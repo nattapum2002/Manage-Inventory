@@ -16,5 +16,5 @@ Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');
 });
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard.index');
 });
