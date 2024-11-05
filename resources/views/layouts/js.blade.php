@@ -57,3 +57,23 @@
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
 </script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#stock_per_date').DataTable({
+            info: false,
+            ordering: false,
+            paging: true
+        });
+        $('#slip_per_date').DataTable({
+            info: false,
+            ordering: false,
+            paging: true
+        });
+        $('#item_per_slip').DataTable({
+            info: false,
+            ordering: false,
+            paging: true
+        });
+    });
+</script>

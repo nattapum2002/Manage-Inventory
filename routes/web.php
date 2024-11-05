@@ -19,6 +19,18 @@ Route::get('/manageshift', function () {
 Route::get('/managestock', function () {
     return view('Admin.ManageStock.managerecivestock');
 });
+Route::get('/manageslip', function () {
+    return view('Admin.ManageStock.manageslipstock');
+})->name('Manage slip');
+
+Route::get('/manageitem', function () {
+    return view('Admin.ManageStock.manageslipdetail');
+})->name('Manage item');
+
+Route::get('/additem', function () {
+    return view('Admin.ManageStock.addstock');
+})->name('Add item');
+
 Route::get('/', function () {
     return view('admin.Dashboard.index');
 })->name('Dashboard');
