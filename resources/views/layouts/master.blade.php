@@ -19,21 +19,22 @@
                             class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    {{-- <a href="{{ route('home') }}" class="nav-link">Home</a> --}}
+                    <a href="{{ route('Dashboard') }}" class="nav-link">Dashboard</a>
                 </li>
+
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown user-menu">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                        {{-- <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}"
-                            class="user-image img-circle elevation-2" alt="User Image"> --}}
+                        <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}"
+                            class="user-image img-circle elevation-2" alt="User Image">
                         <span class="d-none d-md-inline"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <!-- User image -->
                         <li class="user-header bg-primary">
-                            {{-- <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}" class="img-circle elevation-2"
-                                alt="User Image"> --}}
+                            <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}" class="img-circle elevation-2"
+                                alt="User Image">
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
@@ -61,11 +62,14 @@
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
+                                @if (!Route::is('Dashboard'))
+                                    <li class="breadcrumb-item"><a href="{{ route('Dashboard') }}">Dashboard</a></li>
+                                @endif
                                 <li class="breadcrumb-item active">@yield('title')</li>
                             </ol>
                         </div>
                     </div>
-                </div><!-- /.container-fluid -->
+                </div>
             </section>
             @yield('content')
         </div>
