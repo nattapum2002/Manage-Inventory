@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('users', App\Http\Controllers\UserController::class);
+Route::resource('Users', App\Http\Controllers\UserController::class);
 
 Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');
@@ -22,6 +22,7 @@ Route::get('/manageshift', function () {
 Route::get('/managestock', function () {
     return view('Admin.ManageStock.managerecivestock');
 });
+
 Route::get('/', function () {
     return view('admin.Dashboard.index');
 })->name('Dashboard');
@@ -42,6 +43,8 @@ Route::get('/ManageStock', function () {
     return view('admin.ManageStock.managerecivestock');
 })->name('ManageStock');
 
+Route::get('/ManageUsers', [App\Http\Controllers\UserController::class, 'index'])->name('ManageUsers');
+
 Route::get('/Profile', function () {
-    return view('admin.Profile.profile');
+    return view('admin.ManageUsers.profile');
 })->name('Profile');

@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        $Users = DB::table('users')->get();
+
+        return view('admin.ManageUsers.manageuser', compact('Users'));
+    }
+
     public function profile()
     {
         // if (!Auth::user()) {
@@ -16,7 +23,7 @@ class UserController extends Controller
 
         // $user = DB::table('users')->where('user_id', Auth::user()->user_id)->first();
 
-        // return view('admin.Profile.profile', compact('user'));
+        // return view('admin.ManageUsers.profile', compact('user'));
     }
 
     public function create(Request $request)

@@ -80,6 +80,14 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('ManageUsers') }}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            Manage Users
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
