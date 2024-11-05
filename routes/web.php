@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::resource('Users', App\Http\Controllers\UserController::class);
+
 Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');
 });
@@ -50,3 +53,9 @@ Route::get('/ManageShift', function () {
 Route::get('/ManageStock', function () {
     return view('admin.ManageStock.managerecivestock');
 })->name('ManageStock');
+
+Route::get('/ManageUsers', [App\Http\Controllers\UserController::class, 'index'])->name('ManageUsers');
+
+Route::get('/Profile', function () {
+    return view('admin.ManageUsers.profile');
+})->name('Profile');
