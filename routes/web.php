@@ -18,6 +18,10 @@ Route::resource('users', App\Http\Controllers\UserController::class);
 Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');
 });
+
+Route::get('/managestock', function () {
+    return view('Admin.ManageStock.managerecivestock');
+});
 Route::get('/', function () {
     return view('admin.Dashboard.index');
 })->name('Dashboard');

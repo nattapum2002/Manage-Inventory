@@ -11,7 +11,7 @@
             <a class="btn btn-primary" href="">เพิ่มข้อมูลสินค้า</a>
         </div>
         <div class="card-body">
-            <table id="stock_per_date" class="table table-striped">
+            <table id="slip_per_date" class="table table-striped">
                 <thead>
                     <tr>
                         <th>วันที่</th>
@@ -34,7 +34,7 @@
     </div>
 <script>
     $(document).ready(function() {
-        $('#stock_per_date').DataTable();
+        $('#slip_per_date').DataTable();
     });
 </script>
 @endsection
