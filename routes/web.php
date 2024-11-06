@@ -29,9 +29,13 @@ Route::get('/manageshift', function () {
 //     return view('Admin.ManageStock.manageslipstock');
 // })->name('Manage slip');
 
-Route::get('/manageitem', function () {
-    return view('Admin.ManageStock.manageslipdetail');
-})->name('Manage item');
+// Route::get('/manageitem', function () {
+//     return view('Admin.ManageStock.manageslipdetail');
+// })->name('Manage item');
+
+//Route::get('/ManageStock', function () {
+    //     return view('Admin.ManageStock.managerecivestock');
+    // })->name('ManageStock');
 
 Route::get('/additem', function () {
     return view('Admin.ManageStock.addstock');
@@ -59,11 +63,11 @@ Route::get('/ManageShift', function () {
 
 Route::get('/ManageStock',[App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
 Route::get('/ManageSlip/{date}',[App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
+Route::get('/SlipDetail/{slip_id}',[App\Http\Controllers\managestock::class, 'show_slip_detail'])->name('SlipDetail');
 
 Route::post('/AddSlip', [App\Http\Controllers\managestock::class, 'create'])->name('AddSlip');
-Route::get('/ManageStock', function () {
-    return view('Admin.ManageStock.managerecivestock');
-})->name('ManageStock');
+Route::get('autocomplete', [App\Http\Controllers\managestock::class, 'autocomplete'])->name('autocomplete');
+// 
 
 Route::get('/ManageUsers', [App\Http\Controllers\UserController::class, 'index'])->name('ManageUsers');
 
