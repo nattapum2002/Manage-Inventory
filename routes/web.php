@@ -15,16 +15,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('Users', App\Http\Controllers\UserController::class);
 
+Route::resource('ManageStock', App\Http\Controllers\managestock::class);
+
 Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');
 });
 
-Route::get('/managestock', function () {
-    return view('Admin.ManageStock.managerecivestock');
-});
-Route::get('/manageslip', function () {
-    return view('Admin.ManageStock.manageslipstock');
-})->name('Manage slip');
+// Route::get('/managestock', function () {
+//     return view('Admin.ManageStock.managerecivestock');
+// });
+// Route::get('/manageslip', function () {
+//     return view('Admin.ManageStock.manageslipstock');
+// })->name('Manage slip');
 
 Route::get('/manageitem', function () {
     return view('Admin.ManageStock.manageslipdetail');
@@ -50,9 +52,10 @@ Route::get('/ManageShift', function () {
     return view('admin.ManageShift.manageshift');
 })->name('ManageShift');
 
-Route::get('/ManageStock', function () {
-    return view('admin.ManageStock.managerecivestock');
-})->name('ManageStock');
+Route::get('/ManageStock',[App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
+Route::get('/ManageSlip/{date}',[App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
+
+Route::post('/AddSlip', [App\Http\Controllers\managestock::class, 'create'])->name('AddSlip');
 
 Route::get('/ManageUsers', [App\Http\Controllers\UserController::class, 'index'])->name('ManageUsers');
 

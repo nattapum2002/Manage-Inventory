@@ -6,6 +6,12 @@
 
 @section('content')
 <section class="content">
+    @if (session()->has('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session()->get('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
     <div class="card">
         <div class="card-header d-flex justify-content-start">
             <a class="btn btn-primary" href="{{route('Add item')}}">เพิ่มข้อมูลสินค้า</a>
@@ -14,6 +20,7 @@
             <table id="slip_per_date" class="table table-striped">
                 <thead>
                     <tr>
+                        <th>เลขที่</th>
                         <th>สลิปใบที่ No.</th>
                         <th>หน่วยงาน</th>
                         <th>Production Checker</th>
@@ -23,6 +30,7 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td>23227</td>
                         <td>1</td>
                         <td>DMT</td>
                         <td>นาย A</td>

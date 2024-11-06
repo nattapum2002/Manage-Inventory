@@ -62,7 +62,61 @@
 <script
     src="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.1.8/af-2.7.0/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/date-1.5.4/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.3/rg-1.5.0/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/sr-1.4.1/datatables.min.js">
 </script>
+<script>
+    var item_count = 0 ;
+    $('#add-item').click(function() {
+        item_count++;
+        $('#item-row').append(`<div class="row" id="item-${item_count}">${item_count}<div class="col">
+                    <label for="item_id" class="form-label">รหัสสินค้า</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="item_id" name="item_id[${item_count}]">
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="item_name" class="form-label">ชื่อสินค้า</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="item_name" name="item_name[${item_count}]" disabled>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="item_amount" class="form-label">จำนวน</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="item_amount" name="item_amount[${item_count}]">
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="item_weight" class="form-label">น้ำหนัก</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="item_weight" name="item_weight[${item_count}]">
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="item_comment" class="form-label">หมายเหตุ</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="item_comment" name="item_comment[${item_count}]">
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="remove-item" class="form-label">จัดการ</label>
+                    <div class="input-group text-center">
+                        <button type="button" class="btn btn-danger remove-item" id="">ลบ</button>
+                    </div>
+                </div>
+            </div>
+            
+            `);
+    })
+    $(document).on('click', '.remove-item', function() {
+        item_count--;
+        $(this).closest('[id^="item-"]').remove();
+    });
+    $(document).ready(function() {
+        // Trigger custom event when success message is found
+        $(document).trigger('dataSavedEvent', '{{ session()->get('success') }}');
 
+        alert(message);
+    });
+</script>
 <script>
     $(document).ready(function() {
         $('#stock_per_date').DataTable({

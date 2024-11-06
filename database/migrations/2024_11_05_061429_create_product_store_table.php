@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('product_store', function (Blueprint $table) {
             $table->id();
-            $table->string('product_slip_id')->unique();
+            $table->string('product_slip_id');
+            $table->string('product_slip_number');
             $table->string('product_id');
             $table->string('department');
             $table->integer('weight');

@@ -14,22 +14,20 @@
             <table id="stock_per_date" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>วันที่</th>
-                        <th>เวลา</th>
-                        <th>หน่วยงาน</th>
+                        <th class="text-center">วันที่</th>
                         <th>จัดการ</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($show_per_date as $item) 
                     <tr>
-                        <td>2011-04-25</td>
-                        <td>12:00:00</td>
-                        <td>DMT</td>
+                        <td class="text-center">{{$item->store_date}}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{route('Manage slip')}}">ดู</a>
+                            <a class="btn btn-primary" href="{{route('ManageSlip',$item->store_date)}}">ดู</a>
                             {{-- <a class="btn btn-danger" href="">ลบ</a> --}}
                         </td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
