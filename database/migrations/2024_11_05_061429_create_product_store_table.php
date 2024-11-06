@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('department');
             $table->integer('weight');
             $table->integer('amount');
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->date('store_date');
             $table->time('store_time');
             $table->boolean('check_status');

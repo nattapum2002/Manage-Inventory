@@ -65,7 +65,22 @@
                         </a>
                     </li>
                 @elseif (Auth::user()->user_type == 'Manager')
-
+                    <li class="nav-item">
+                        <a href="{{ route('ProductStore') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Product Store
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('CustomerOrder') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Customer Order
+                            </p>
+                        </a>
+                    </li>
                 @elseif (Auth::user()->user_type == 'User')
                 @endif
             </ul>
