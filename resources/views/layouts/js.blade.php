@@ -62,61 +62,95 @@
 <script
     src="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.1.8/af-2.7.0/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/date-1.5.4/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.3/rg-1.5.0/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/sr-1.4.1/datatables.min.js">
 </script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script>
     var item_count = 0;
+
     $('#add-item').click(function() {
         item_count++;
-        $('#item-row').append(`<div class="row" id="item-${item_count}">${item_count}<div class="col">
-                    <label for="item_id" class="form-label">รหัสสินค้า</label>
+        $('#item-row').append(`
+            <div class="row" id="item-${item_count}">
+                <div class="col">
+                    <label for="item_id_${item_count}" class="form-label">รหัสสินค้า</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="item_id" name="item_id[${item_count}]">
+                        <input type="text" class="form-control" id="item_id_${item_count}" name="item_id[${item_count}]">
                     </div>
                 </div>
                 <div class="col">
-                    <label for="item_name" class="form-label">ชื่อสินค้า</label>
+                    <label for="item_name_${item_count}" class="form-label">ชื่อสินค้า</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="item_name" name="item_name[${item_count}]" disabled>
+                        <input type="text" class="form-control" id="item_name_${item_count}" name="item_name[${item_count}]" >
                     </div>
                 </div>
                 <div class="col">
-                    <label for="item_amount" class="form-label">จำนวน</label>
+                    <label for="item_amount_${item_count}" class="form-label">จำนวน</label>
                     <div class="input-group">
-                        <input type="number" class="form-control" id="item_amount" name="item_amount[${item_count}]">
+                        <input type="number" class="form-control" id="item_amount_${item_count}" name="item_amount[${item_count}]">
                     </div>
                 </div>
                 <div class="col">
-                    <label for="item_weight" class="form-label">น้ำหนัก</label>
+                    <label for="item_weight_${item_count}" class="form-label">น้ำหนัก(KG.)</label>
                     <div class="input-group">
-                        <input type="number" class="form-control" id="item_weight" name="item_weight[${item_count}]">
+                        <input type="number" class="form-control" id="item_weight_${item_count}" name="item_weight[${item_count}]">
                     </div>
                 </div>
                 <div class="col">
-                    <label for="item_comment" class="form-label">หมายเหตุ</label>
+                    <label for="item_comment_${item_count}" class="form-label">หมายเหตุ</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="item_comment" name="item_comment[${item_count}]">
+                        <input type="text" class="form-control" id="item_comment_${item_count}" name="item_comment[${item_count}]">
                     </div>
                 </div>
                 <div class="col">
                     <label for="remove-item" class="form-label">จัดการ</label>
                     <div class="input-group text-center">
-                        <button type="button" class="btn btn-danger remove-item" id="">ลบ</button>
+                        <button type="button" class="btn btn-danger remove-item">ลบ</button>
                     </div>
                 </div>
             </div>
+        `);
+        // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
+        initializeAutocomplete(`#item_name_${item_count}`);
+    });
 
-            `);
-    })
+    // ฟังก์ชันสำหรับลบแถว
     $(document).on('click', '.remove-item', function() {
-        item_count--;
         $(this).closest('[id^="item-"]').remove();
     });
-    $(document).ready(function() {
-        // Trigger custom event when success message is found
-        $(document).trigger('dataSavedEvent', '{{ session()->get('success') }}');
 
-        alert(message);
-    });
+    // ฟังก์ชันสำหรับ autocomplete
+    function initializeAutocomplete(selector) {
+        $(selector).autocomplete({
+            source: function(request, response) {
+
+                $.ajax({
+                    url: "{{ route('autocomplete') }}",
+                    data: {
+                        query: request.term
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2
+        });
+    }
 </script>
+
+{{-- <script type="text/javascript">
+    var path = "{{ route('autocomplete') }}";
+    $('#item_name').typeahead({
+        source: function (query, process) {
+            return $.get(path, {
+                query: query
+            }, function (data) {
+                return process(data);
+            });
+        }
+    });
+</script> --}}
 <script>
     $(document).ready(function() {
         $('#stock_per_date').DataTable({

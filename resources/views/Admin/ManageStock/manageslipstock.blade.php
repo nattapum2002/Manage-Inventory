@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    จัดการผลิตภัณฑ์จากคลัง : สลิป
+    จัดการผลิตภัณฑ์จากคลัง : สลิป {{$date}}
 @endsection
 
 @section('content')
@@ -21,7 +21,7 @@
                 <thead>
                     <tr>
                         <th>เลขที่</th>
-                        <th>สลิปใบที่ No.</th>
+                        <th class="text-center">สลิปใบที่ No.</th>
                         <th>หน่วยงาน</th>
                         <th>Production Checker</th>
                         <th>Domestic Checker</th>
@@ -29,17 +29,19 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($show_slip as $item )
                     <tr>
-                        <td>23227</td>
-                        <td>1</td>
-                        <td>DMT</td>
-                        <td>นาย A</td>
-                        <td>ไม่มี</td>
+                        <td>{{$item->slip_id}}</td>
+                        <td class="text-center">{{$item->slip_number}}</td>
+                        <td>{{$item->department}}</td>
+                        <td>{{$item->product_checker ?? 'ไม่มี'}}</td>
+                        <td>{{$item->domestic_checker ?? 'ไม่มี'}}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{route('Manage item')}}">ดู</a>
+                            <a class="btn btn-primary" href="{{route('SlipDetail',$item->slip_id)}}">ดู</a>
                             {{-- <a class="btn btn-danger" href="">ลบ</a> --}}
                         </td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
