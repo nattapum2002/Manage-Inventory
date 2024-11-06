@@ -86,8 +86,22 @@
     $(function() {
         $("#userstable").DataTable({
             responsive: true,
-            lengthChange: false,
-            autoWidth: false,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#product_storetable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
             layout: {
                 topStart: {
                     buttons: [

@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <div class="brand-link d-flex justify-content-between align-items-center">
-        <a class="brand-link" href="{{ route('Dashboard') }}">
+        <a href="{{ route('Dashboard.' . Auth::user()->user_type) }}" class="brand-link">
             {{-- <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"> --}}
             <span class="brand-text font-weight-light">MIS</span>
         </a>
@@ -23,71 +23,51 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-                {{-- <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Starter Pages
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Active Page</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Inactive Page</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li> --}}
-                <li class="nav-item">
-                    <a href="{{ route('ManageLockStock') }}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                            Manage Lock Stock
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('ManageQueue') }}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                            Manage Queue
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('ManageShift') }}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                            Manage Shift
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('ManageStock') }}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                            Manage Stock
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('ManageUsers') }}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                            Manage Users
-                        </p>
-                    </a>
-                </li>
+                @if (Auth::user()->user_type == 'Admin')
+                    <li class="nav-item">
+                        <a href="{{ route('ManageLockStock') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Manage Lock Stock
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ManageQueue') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Manage Queue
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ManageShift') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Manage Shift
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ManageStock') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Manage Stock
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ManageUsers') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Manage Users
+                            </p>
+                        </a>
+                    </li>
+                @elseif (Auth::user()->user_type == 'Manager')
+
+                @elseif (Auth::user()->user_type == 'User')
+                @endif
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

@@ -19,34 +19,16 @@
                             class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{{ route('Dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ route('Dashboard.' . Auth::user()->user_type) }}" class="nav-link">Dashboard</a>
                 </li>
 
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown user-menu">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                        <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}"
-                            class="user-image img-circle elevation-2" alt="User Image">
+                    <a href="{{ route('Logout') }}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
                         <span class="d-none d-md-inline"></span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <!-- User image -->
-                        <li class="user-header bg-primary">
-                            <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}" class="img-circle elevation-2"
-                                alt="User Image">
-                        </li>
-                        <!-- Menu Footer-->
-                        <li class="user-footer">
-                            {{-- <a href="#" class="btn btn-default btn-flat float-right"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Sign out
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form> --}}
-                        </li>
-                    </ul>
                 </li>
             </ul>
         </nav>
@@ -62,8 +44,10 @@
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                @if (!Route::is('Dashboard'))
-                                    <li class="breadcrumb-item"><a href="{{ route('Dashboard') }}">Dashboard</a></li>
+                                @if (!Route::is('Dashboard.' . Auth::user()->user_type))
+                                    <li class="breadcrumb-item"><a
+                                            href="{{ route('Dashboard.' . Auth::user()->user_type) }}">Dashboard</a>
+                                    </li>
                                 @endif
                                 <li class="breadcrumb-item active">@yield('title')</li>
                             </ol>
