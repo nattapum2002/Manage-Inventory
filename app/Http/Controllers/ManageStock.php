@@ -31,6 +31,7 @@ class managestock extends Controller
     public function show_slip_detail($slip_id)
     {
         $show_detail = DB::table('product_store')
+            ->join('stock', 'product_store.product_id', '=', 'stock.product_id')
             ->where('product_slip_id', $slip_id)
             ->get();
         return view('Admin.ManageStock.manageslipdetail', compact('show_detail', 'slip_id'));
@@ -40,24 +41,52 @@ class managestock extends Controller
     {
         $query = $request->get('query');
 
-        // ดึงข้อมูลเฉพาะฟิลด์ที่ต้องการ เช่น product_name
+        // ดึงข้อมูลเฉพาะฟิลด์ที่ต้องการ เช่น product_name และ product_id
         $data = DB::table('stock')
-            ->select('product_name', 'product_id') // เลือกเฉพาะฟิลด์ product_name
+            ->select('product_name', 'product_id') // เลือกเฉพาะฟิลด์ product_name และ product_id
             ->where('product_name', 'like', '%' . $query . '%')
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
             ->get();
-
+    
         // แปลงข้อมูลให้อยู่ในรูปแบบที่ jQuery autocomplete ต้องการ
-        $suggestions = [];
+        $results = [];
         foreach ($data as $item) {
-            $suggestions[] = $item->product_name;
+            $results[] = [
+                'label' => $item->product_name,  // ใช้ 'label' สำหรับการแสดงผลในรายการ autocomplete
+                'value' => $item->product_name,  // ใช้ 'value' สำหรับการเติมในช่อง input
+                'id' => $item->product_id        // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
+            ];
         }
-
-        return response()->json($suggestions);
+    
+        return response()->json($results);
     }
 
     public function create(Request $request)
     {
+        $request->validate([
+            'slip_id' => 'required',
+            'slip_number' => 'required',
+            'department' => 'required',
+            'date' => 'required',
+            'time' => 'required',
+            'item_name.*' => 'required',
+            'item_amount.*' => 'required',
+            'item_weight.*' => 'required',
+            'product_checker' => 'required',
+            'domestic_checker' => 'required'
+        ],[
+            'slip_id.required' => 'กรุณากรอกรหัสสลิป',
+            'slip_number.required' => 'กรุณากรอกหมายเลขสลิป',
+            'department.required' => 'กรุณากรอกแผนก',
+            'date.required' => 'กรุณากรอกวันที่',
+            'time.required' => 'กรุณากรอกเวลา',
+            'item_name.*.required' => 'กรุณากรอกชื่อสินค้า',
+            'item_amount.*.required' => 'กรุณากรอกจำนวนสินค้า',
+            'item_weight.*.required' => 'กรุณากรอกน้ำหนักสินค้า',
+            'product_checker.required' => 'กรุณากรอกรหัสผู้ตรวจสินค้า',
+            'domestic_checker.required' => 'กรุณากรอกรหัสผู้ตรวจสินค้า'
+        ]);
+        
         $data = $request->all();
         DB::transaction(function () use ($data) {
             foreach ($data['item_id'] as $key => $value) {
@@ -72,8 +101,8 @@ class managestock extends Controller
                     'store_date' => $data['date'],
                     'store_time' => $data['time'],
                     'check_status' => 1,
-                    'product_checker' => 'นาย ก',
-                    'domestic_checker' => 'นาย ข'
+                    'product_checker' => $data['product_checker'],
+                    'domestic_checker' => $data['domestic_checker']
                 ]);
             }
         });

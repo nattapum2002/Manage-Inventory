@@ -6,11 +6,32 @@
 
 @section('content')
     <section class="content">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form class="add-stock" method="POST" action="{{ route('AddSlip') }}">
             @csrf
             <div class="card">
-                <div class="card-header">
-                    <h3 class="">กรอกข้อมูลชุดการผลิต</h3>
+                <div class="card-header row">
+                    <aside class="col">
+                        <h3 class="mb-0">กรอกข้อมูลชุดการผลิต</h3>
+                    </aside>
+                    <div class="col d-flex">
+                        <aside class="input-group me-3">
+                            <span class="input-group-text">Product Checker</span>
+                            <input type="text" class="form-control" id="product_checker" name="product_checker" placeholder="กรอกรหัสพนักงาน">
+                        </aside>
+                        <aside class="input-group">
+                            <span class="input-group-text">Domestic Checker</span>
+                            <input type="text" class="form-control" id="domestic_checker" name="domestic_checker" placeholder="กรอกรหัสพนักงาน">
+                        </aside>
+                    </div>
                 </div>
                 <div class="card-body">
                     <article class="row">
@@ -48,7 +69,46 @@
                     <hr>
 
                     <article id="item-row">
-
+                        <div class="row" id="item-1">
+                            <div class="col">
+                                <label for="item_id_1" class="form-label">1 รหัสสินค้า</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="item_id_1" name="item_id[1]"
+                                        readonly="">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="item_name_1" class="form-label">ชื่อสินค้า</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control ui-autocomplete-input" id="item_name_1"
+                                        name="item_name[1]" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="item_amount_1" class="form-label">จำนวน</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="item_amount_1" name="item_amount[1]">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="item_weight_1" class="form-label">น้ำหนัก(KG.)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="item_weight_1" name="item_weight[1]">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="item_comment_1" class="form-label">หมายเหตุ</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="item_comment_1" name="item_comment[1]">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="remove-item" class="form-label">จัดการ</label>
+                                {{-- <div class="input-group text-center">
+                                    <button type="button" class="btn btn-danger remove-item">ลบ</button>
+                                </div> --}}
+                            </div>
+                        </div>
                     </article>
 
                     <div class="d-flex justify-content-center mt-3">

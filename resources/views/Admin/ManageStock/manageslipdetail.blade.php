@@ -26,7 +26,7 @@
                     @foreach ( $show_detail as $item )
                     <tr>
                         <td>{{$item->product_id}}</td>
-                        <td>ไก่ชายโสด</td>
+                        <td>{{$item->product_name}}</td>
                         <td>{{$item->amount}}</td>
                         <td>{{$item->weight}}</td>
                         <td>{{$item->comment}}</td>
@@ -48,9 +48,4 @@
     </div>
 </section>
     
-<script>
-    new DataTable('#item_per_slip', {
-        order: [[3, 'desc']]
-    });
-</script>
 @endsection
