@@ -15,9 +15,10 @@ class StatisticsController extends Controller
         $stocks = DB::table('stock')->get();
         $customer_orders = DB::table('customer_order')->get();
         $pallets = DB::table('pallet')->get();
+        $customer_queues = DB::table('customer_queue')->get();
 
         if (Auth::check()) {
-            return view(Auth::user()->user_type . '.Dashboard.index', compact('Users', 'product_stores', 'stocks', 'customer_orders', 'pallets'));
+            return view(Auth::user()->user_type . '.Dashboard.index', compact('Users', 'product_stores', 'stocks', 'customer_orders', 'pallets', 'customer_queues'));
         } else {
             Auth::logout();
             return redirect()->back()->with('error', 'สิทธิ์ไม่เพียงพอ');
@@ -36,6 +37,12 @@ class StatisticsController extends Controller
         return view('Manager.ProductStore.DetailProductStore', compact('product_stores'));
     }
 
+    public function ProductStock()
+    {
+        $stocks = DB::table('stock')->get();
+        return view('Manager.ProductStock.ProductStock', compact('stocks'));
+    }
+
     public function CustomerOrder()
     {
         $customer_orders = DB::table('customer_order')->select('order_id', 'customer_id', 'date', 'packer_id')->distinct()->get();
@@ -46,5 +53,17 @@ class StatisticsController extends Controller
     {
         $customer_orders = DB::table('customer_order')->where('order_id', $order_id)->get();
         return view('Manager.CustomerOrder.detailcustomerorder', compact('customer_orders'));
+    }
+
+    public function Pallet()
+    {
+        $pallets = DB::table('pallet')->distinct()->get();
+        return view('Manager.Pallet.Pallet', compact('pallets'));
+    }
+
+    public function DetailPallet($pallet_id)
+    {
+        $pallets = DB::table('pallet')->where('pallet_id', $pallet_id)->get();
+        return view('Manager.Pallet.DetailPallet', compact('pallets'));
     }
 }

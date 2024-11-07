@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class CustomerOrderSeeder extends Seeder
+class CustomerQueueSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,14 +14,13 @@ class CustomerOrderSeeder extends Seeder
     public function run(): void
     {
         for ($i = 0; $i < 30; $i++) {
-            DB::table('customer_order')->insert([
+            DB::table('customer_queue')->insert([
+                'queue_id' => $i,
                 'order_id' => $i,
-                'product_id' => $i,
-                'customer_id' => $i,
-                'order_amount' => $i * 10,
-                'send_amount' => $i * 10,
-                'date' => '2022-01-01',
-                'packer_id' => $i,
+                'queue' => $i,
+                'time_queue' => '00:00:00',
+                'recive_time' => '00:00:00',
+                'recive_status' => rand(0, 1),
             ]);
         }
     }

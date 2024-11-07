@@ -17,13 +17,13 @@
                                         <th colspan="3">
                                             <div class="row">
                                                 <div class="col-4">
-                                                    รหัสคำสั่งซื้อ : {{ $customer_orders[0]->order_id }}
+                                                    รหัสคำสั่งซื้อ : {{ $customer_orders[0]->order_id ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-4">
-                                                    รหัสลูกค้า : {{ $customer_orders[0]->customer_id }}
+                                                    รหัสลูกค้า : {{ $customer_orders[0]->customer_id ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-4">
-                                                    วันที่ : {{ $customer_orders[0]->date }}
+                                                    วันที่ : {{ $customer_orders[0]->date ?? 'N/A' }}
                                                 </div>
                                             </div>
                                         </th>
@@ -55,7 +55,7 @@
                                                 <div class="col-8">
                                                 </div>
                                                 <div class="col-4">
-                                                    ผู้แพ็คสินค้า : {{ $customer_orders[0]->packer_id }}
+                                                    ผู้แพ็คสินค้า : {{ $customer_orders[0]->packer_id ?? 'N/A' }}
                                                 </div>
                                             </div>
                                         </th>

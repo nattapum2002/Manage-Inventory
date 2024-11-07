@@ -157,5 +157,110 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">พาเลท (pallets)</h3>
+                        </div>
+                        <div class="card-body">
+                            <table id="pallettable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>รหัสพาเลท</th>
+                                        <th>รหัสคำสั่งซื้อ</th>
+                                        <th>รหัสสินค้า</th>
+                                        <th>จํานวนที่สั่ง</th>
+                                        <th>จํานวนที่ส่ง</th>
+                                        <th>สีถุง</th>
+                                        <th>ห้อง</th>
+                                        <th>เวลาเริ่มแพ็คสินค้า</th>
+                                        <th>เวลาสิ้นสุดแพ็คสินค้า</th>
+                                        <th>ผู้เช็ค</th>
+                                        <th>กะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($pallets as $pallet)
+                                        <tr>
+                                            <td>{{ $pallet->pallet_id }}</td>
+                                            <td>{{ $pallet->order_id }}</td>
+                                            <td>{{ $pallet->product_id }}</td>
+                                            <td>{{ $pallet->order_amount }}</td>
+                                            <td>{{ $pallet->send_amount }}</td>
+                                            <td>{{ $pallet->bag_color }}</td>
+                                            <td>{{ $pallet->room }}</td>
+                                            <td>{{ $pallet->pack_start_time }}</td>
+                                            <td>{{ $pallet->pack_end_time }}</td>
+                                            <td>{{ $pallet->checker_id }}</td>
+                                            <td>{{ $pallet->shift_id }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>รหัสพาเลท</th>
+                                        <th>รหัสคำสั่งซื้อ</th>
+                                        <th>รหัสสินค้า</th>
+                                        <th>จํานวนที่สั่ง</th>
+                                        <th>จํานวนที่ส่ง</th>
+                                        <th>สีถุง</th>
+                                        <th>ห้อง</th>
+                                        <th>เวลาเริ่มแพ็คสินค้า</th>
+                                        <th>เวลาสิ้นสุดแพ็คสินค้า</th>
+                                        <th>ผู้เช็ค</th>
+                                        <th>กะ</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">คิวลูกค้า (customer_queue)</h3>
+                        </div>
+                        <div class="card-body">
+                            <table id="CustomerQueuetable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>รหัสคิว</th>
+                                        <th>รหัสคำสั่งซื้อ</th>
+                                        <th>ลำดับคิว</th>
+                                        <th>เวลารับ</th>
+                                        <th>เวลารับจริง</th>
+                                        <th>สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($customer_queues as $customer_queue)
+                                        <tr>
+                                            <td>{{ $customer_queue->queue_id }}</td>
+                                            <td>{{ $customer_queue->order_id }}</td>
+                                            <td>{{ $customer_queue->queue }}</td>
+                                            <td>{{ $customer_queue->time_queue }}</td>
+                                            <td>{{ $customer_queue->recive_time }}</td>
+                                            <td>{{ $customer_queue->recive_status }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>รหัสคิว</th>
+                                        <th>รหัสคำสั่งซื้อ</th>
+                                        <th>ลำดับคิว</th>
+                                        <th>เวลารับ</th>
+                                        <th>เวลารับจริง</th>
+                                        <th>สถานะ</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </section>
 @endsection

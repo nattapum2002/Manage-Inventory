@@ -17,13 +17,15 @@
                                         <th colspan="6">
                                             <div class="row">
                                                 <div class="col-3">
-                                                    รหัสสลิปสินค้า : {{ $product_stores[0]->product_slip_id }}</div>
+                                                    รหัสสลิปสินค้า : {{ $product_stores[0]->product_slip_id ?? 'N/A' }}
+                                                </div>
                                                 <div class="col-3">
-                                                    หมายเลขสลิป : {{ $product_stores[0]->product_slip_number }}</div>
+                                                    หมายเลขสลิป : {{ $product_stores[0]->product_slip_number ?? 'N/A' }}
+                                                </div>
                                                 <div class="col-3">
-                                                    วันเก็บสินค้า : {{ $product_stores[0]->store_date }}</div>
+                                                    วันเก็บสินค้า : {{ $product_stores[0]->store_date ?? 'N/A' }}</div>
                                                 <div class="col-3">
-                                                    เวลาเก็บสินค้า : {{ $product_stores[0]->store_time }}</div>
+                                                    เวลาเก็บสินค้า : {{ $product_stores[0]->store_time ?? 'N/A' }}</div>
                                             </div>
                                         </th>
                                     </tr>
@@ -62,9 +64,11 @@
                                             <div class="row">
                                                 <div class="col-6"></div>
                                                 <div class="col-3">
-                                                    product checker : {{ $product_stores[0]->product_checker }}</div>
+                                                    product checker : {{ $product_stores[0]->product_checker ?? 'N/A' }}
+                                                </div>
                                                 <div class="col-3">
-                                                    domestic checker : {{ $product_stores[0]->domestic_checker }}</div>
+                                                    domestic checker : {{ $product_stores[0]->domestic_checker ?? 'N/A' }}
+                                                </div>
                                             </div>
                                         </th>
                                     </tr>

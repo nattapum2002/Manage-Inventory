@@ -92,8 +92,13 @@ Route::get('/Manager/Dashboard', [App\Http\Controllers\StatisticsController::cla
 Route::get('/Manager/ProductStore', [App\Http\Controllers\StatisticsController::class, 'ProductStore'])->name('ProductStore');
 Route::get('/Manager/ProductStore/{slip_id}', [App\Http\Controllers\StatisticsController::class, 'DetailProductStore'])->name('DetailProductStore');
 
+Route::get('/Manager/ProductStock', [App\Http\Controllers\StatisticsController::class, 'ProductStock'])->name('ProductStock');
+
 Route::get('/Manager/CustomerOrder', [App\Http\Controllers\StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
 Route::get('/Manager/CustomerOrder/{order_id}', [App\Http\Controllers\StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
+
+Route::get('/Manager/Pallet', [App\Http\Controllers\StatisticsController::class, 'Pallet'])->name('Pallet');
+Route::get('/Manager/Pallet/{pallet_id}', [App\Http\Controllers\StatisticsController::class, 'DetailPallet'])->name('DetailPallet');
 
 Route::get('/Manager/Profile', function () {
     return view('Manager.profile');

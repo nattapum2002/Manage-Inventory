@@ -74,10 +74,26 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('ProductStock') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Product Stock
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('CustomerOrder') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 Customer Order
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('Pallet') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Pallet
                             </p>
                         </a>
                     </li>

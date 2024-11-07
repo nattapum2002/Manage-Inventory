@@ -13,7 +13,7 @@ class ProductStoreSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             DB::table('product_store')->insert([
                 'product_slip_id' => $i,
                 'product_slip_number' => $i,

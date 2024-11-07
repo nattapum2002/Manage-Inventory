@@ -6,19 +6,20 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class StockSeeder extends Seeder
+class WorkShiftSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        $shift_name = ['A', 'B', 'C', 'D'];
         for ($i = 0; $i < 30; $i++) {
-            DB::table('stock')->insert([
-                'product_id' => $i,
-                'product_name' => 'product' . $i,
-                'weight' => $i * 10,
-                'amount' => $i * 10,
+            DB::table('work_shift')->insert([
+                'shift_id' => $i,
+                'shift_name' => $shift_name[rand(0, 3)],
+                'start_time' => '00:00:00',
+                'end_time' => '00:00:00',
             ]);
         }
     }
