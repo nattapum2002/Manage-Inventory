@@ -34,8 +34,8 @@ Route::get('/manageshift', function () {
 // })->name('Manage item');
 
 //Route::get('/ManageStock', function () {
-    //     return view('Admin.ManageStock.managerecivestock');
-    // })->name('ManageStock');
+//     return view('Admin.ManageStock.managerecivestock');
+// })->name('ManageStock');
 
 Route::get('/additem', function () {
     return view('Admin.ManageStock.addstock');
@@ -61,13 +61,13 @@ Route::get('/ManageShift', function () {
     return view('Admin.ManageShift.manageshift');
 })->name('ManageShift');
 
-Route::get('/ManageStock',[App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
-Route::get('/ManageSlip/{date}',[App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
-Route::get('/SlipDetail/{slip_id}',[App\Http\Controllers\managestock::class, 'show_slip_detail'])->name('SlipDetail');
+Route::get('/ManageStock', [App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
+Route::get('/ManageSlip/{date}', [App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
+Route::get('/SlipDetail/{slip_id}', [App\Http\Controllers\managestock::class, 'show_slip_detail'])->name('SlipDetail');
 
 Route::post('/AddSlip', [App\Http\Controllers\managestock::class, 'create'])->name('AddSlip');
 Route::get('autocomplete', [App\Http\Controllers\managestock::class, 'autocomplete'])->name('autocomplete');
-// 
+//
 
 Route::get('/ManageUsers', [App\Http\Controllers\UserController::class, 'index'])->name('ManageUsers');
 
@@ -87,9 +87,18 @@ Route::get('/Profile', function () {
 
 //Manager Routes
 
-Route::get('/Manager/Dashboard', function () {
-    return view('Manager.Dashboard.index');
-})->name('Dashboard.Manager');
+Route::get('/Manager/Dashboard', [App\Http\Controllers\StatisticsController::class, 'index'])->name('Dashboard.Manager');
+
+Route::get('/Manager/ProductStore', [App\Http\Controllers\StatisticsController::class, 'ProductStore'])->name('ProductStore');
+Route::get('/Manager/ProductStore/{slip_id}', [App\Http\Controllers\StatisticsController::class, 'DetailProductStore'])->name('DetailProductStore');
+
+Route::get('/Manager/ProductStock', [App\Http\Controllers\StatisticsController::class, 'ProductStock'])->name('ProductStock');
+
+Route::get('/Manager/CustomerOrder', [App\Http\Controllers\StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
+Route::get('/Manager/CustomerOrder/{order_id}', [App\Http\Controllers\StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
+
+Route::get('/Manager/Pallet', [App\Http\Controllers\StatisticsController::class, 'Pallet'])->name('Pallet');
+Route::get('/Manager/Pallet/{pallet_id}', [App\Http\Controllers\StatisticsController::class, 'DetailPallet'])->name('DetailPallet');
 
 Route::get('/Manager/Profile', function () {
     return view('Manager.profile');

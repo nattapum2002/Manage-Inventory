@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
     {
         $user_type = ['Admin', 'User', 'Manager'];
         $position = ['Admin', 'User', 'Manager'];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             DB::table('users')->insert([
                 'user_id' => $i,
                 'name' => 'user' . $i,
