@@ -11,7 +11,7 @@ class managestock extends Controller
     public function index()
     {
         $show_per_date = DB::table('product_store')
-            ->selectRaw('store_date, COUNT(*) as total_times') // หรือเลือกฟิลด์ที่คุณต้องการ
+            ->selectRaw('store_date, COUNT(DISTINCT(product_slip_number)) as total_slip') // หรือเลือกฟิลด์ที่คุณต้องการ
             ->groupBy('store_date')
             ->get();
         return view('admin.ManageStock.managerecivestock', compact('show_per_date'));
@@ -74,7 +74,6 @@ class managestock extends Controller
             'item_amount.*' => 'required',
             'item_weight.*' => 'required',
             'product_checker' => 'required||integer',
-            'domestic_checker' => 'required||integer'
         ], [
             'slip_id.required' => 'กรุณากรอกรหัสสลิป',
             'slip_number.required' => 'กรุณากรอกหมายเลขสลิป',
@@ -85,12 +84,12 @@ class managestock extends Controller
             'item_amount.*.required' => 'กรุณากรอกจำนวนสินค้า',
             'item_weight.*.required' => 'กรุณากรอกน้ำหนักสินค้า',
             'product_checker.required' => 'กรุณากรอกรหัสผู้ตรวจสินค้า',
-            'domestic_checker.required' => 'กรุณากรอกรหัสผู้ตรวจสินค้า',
             'product_checker.integer' => 'กรุณากรอกรหัสผู้ตรวจสินค้าเป็นตัวเลข',
             'domestic_checker.integer' => 'กรุณากรอกรหัสผู้ตรวจสินค้าเป็นตัวเลข'
         ]);
 
         $data = $request->all();
+
         DB::transaction(function () use ($data) {
             foreach ($data['item_id'] as $key => $value) {
                 DB::table('product_store')->insert([
@@ -113,7 +112,7 @@ class managestock extends Controller
             }
         });
 
-        return redirect()->route('ManageSlip', $data['date'])->with('success', 'Data saved successfully');
+        return redirect()->route('Add item')->with('success', 'Data saved successfully');
     }
     public function edit(Request $request)
     {

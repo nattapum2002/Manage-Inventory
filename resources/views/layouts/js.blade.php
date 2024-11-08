@@ -281,7 +281,7 @@
             </div>
         `);
         // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
-        initializeAutocomplete(`#name${user_count}`, `#user_id${user_count}`, `#surname${user_count}`,
+        initializeShiftAutocomplete(`#name${user_count}`, `#user_id${user_count}`, `#surname${user_count}`,
             `#position${user_count}`);
     });
 
@@ -291,7 +291,7 @@
     });
 
     // ฟังก์ชันสำหรับ autocomplete
-    function initializeAutocomplete(nameSelector, idSelector, surnameSelector, positionSelector) {
+    function initializeShiftAutocomplete(nameSelector, idSelector, surnameSelector, positionSelector) {
         $(nameSelector).autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -319,7 +319,7 @@
             $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
         });
     }
-    initializeAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
+    initializeShiftAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
 </script>
 <script>
     $(document).ready(function() {

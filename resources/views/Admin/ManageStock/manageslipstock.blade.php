@@ -6,15 +6,9 @@
 
 @section('content')
     <section class="content">
-        @if (session()->has('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session()->get('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
         <div class="card">
             <div class="card-header d-flex justify-content-start">
-                <a class="btn btn-primary" href="{{ route('Add item') }}">เพิ่มข้อมูลสินค้า</a>
+                <a class="btn btn-primary" href="{{ route('Add item') }}">เพิ่มสินค้าเข้าคลัง</a>
             </div>
             <div class="card-body">
                 <table id="slip_per_date" class="table table-striped">

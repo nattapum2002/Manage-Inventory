@@ -43,7 +43,9 @@ Route::get('/', [App\Http\Controllers\LoginController::class, 'index'])->name('L
 Route::post('/Login', [App\Http\Controllers\LoginController::class, 'login'])->name('Login');
 Route::get('/Logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('Logout');
 
-
+Route::get('NewItem',function(){
+    return view('Stock.additem');
+})->name('NewItem');
 Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
 Route::get('/Admin/Dashboard', function () {
     return view('Admin.Dashboard.index');
@@ -65,7 +67,7 @@ Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [App\Http\Controllers\S
 Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 
 Route::get('AddItem',function(){
-    return view('Admin.ManageStock.additem');
+    return view('Admin.ManageStock.addstock');
 })->name('Add item');
 Route::get('/ManageStock', [App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
 Route::get('/ManageSlip/{date}', [App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
