@@ -218,7 +218,6 @@
                 },
 
                 success: function(response) {
-                    alert('บันทึกข้อมูลเรียบร้อย');
                     // อัปเดตข้อมูลใหม่ในตาราง
                     fields.forEach(function(field) {
                         $('#' + field + '_' + edit_slip_productId).text(data_slip[field]);
@@ -226,7 +225,7 @@
 
                     // ซ่อน input และแสดงค่าใหม่
                     hideEdit(edit_slip_productId);
-                   
+                   alert('บันทึกข้อมูลสําเร็จ');
                 },
                 error: function(error) {
                     alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
@@ -239,6 +238,11 @@
 {{-- สคริปต์ SlipDetail --}}
 <script>
     $(document).ready(function() {
+        $('#stock-all-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        });
         $('#stock_per_date').DataTable({
             info: false,
             ordering: false,
@@ -360,19 +364,6 @@
             }
         });
         $("#CustomerQueuetable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
-        });
-        $("#Shifttable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,

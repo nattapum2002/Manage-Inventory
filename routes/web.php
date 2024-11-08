@@ -37,14 +37,14 @@ Route::get('/manageshift', function () {
 //     return view('Admin.ManageStock.managerecivestock');
 // })->name('ManageStock');
 
-Route::get('/additem', function () {
-    return view('Admin.ManageStock.addstock');
-})->name('Add item');
+
 
 Route::get('/', [App\Http\Controllers\LoginController::class, 'index'])->name('Login.index');
 Route::post('/Login', [App\Http\Controllers\LoginController::class, 'login'])->name('Login');
 Route::get('/Logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('Logout');
 
+
+Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
 Route::get('/Admin/Dashboard', function () {
     return view('Admin.Dashboard.index');
 })->name('Dashboard.Admin');
@@ -62,6 +62,9 @@ Route::get('/ManageShift/DetailShift/{shift_id}', [App\Http\Controllers\ShiftCon
 Route::get('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 
+Route::get('AddItem',function(){
+    return view('Admin.ManageStock.additem');
+})->name('Add item');
 Route::get('/ManageStock', [App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
 Route::get('/ManageSlip/{date}', [App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
 Route::get('/SlipDetail/{slip_id}', [App\Http\Controllers\managestock::class, 'show_slip_detail'])->name('SlipDetail');

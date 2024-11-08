@@ -22,16 +22,21 @@
                     <aside class="col">
                         <h3 class="mb-0">กรอกข้อมูลชุดการผลิต</h3>
                     </aside>
-                    <div class="col d-flex">
+                    <div class="col">
+                        
+                    </div>
+                    <div class="col d-flex w-50">
                         <aside class="input-group me-3">
-                            <span class="input-group-text">Product Checker</span>
-                            <input type="text" class="form-control" id="product_checker" name="product_checker" placeholder="กรอกรหัสพนักงาน">
-                        </aside>
-                        <aside class="input-group">
-                            <span class="input-group-text">Domestic Checker</span>
-                            <input type="text" class="form-control" id="domestic_checker" name="domestic_checker" placeholder="กรอกรหัสพนักงาน">
+                            <!-- เริ่มต้นด้วย span -->
+                            <input type="text" class="form-control" id="product_checker" name="product_checker"
+                                   value="{{ Auth::user()->user_id }}" placeholder="กรอกรหัสพนักงาน">
+                            <span class="input-group-text">Product Checker</span> <!-- ย้ายไปท้ายสุด -->
                         </aside>
                     </div>
+                        {{-- <aside class="input-group">
+                            <span class="input-group-text">Domestic Checker</span>
+                            <input type="text" class="form-control" id="domestic_checker" name="domestic_checker" placeholder="กรอกรหัสพนักงาน">
+                        </aside> --}}
                 </div>
                 <div class="card-body">
                     <article class="row">
