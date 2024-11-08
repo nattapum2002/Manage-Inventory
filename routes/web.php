@@ -67,8 +67,8 @@ Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::clas
 Route::get('/ManageStock', [App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
 Route::get('/ManageSlip/{date}', [App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
 Route::get('/SlipDetail/{slip_id}', [App\Http\Controllers\managestock::class, 'show_slip_detail'])->name('SlipDetail');
-
-Route::post('/AddSlip', [App\Http\Controllers\managestock::class, 'create'])->name('AddSlip');
+Route::post('/EditSlipDetail', [App\Http\Controllers\managestock::class, 'edit'])->name('EditSlip');
+Route::post('/Add-Slip', [App\Http\Controllers\managestock::class, 'create'])->name('AddSlip');
 Route::get('autocomplete', [App\Http\Controllers\managestock::class, 'autocomplete'])->name('autocomplete');
 //
 

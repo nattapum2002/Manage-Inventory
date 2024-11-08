@@ -22,7 +22,7 @@
                         <tr>
                             <th>เลขที่</th>
                             <th class="text-center">สลิปใบที่ No.</th>
-                            <th>รายละเอียดสินค้า</th>
+                            <th>แผนก</th>
                             <th>Production Checker</th>
                             <th>Domestic Checker</th>
                             <th>จัดการ</th>
