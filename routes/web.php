@@ -57,9 +57,10 @@ Route::get('/ManageQueue', function () {
     return view('Admin.ManageQueue.managequeue');
 })->name('ManageQueue');
 
-Route::get('/ManageShift', function () {
-    return view('Admin.ManageShift.manageshift');
-})->name('ManageShift');
+Route::get('/ManageShift', [App\Http\Controllers\ShiftController::class, 'index'])->name('ManageShift');
+Route::get('/ManageShift/DetailShift/{shift_id}', [App\Http\Controllers\ShiftController::class, 'DetailShift'])->name('DetailShift');
+Route::get('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
+Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 
 Route::get('/ManageStock', [App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
 Route::get('/ManageSlip/{date}', [App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
