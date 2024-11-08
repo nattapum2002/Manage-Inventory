@@ -20,6 +20,7 @@ class WorkShiftSeeder extends Seeder
                 'shift_name' => $shift_name[rand(0, 3)],
                 'start_shift' => '00:00:00',
                 'end_shift' => '00:00:00',
+                'status' => rand(0, 1),
             ]);
         }
     }

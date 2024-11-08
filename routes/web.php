@@ -58,8 +58,10 @@ Route::get('/ManageQueue', function () {
 })->name('ManageQueue');
 
 Route::get('/ManageShift', [App\Http\Controllers\ShiftController::class, 'index'])->name('ManageShift');
+Route::get('/ManageShift/Toggle/{shift_id}/{status}', [App\Http\Controllers\ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
 Route::get('/ManageShift/DetailShift/{shift_id}', [App\Http\Controllers\ShiftController::class, 'DetailShift'])->name('DetailShift');
 Route::get('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
+Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [App\Http\Controllers\ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
 Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 
 Route::get('/ManageStock', [App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
