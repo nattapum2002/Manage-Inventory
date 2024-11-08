@@ -77,7 +77,7 @@
 
 <script>
     // ฟังก์ชันสำหรับการเพิ่ม item และเรียกใช้งาน autocomplete
-    var item_count = 1;
+    let item_count = 1;
 
     $('#add-item').click(function() {
         item_count++;
@@ -126,7 +126,7 @@
         // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
         initializeAutocomplete(`#item_name_${item_count}`, `#item_id_${item_count}`);
     });
-    
+
     // ฟังก์ชัน autocomplete
     function initializeAutocomplete(nameSelector, idSelector) {
         $(nameSelector).autocomplete({
@@ -161,6 +161,82 @@
         $(this).closest('[id^="item-"]').remove();
     });
 </script>
+{{-- สคริปต์ SlipDetail --}}
+<script>
+    $(document).ready(function() {
+        let fields = ['department', 'amount', 'weight', 'comment'];
+
+        function hideEdit(edit_slip_productId) {
+            fields.forEach(function(field) {
+                $('#' + field + '_' + edit_slip_productId).show();
+                $('#edit_' + field + '_' + edit_slip_productId).hide();
+            });
+
+            // เปลี่ยนปุ่ม "บันทึก" กลับเป็น "แก้ไข"
+            $('.save_btn').text('แก้ไข').removeClass('btn-success')
+            .addClass('btn-primary').removeClass('save_btn').addClass('edit_slip');
+            $('#cancel_edit_' + edit_slip_productId).hide();
+        }
+
+        $(document).on('click', '.edit_slip', function() {
+            let edit_slip_productId = $(this).data('product-id'); // รับค่า product_id จากปุ่ม
+            fields.forEach(function(field) {
+                $('#' + field + '_' + edit_slip_productId).hide();
+                $('#edit_' + field + '_' + edit_slip_productId).show();
+            });
+
+            $('#cancel_edit_' + edit_slip_productId).show();
+            // เปลี่ยนปุ่ม "แก้ไข" เป็น "บันทึก"
+            $(this).text('บันทึก').removeClass('btn-primary').addClass('btn-success')
+                .removeClass('edit_slip').addClass('save_btn').attr('type', 'button');
+            $('#cancel_edit_' + edit_slip_productId).click(function() {
+                hideEdit(edit_slip_productId);
+            });
+
+        });
+
+        // Handle saving data when clicking the "บันทึก" button
+        $(document).on('click', '.save_btn', function() {
+            let edit_slip_productId = $(this).data('product-id');
+
+            let data_slip = {};
+
+            // รับค่าที่แก้ไขจาก input
+            $.each(fields, function(index, field) {
+                data_slip[field] = $('#edit_' + field + '_' + edit_slip_productId).val();
+            });
+
+            // ส่งข้อมูลไปยังเซิร์ฟเวอร์ (Ajax)
+            $.ajax({
+                url: "{{ route('EditSlip') }}", // ตัวอย่าง URL สำหรับการอัปเดตข้อมูล
+                method: "POST",
+                dataType: "json",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    product_id: edit_slip_productId,
+                    product_edit: data_slip,
+                },
+
+                success: function(response) {
+                    alert('บันทึกข้อมูลเรียบร้อย');
+                    // อัปเดตข้อมูลใหม่ในตาราง
+                    fields.forEach(function(field) {
+                        $('#' + field + '_' + edit_slip_productId).text(data_slip[field]);
+                    });
+
+                    // ซ่อน input และแสดงค่าใหม่
+                    hideEdit(edit_slip_productId);
+                   
+                },
+                error: function(error) {
+                    alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
+                }
+            });
+        });
+    });
+</script>
+
+{{-- สคริปต์ SlipDetail --}}
 <script>
     $(document).ready(function() {
         $('#stock_per_date').DataTable({
