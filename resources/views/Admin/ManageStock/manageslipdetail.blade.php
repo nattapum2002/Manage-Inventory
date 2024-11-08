@@ -73,11 +73,4 @@
         </div>
     </section>
 
-    <script>
-        new DataTable('#item_per_slip', {
-            order: [
-                [3, 'desc']
-            ]
-        });
-    </script>
 @endsection
