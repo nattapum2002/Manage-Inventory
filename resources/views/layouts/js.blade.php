@@ -150,6 +150,81 @@
     }
 </script>
 
+{{-- Shift --}}
+<script>
+    var user_count = 0;
+
+    $('#add-user').click(function() {
+        user_count++;
+        $('#add-user-shift').append(`
+            <div class="row" id="user-${user_count}">
+                <div class="col-11">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="user_id[${user_count}]" class="form-label">รหัสพนักงาน</label>
+                                <input type="text" class="form-control" id="user_id[${user_count}]" name="user_id[${user_count}]">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="name[${user_count}]" class="form-label">ชื่อ</label>
+                                <input type="text" class="form-control" id="name[${user_count}]" name="name[${user_count}]" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="surname[${user_count}]" class="form-label">นามสกุล</label>
+                                <input type="text" class="form-control" id="surname[${user_count}]" name="surname[${user_count}]" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="position[${user_count}]" class="form-label">ตำแหน่ง</label>
+                                <input type="text" class="form-control" id="position[${user_count}]" name="position[${user_count}]" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-1">
+                        <label for="remove-user" class="form-label">#</label>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger remove-user">ลบ</button>
+                    </div>
+                </div>
+            </div>
+        `);
+        // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
+        initializeAutocomplete(`#name[${user_count}]`);
+    });
+
+    // ฟังก์ชันสำหรับลบแถว
+    $(document).on('click', '.remove-user', function() {
+        $(this).closest('[id^="user-"]').remove();
+    });
+
+    // ฟังก์ชันสำหรับ autocomplete
+    function initializeAutocomplete(selector) {
+        $(selector).autocomplete({
+            source: function(request, response) {
+
+                $.ajax({
+                    url: "{{ route('autocomplete') }}",
+                    data: {
+                        query: request.term
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2
+        });
+    }
+</script>
+
 {{-- <script type="text/javascript">
     var path = "{{ route('autocomplete') }}";
     $('#item_name').typeahead({
@@ -285,6 +360,19 @@
             }
         });
         $("#CustomerQueuetable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#Shifttable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,

@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             CustomerOrderSeeder::class,
             PalletSeeder::class,
             CustomerQueueSeeder::class,
+            WorkShiftSeeder::class,
+            ShiftUsersSeeder::class,
         ]);
     }
 }
