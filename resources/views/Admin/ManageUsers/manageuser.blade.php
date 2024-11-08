@@ -38,14 +38,13 @@
                                             <td>{{ $user->surname }}</td>
                                             <td>{{ $user->position }}</td>
                                             <td>{{ $user->user_type }}</td>
-                                            <td>{{ $user->status }}</td>
+                                            <td>{{ $user->status ? 'ใช้งาน' : 'ไม่ใช้งาน' }}</td>
                                             <td>
                                                 <a href="{{ route('Edituser', $user->user_id) }}" class="btn btn-primary">
                                                     <i class="fas fa-edit"></i></a>
-                                                <a href="{{ route('ManageUsers.Toggle', [$user->user_id, 1]) }}"
-                                                    class="btn btn-success"><i class="fas fa-eye"></i></a>
-                                                <a href="{{ route('ManageUsers.Toggle', [$user->user_id, 0]) }}"
-                                                    class="btn btn-danger"><i class="fas fa-eye-slash"></i></a>
+                                                <a href="{{ route('ManageUsers.Toggle', [$user->user_id, $user->status ? 0 : 1]) }}"
+                                                    class="btn {{ $user->status ? 'btn-danger' : 'btn-success' }}"><i
+                                                        class="fas {{ $user->status ? 'fa-eye-slash' : 'fa-eye' }}"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach

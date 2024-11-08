@@ -24,7 +24,8 @@
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label for="shift_name">ชื่อกะพนักงาน</label>
-                                            <select class="form-control" id="shift_name">
+                                            <select class="form-control" id="shift_name" name="shift_name">
+                                                <option selected value="">เลือกชื่อกะพนักงาน</option>
                                                 <option value="A">A</option>
                                                 <option value="B">B</option>
                                                 <option value="C">C</option>
@@ -50,11 +51,43 @@
                                     </div>
                                 </article>
                                 <hr>
+                                <article>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="user_id[0]" class="form-label">รหัสพนักงาน</label>
+                                                <input type="text" class="form-control" id="user_id0" name="user_id[0]"
+                                                    readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="name[0]" class="form-label">ชื่อ</label>
+                                                <input type="text" class="form-control" id="name0" name="name[0]">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="surname[0]" class="form-label">นามสกุล</label>
+                                                <input type="text" class="form-control" id="surname0" name="surname[0]"
+                                                    disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="position[0]" class="form-label">ตำแหน่ง</label>
+                                                <input type="text" class="form-control" id="position0" name="position[0]"
+                                                    disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
                                 <article id="add-user-shift">
 
                                 </article>
                                 <div class="d-flex justify-content-center mt-3">
-                                    <button type="button" class="btn btn-primary" id="add-user">เพิ่มพนักงาน</button>
+                                    <button type="button" class="btn btn-primary mr-3" id="add-user">เพิ่มพนักงาน</button>
+                                    <button type="submit" class="btn btn-success">บันทึก</button>
                                 </div>
                             </form>
                         </div>
