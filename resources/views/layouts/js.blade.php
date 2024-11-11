@@ -180,6 +180,7 @@
 
         $(document).on('click', '.edit_slip', function() {
             let edit_slip_productId = $(this).data('product-id'); // รับค่า product_id จากปุ่ม
+            let edit_slip_productCode = $(this).data('product-code');
             fields.forEach(function(field) {
                 $('#' + field + '_' + edit_slip_productId).hide();
                 $('#edit_' + field + '_' + edit_slip_productId).show();
@@ -198,8 +199,8 @@
         // Handle saving data when clicking the "บันทึก" button
         $(document).on('click', '.save_btn', function() {
             let edit_slip_productId = $(this).data('product-id');
-
             let data_slip = {};
+            let edit_slip_productCode = $(this).data('product-code');
 
             // รับค่าที่แก้ไขจาก input
             $.each(fields, function(index, field) {
@@ -215,6 +216,7 @@
                     _token: '{{ csrf_token() }}',
                     product_id: edit_slip_productId,
                     product_edit: data_slip,
+                    product_code: edit_slip_productCode
                 },
 
                 success: function(response) {
@@ -222,13 +224,14 @@
                     fields.forEach(function(field) {
                         $('#' + field + '_' + edit_slip_productId).text(data_slip[field]);
                     });
-
+                    console.log(response);
                     // ซ่อน input และแสดงค่าใหม่
                     hideEdit(edit_slip_productId);
                    alert('บันทึกข้อมูลสําเร็จ');
                 },
-                error: function(error) {
+                error: function(xhr, status ,error) {
                     alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
+                    console.log(xhr.responseText);
                 }
             });
         });
