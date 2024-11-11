@@ -42,23 +42,31 @@
                                 </td>
                                 <td>
                                     <span id="department_{{ $item->id }}">{{ $item->department }}</span>
-                                    <input type="text" id="edit_department_{{ $item->id }}" value="{{ $item->department }}" style="display:none;">
+                                    <input type="text" class="form-control" id="edit_department_{{ $item->id }}"
+                                        value="{{ $item->department }}" style="display:none;">
                                 </td>
                                 <td>
                                     <span id="amount_{{ $item->id }}">{{ $item->amount }}</span>
-                                    <input type="number" id="edit_amount_{{ $item->id }}" value="{{ $item->amount }}" style="display:none;">
+                                    <input type="number" class="form-control" id="edit_amount_{{ $item->id }}"
+                                        value="{{ $item->amount }}" style="display:none;">
                                 </td>
                                 <td>
                                     <span id="weight_{{ $item->id }}">{{ $item->weight }}</span>
-                                    <input type="number" name="" id="edit_weight_{{ $item->id }}" value="{{ $item->weight }}" style="display:none;">
+                                    <input type="number" class="form-control" name=""
+                                        id="edit_weight_{{ $item->id }}" value="{{ $item->weight }}"
+                                        style="display:none;">
                                 </td>
                                 <td>
                                     <span id="comment_{{ $item->id }}">{{ $item->comment }}</span>
-                                    <input type="text" name="" id="edit_comment_{{ $item->id }}" value="{{ $item->comment }}" style="display:none;">
+                                    <input type="text" class="form-control" name=""
+                                        id="edit_comment_{{ $item->id }}" value="{{ $item->comment }}"
+                                        style="display:none;">
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-primary edit_slip" data-product-id="{{ $item->id }}">แก้ไข</button>
-                                    <button type="button" class="btn btn-danger" id="cancel_edit_{{ $item->id }}" style="display:none;">ยกเลิก</button>
+                                    <button type="button" class="btn btn-primary edit_slip"
+                                        data-product-id="{{ $item->id }}">แก้ไข</button>
+                                    <button type="button" class="btn btn-danger" id="cancel_edit_{{ $item->id }}"
+                                        style="display:none;">ยกเลิก</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -89,5 +97,4 @@
             </div>
         </div>
     </section>
-
 @endsection
