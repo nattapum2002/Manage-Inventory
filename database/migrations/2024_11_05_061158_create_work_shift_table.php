@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('work_shift', function (Blueprint $table) {
             $table->id();
-            $table->string('shift_id')->unique();
+            $table->string('shift_id');
             $table->string('shift_name');
             $table->time('start_shift');
             $table->time('end_shift');
+            $table->date('date');
+            $table->string('note')->nullable();
             $table->boolean('status')->default(0);
             $table->timestamps();
         });

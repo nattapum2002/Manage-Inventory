@@ -15,16 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('product_slip_id');
             $table->string('product_slip_number');
-            $table->string('product_id');
             $table->string('department');
-            $table->integer('weight');
-            $table->integer('amount');
-            $table->string('comment')->nullable();
             $table->date('store_date');
             $table->time('store_time');
-            $table->boolean('check_status');
             $table->string('product_checker');
             $table->string('domestic_checker');
+            $table->string('shift_id');
+            $table->string('note')->nullable();
+            $table->boolean('status');
             $table->timestamps();
         });
     }

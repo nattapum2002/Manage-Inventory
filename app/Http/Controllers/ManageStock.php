@@ -98,13 +98,13 @@ class managestock extends Controller
                     'product_id' => $data['item_id'][$key],
                     'amount' => $data['item_amount'][$key],
                     'weight' => $data['item_weight'][$key],
-                    'comment' => $data['item_comment'][$key],
                     'department' => $data['department'],
                     'store_date' => $data['date'],
                     'store_time' => $data['time'],
-                    'check_status' => 0,
                     'product_checker' => $data['product_checker'],
-                    'domestic_checker' => 'N/A'
+                    'domestic_checker' => 'N/A',
+                    'note' => $data['item_comment'][$key],
+                    'status' => 0,
                 ]);
 
                 DB::table('stock')->where('product_id', $data['item_id'][$key])->increment('amount', $data['item_amount'][$key]);
@@ -122,7 +122,7 @@ class managestock extends Controller
             'department' => $productData['department'],
             'amount' => $productData['amount'],
             'weight' => $productData['weight'],
-            'comment' => $productData['comment'],
+            'note' => $productData['comment'],
         ]);
         return response()->json([
             "status" => true,

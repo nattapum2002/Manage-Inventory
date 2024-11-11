@@ -13,17 +13,12 @@ return new class extends Migration
     {
         Schema::create('pallet', function (Blueprint $table) {
             $table->id();
-            $table->string('pallet_id')->unique();
-            $table->string('order_id');
-            $table->string('product_id');
-            $table->integer('order_amount');
-            $table->integer('send_amount');
-            $table->string('bag_color');
+            $table->string('pallet_id');
+            $table->string('pallet_no');
             $table->string('room');
-            $table->time('pack_start_time');
-            $table->time('pack_end_time');
-            $table->string('checker_id');
-            $table->string('shift_id');
+            $table->string('order_id');
+            $table->string('note')->nullable();
+            $table->boolean('status');
             $table->timestamps();
         });
     }

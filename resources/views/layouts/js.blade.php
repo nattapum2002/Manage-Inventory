@@ -230,7 +230,7 @@
                     hideEdit(edit_slip_productId);
                     alert('บันทึกข้อมูลสําเร็จ');
                 },
-                error: function(xhr, status ,error) {
+                error: function(xhr, status, error) {
                     alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
                     console.log(xhr.responseText);
                 }
@@ -238,8 +238,8 @@
         });
     });
 </script>
-
 {{-- สคริปต์ SlipDetail --}}
+
 <script>
     var user_count = 1;
 
@@ -334,28 +334,34 @@
                 $('#span_shift_' + field + '_' + edit_shift_productId).show();
                 $('#edit_shift_' + field + '_' + edit_shift_productId).hide();
             });
-            $('.save_btn').text('แก้ไข').removeClass('btn-success')
-                .addClass('btn-primary').removeClass('save_btn').addClass('edit_shift');
+            $('.save_shift_btn').text('แก้ไข').removeClass('btn-success')
+                .addClass('btn-primary').removeClass('save_shift_btn').addClass('edit_shift');
             $('#cancel_edit_shift_' + edit_shift_productId).hide();
         }
 
         $(document).on('click', '.edit_shift', function() {
-            let edit_shift_productId = $(this).data('product-id');
+            let edit_shift_productId = $(this).data('shift-id');
             fields.forEach(function(field) {
                 $('#span_shift_' + field + '_' + edit_shift_productId).hide();
                 $('#edit_shift_' + field + '_' + edit_shift_productId).show();
             });
             $('#cancel_edit_shift_' + edit_shift_productId).show();
             $(this).text('บันทึก').removeClass('btn-primary').addClass('btn-success')
-                .removeClass('edit_shift').addClass('save_btn').attr('type', 'button');
+                .removeClass('edit_shift').addClass('save_shift_btn').attr('type', 'button');
 
             $('#cancel_edit_shift_' + edit_shift_productId).click(function() {
                 hideEdit(edit_shift_productId);
             });
+
+            // Initialize autocomplete for each field when edit mode is activated
+            initializeEditShiftAutocomplete('#edit_shift_name_' + edit_shift_productId,
+                '#edit_shift_user_id_' +
+                edit_shift_productId, '#edit_shift_surname_' + edit_shift_productId,
+                '#edit_shift_position_' + edit_shift_productId);
         });
 
-        $(document).on('click', '.save_btn', function() {
-            let edit_shift_productId = $(this).data('product-id');
+        $(document).on('click', '.save_shift_btn', function() {
+            let edit_shift_productId = $(this).data('shift-id');
             let data_shift = {};
 
             $.each(fields, function(index, field) {
@@ -364,13 +370,13 @@
             });
 
             $.ajax({
-                url: "{{ route('EditSlip') }}",
+                url: "{{ route('SaveEditShift') }}",
                 method: "POST",
                 dataType: "json",
                 data: {
                     _token: '{{ csrf_token() }}',
-                    product_id: edit_shift_productId,
-                    product_edit: data_shift,
+                    shift_id: edit_shift_productId,
+                    shift_edit: data_shift,
                 },
                 success: function(response) {
                     fields.forEach(function(field) {
@@ -379,18 +385,17 @@
                     });
                     hideEdit(edit_shift_productId);
                     alert('บันทึกข้อมูลสำเร็จ');
+                    console.log(response);
                 },
-                error: function(error) {
+                error: function(xhr, status, error) {
                     alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
+                    console.log(xhr);
                 }
             });
         });
-
-        initializeAutocomplete(`#name${user_count}`, `#user_id${user_count}`, `#surname${user_count}`,
-            `#position${user_count}`);
     });
 
-    function initializeAutocomplete(nameSelector, idSelector, surnameSelector, positionSelector) {
+    function initializeEditShiftAutocomplete(nameSelector, idSelector, surnameSelector, positionSelector) {
         $(nameSelector).autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -399,26 +404,25 @@
                         query: request.term
                     },
                     success: function(data) {
-                        console.log(data);
-                        response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                        response(data);
                     }
                 });
             },
-            minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
+            minLength: 0,
             select: function(event, ui) {
-                // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
-                $(idSelector).val(ui.item.user_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
-                $(nameSelector).val(ui.item.name); // เติมชื่อสินค้าในช่องชื่อสินค้า
+                $(idSelector).val(ui.item.user_id);
+                $(nameSelector).val(ui.item.name);
                 $(surnameSelector).val(ui.item.surname);
                 $(positionSelector).val(ui.item.position);
             }
         });
 
         $(nameSelector).focus(function() {
-            $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
+            $(this).autocomplete('search', '');
         });
     }
 </script>
+
 
 <script>
     $(document).ready(function() {
@@ -548,6 +552,19 @@
             }
         });
         $("#CustomerQueuetable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#Shifttable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,

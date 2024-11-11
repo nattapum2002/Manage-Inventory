@@ -22,9 +22,11 @@ class UserSeeder extends Seeder
                 'name' => 'user' . $i,
                 'surname' => 'surname' . $i,
                 'position' => $position[rand(0, 2)],
+                'start_date' => '2022-01-01',
                 'user_type' => $user_type[rand(0, 2)],
-                'email' => 'user' . $i . '@email.com',
+                // 'email' => 'user' . $i . '@email.com',
                 'password' => Hash::make('password'),
+                'note' => 'note' . $i,
                 'status' => rand(0, 1),
             ]);
         }

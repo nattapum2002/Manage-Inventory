@@ -19,6 +19,9 @@ class StockSeeder extends Seeder
                 'product_name' => 'product' . $i,
                 'weight' => $i * 10,
                 'amount' => $i * 10,
+                'storage_room' => 'room' . $i,
+                'note' => 'note' . $i,
+                'status' => rand(0, 1),
             ]);
         }
     }

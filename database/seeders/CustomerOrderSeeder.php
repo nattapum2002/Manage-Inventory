@@ -16,12 +16,10 @@ class CustomerOrderSeeder extends Seeder
         for ($i = 0; $i < 30; $i++) {
             DB::table('customer_order')->insert([
                 'order_id' => $i,
-                'product_id' => $i,
                 'customer_id' => $i,
-                'order_amount' => $i * 10,
-                'send_amount' => $i * 10,
-                'date' => '2022-01-01',
-                'packer_id' => $i,
+                'team_id' => $i,
+                'note' => 'note' . $i,
+                'status' => rand(0, 1),
             ]);
         }
     }

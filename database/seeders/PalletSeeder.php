@@ -17,16 +17,11 @@ class PalletSeeder extends Seeder
         for ($i = 0; $i < 30; $i++) {
             DB::table('pallet')->insert([
                 'pallet_id' => $i,
-                'order_id' => $i,
-                'product_id' => $i,
-                'order_amount' => $i * 10,
-                'send_amount' => $i * 10,
-                'bag_color' => $bag_color[rand(0, 3)],
+                'pallet_no' => $i,
                 'room' => 'room' . $i,
-                'pack_start_time' => '00:00:00',
-                'pack_end_time' => '00:00:00',
-                'checker_id' => $i,
-                'shift_id' => $i,
+                'order_id' => $i,
+                'note' => 'note' . $i,
+                'status' => rand(0, 1),
             ]);
         }
     }

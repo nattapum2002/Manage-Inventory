@@ -62,9 +62,11 @@ Route::get('/ManageQueue', function () {
 Route::get('/ManageShift', [App\Http\Controllers\ShiftController::class, 'index'])->name('ManageShift');
 Route::get('/ManageShift/Toggle/{shift_id}/{status}', [App\Http\Controllers\ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
 Route::get('/ManageShift/EditShift/{shift_id}', [App\Http\Controllers\ShiftController::class, 'EditShift'])->name('EditShift');
+Route::post('/ManageShift/EditShift/Save', [App\Http\Controllers\ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
 Route::get('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [App\Http\Controllers\ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
 Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
+Route::get('/ManageShift/DeleteShift/{shift_id}/{user_id}', [App\Http\Controllers\ShiftController::class, 'DeleteShift'])->name('DeleteShift');
 
 Route::get('AddItem', function () {
     return view('Admin.ManageStock.addstock');

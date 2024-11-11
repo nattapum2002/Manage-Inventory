@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('customer_queue', function (Blueprint $table) {
             $table->id();
-            $table->string('queue_id')->unique();
-            $table->string('order_id');
-            $table->integer('queue');
-            $table->time('time_queue');
-            $table->time('recive_time');
-            $table->boolean('recive_status');
+            $table->string('queue_id');
+            $table->integer('no');
+            $table->time('queue_time');
+            $table->integer('queue_no');
+            $table->time('entry_time');
+            $table->time('release_time');
+            $table->string('customer_id');
+            $table->string('note')->nullable();
+            $table->boolean('status');
             $table->timestamps();
         });
     }

@@ -70,10 +70,12 @@
                                             {{-- <td>{{ $shift->user_type }}</td> --}}
                                             <td>
                                                 <button type="button" class="btn btn-primary edit_shift"
-                                                    data-product-id="{{ $shift->user_id }}">แก้ไข</button>
+                                                    data-shift-id="{{ $shift->user_id }}">แก้ไข</button>
                                                 <button type="button" class="btn btn-danger"
                                                     id="cancel_edit_shift_{{ $shift->user_id }}"
                                                     style="display:none;">ยกเลิก</button>
+                                                <a href="{{ route('DeleteShift', ['shift_id' => $shift->shift_id, 'user_id' => $shift->user_id]) }}"
+                                                    class="btn btn-danger">ลบ</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -95,6 +97,28 @@
                                     </th>
                                 </tfoot>
                             </table>
+                            <hr>
+                            <form action="{{ route('AddShift') }}" method="POST">
+                                @csrf
+                                <article style="display:none;" class="row">
+                                    <input type="text" class="form-control" id="shift_id" name="shift_id"
+                                        placeholder="รหัสกะพนักงาน" value="{{ $shifts[0]->shift_id }}">
+                                    <input type="text" class="form-control" id="shift_name" name="shift_name"
+                                        placeholder="เลือกชื่อกะพนักงาน" value="{{ $shifts[0]->shift_name }}">
+                                    <input type="time" class="form-control" id="start_shift" name="start_shift"
+                                        placeholder="เวลาเริ่มกะ" value="{{ $shifts[0]->start_shift }}">
+                                    <input type="time" class="form-control" id="end_shift" name="end_shift"
+                                        placeholder="เวลาเลิกกะ" value="{{ $shifts[0]->end_shift }}">
+                                </article>
+
+                                <article id="add-user-shift">
+
+                                </article>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-primary mr-3" id="add-user">เพิ่มพนักงาน</button>
+                                    <button type="submit" class="btn btn-success">บันทึก</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
