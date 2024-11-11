@@ -8,7 +8,7 @@
 <main>
     <section class="card">
         <article class="card-header">
-            <a class="btn btn-primary" href="{{route('AddItem')}}">เพิ่มสินค้าใหม่</a>
+            <a class="btn btn-primary" href="{{route('NewItem')}}">เพิ่มสินค้าใหม่</a>
         </article>
         <article class="card-body">
             <table id="stock-all-table" class="table table-striped">

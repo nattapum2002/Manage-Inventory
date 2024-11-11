@@ -43,7 +43,9 @@ Route::get('/', [App\Http\Controllers\LoginController::class, 'index'])->name('L
 Route::post('/Login', [App\Http\Controllers\LoginController::class, 'login'])->name('Login');
 Route::get('/Logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('Logout');
 
-
+Route::get('NewItem', function () {
+    return view('Stock.additem');
+})->name('NewItem');
 Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
 Route::get('/Admin/Dashboard', function () {
     return view('Admin.Dashboard.index');

@@ -6,6 +6,12 @@
 
 @section('content')
     <section class="content">
+        @if (session()->has('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session()->get('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+         @endif
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -23,7 +29,7 @@
                         <h3 class="mb-0">กรอกข้อมูลชุดการผลิต</h3>
                     </aside>
                     <div class="col">
-                        
+
                     </div>
                     <div class="col d-flex w-50">
                         <aside class="input-group me-3">
