@@ -16,10 +16,11 @@
                         <tr>
                             <th colspan="7">
                                 <div class="row">
-                                    <div class="col-3">รหัสสลิป : {{ $slip_id }}</div>
-                                    <div class="col-3">ใบสลิปที่ : {{ $show_detail[0]->product_slip_number }}</div>
-                                    <div class="col-3">Date : {{ $show_detail[0]->store_date ?? 'N/A' }}</div>
-                                    <time class="col-3">Time : {{ $show_detail[0]->store_time ?? 'N/A' }}</time>
+                                    <div class="col-2">รหัสสลิป : {{ $slip_id }}</div>
+                                    <div class="col-2">ใบสลิปที่ : {{ $show_detail[0]->product_slip_number }}</div>
+                                    <div class="col-2">Date : {{ $show_detail[0]->store_date ?? 'N/A' }}</div>
+                                    <time class="col-2">Time : {{ $show_detail[0]->store_time ?? 'N/A' }}</time>
+                                    <div class="col-2">{!! $show_detail[0]->check_status == 1 ? '<p class="text-success">ตรวจสอบแล้ว</p>' : '<p class="text-danger">รอตรวจสอบ</p>' !!}</div>
                                 </div>
                             </th>
                         </tr>
@@ -57,7 +58,7 @@
                                     <input type="text" name="" id="edit_comment_{{ $item->id }}" value="{{ $item->comment }}" style="display:none;">
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-primary edit_slip" data-product-id="{{ $item->id }}">แก้ไข</button>
+                                    <button type="button" class="btn btn-primary edit_slip" data-product-id="{{ $item->id }}" data-product-code="{{$item->product_id}}">แก้ไข</button>
                                     <button type="button" class="btn btn-danger" id="cancel_edit_{{ $item->id }}" style="display:none;">ยกเลิก</button>
                                 </td>
                             </tr>
@@ -77,11 +78,15 @@
                             <th colspan="7">
                                 <div class="row">
                                     <div class="col-6"></div>
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         Production Checker : {{ $show_detail[0]->product_checker ?? 'N/A' }}</div>
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         Domestic Checker : {{ $show_detail[0]->domestic_checker ?? 'N/A' }}</div>
+                                    <div class="col-2">
+                                        <a class="btn btn-success" type="button" href="{{route('CheckSlip', $slip_id)}}">ยืนยัน</a>
+                                    </div>
                                 </div>
+                               
                             </th>
                         </tr>
                     </tfoot>

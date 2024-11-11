@@ -19,6 +19,7 @@
                             <th>แผนก</th>
                             <th>Production Checker</th>
                             <th>Domestic Checker</th>
+                            <th>สถานะ</th>
                             <th>จัดการ</th>
                         </tr>
                     </thead>
@@ -30,6 +31,7 @@
                                 <td>{{ $item->department }}</td>
                                 <td>{{ $item->product_checker ?? 'ไม่มี' }}</td>
                                 <td>{{ $item->domestic_checker ?? 'ไม่มี' }}</td>
+                                <td>{!! $item->status == 1 ? '<p class="text-success">ตรวจสอบแล้ว</p>' : '<p class="text-danger">รอตรวจสอบ</p>' !!}</td>
                                 <td>
                                     <a class="btn btn-primary" href="{{ route('SlipDetail', $item->slip_id) }}">ดู</a>
                                     {{-- <a class="btn btn-danger" href="">ลบ</a> --}}
