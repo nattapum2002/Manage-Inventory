@@ -42,7 +42,7 @@
                                             <td>{{ $product_store->amount }}</td>
                                             <td>{{ $product_store->store_date }}</td>
                                             <td>{{ $product_store->store_time }}</td>
-                                            <td>{{ $product_store->check_status }}</td>
+                                            <td>{{ $product_store->status }}</td>
                                             <td>{{ $product_store->comment }}</td>
                                             <td>{{ $product_store->product_checker }}</td>
                                             <td>{{ $product_store->domestic_checker }}</td>
@@ -238,12 +238,12 @@
                                 <tbody>
                                     @foreach ($customer_queues as $customer_queue)
                                         <tr>
-                                            <td>{{ $customer_queue->queue_id }}</td>
-                                            <td>{{ $customer_queue->order_id }}</td>
-                                            <td>{{ $customer_queue->queue }}</td>
-                                            <td>{{ $customer_queue->time_queue }}</td>
-                                            <td>{{ $customer_queue->recive_time }}</td>
-                                            <td>{{ $customer_queue->recive_status }}</td>
+                                            <td>{{ $customer_queue->no }}</td>
+                                            <td>{{ $customer_queue->queue_time }}</td>
+                                            <td>{{ $customer_queue->queue_no }}</td>
+                                            <td>{{ $customer_queue->entry_time }}</td>
+                                            <td>{{ $customer_queue->release_time }}</td>
+                                            <td>{{ $customer_queue->customer_id }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -45,7 +45,7 @@
                                             <td>{{ $product_store->department }}</td>
                                             <td>{{ $product_store->weight }}</td>
                                             <td>{{ $product_store->amount }}</td>
-                                            <td>{{ $product_store->check_status }}</td>
+                                            <td>{{ $product_store->status }}</td>
                                             <td>{{ $product_store->comment }}</td>
                                         </tr>
                                     @endforeach

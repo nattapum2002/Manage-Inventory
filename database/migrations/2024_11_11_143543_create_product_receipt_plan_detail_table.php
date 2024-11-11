@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_order', function (Blueprint $table) {
+        Schema::create('product_receipt_plan_detail', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id');
-            $table->string('customer_id');
-            $table->string('team_id');
+            $table->string('product_id');
+            $table->string('product_name');
+            $table->integer('weight');
+            $table->integer('increase_weight');
+            $table->integer('reduce_weight');
+            $table->integer('total_weight');
+            $table->string('product_receipt_plan_id');
             $table->string('note')->nullable();
             $table->boolean('status');
             $table->timestamps();
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customer_order');
+        Schema::dropIfExists('product_receipt_plan_detail');
     }
 };

@@ -10,16 +10,30 @@ class ShiftController extends Controller
     public function index()
     {
         $shifts = DB::table('work_shift')->get();
-        return view('Admin.ManageShift.manageshift', compact('shifts'));
+        $usersCounts = DB::table('shift_users')->get();
+        return view('Admin.ManageShift.manageshift', compact('shifts', 'usersCounts'));
     }
 
-    public function DetailShift($shift_id)
+    public function EditShift($shift_id)
     {
         $shifts = DB::table('work_shift')
             ->join('shift_users', 'work_shift.shift_id', '=', 'shift_users.shift_id')
             ->join('users', 'shift_users.user_id', '=', 'users.user_id')
             ->where('work_shift.shift_id', $shift_id)->get();
-        return view('Admin.ManageShift.DetailShift', compact('shifts'));
+        return view('Admin.ManageShift.EditShift', compact('shifts'));
+    }
+
+    public function SaveEditShift(Request $request)
+    {
+        $shiftId = $request->input('shift_id');
+        $shiftData = $request->input('shift_edit');
+        DB::table('shift_users')->where('shift_id', $shiftId)->update([
+            'user_id' => $shiftData['user_id'],
+        ]);
+        return response()->json([
+            "status" => true,
+            "data" => '200'
+        ]);
     }
 
     public function Toggle($shift_id, $status)
@@ -28,7 +42,7 @@ class ShiftController extends Controller
             'status' => $status,
         ]);
 
-        return redirect()->route('ManageShift')->with('success', 'Shift has been updated successfully.');
+        return redirect()->back()->with('success', 'Shift has been updated successfully.');
     }
 
     public function AddShift(Request $request)
@@ -53,13 +67,15 @@ class ShiftController extends Controller
 
         $data = $request->all();
         DB::transaction(function () use ($data) {
-            DB::table('work_shift')->insert([
-                'shift_id' => $data['shift_id'],
-                'shift_name' => $data['shift_name'],
-                'start_shift' => $data['start_shift'],
-                'end_shift' => $data['end_shift'],
-                'status' => 1,
-            ]);
+            DB::table('work_shift')->updateOrInsert(
+                ['shift_id' => $data['shift_id']], // Condition to check for existing record
+                [
+                    'shift_name' => $data['shift_name'], // Data to update/insert
+                    'start_shift' => $data['start_shift'],
+                    'end_shift' => $data['end_shift'],
+                    'status' => 1
+                ]
+            );
             foreach ($data['user_id'] as $key => $value) {
                 DB::table('shift_users')->insert([
                     'shift_id' => $data['shift_id'],
@@ -67,7 +83,13 @@ class ShiftController extends Controller
                 ]);
             }
         });
-        return redirect()->route('AddShift')->with('success', 'Data saved successfully');
+        return redirect()->back()->with('success', 'Data saved successfully');
+    }
+
+    public function DeleteShift($shift_id, $user_id)
+    {
+        DB::table('shift_users')->where('shift_id', $shift_id)->where('user_id', $user_id)->delete();
+        return redirect()->back()->with('success', 'Shift has been deleted successfully.');
     }
 
     public function AutoCompleteAddShift(Request $request)

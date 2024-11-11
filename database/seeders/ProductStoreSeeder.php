@@ -17,16 +17,14 @@ class ProductStoreSeeder extends Seeder
             DB::table('product_store')->insert([
                 'product_slip_id' => $i,
                 'product_slip_number' => $i,
-                'product_id' => $i,
                 'department' => 'department' . $i,
-                'weight' => $i * 10,
-                'amount' => $i * 10,
-                'comment' => 'comment' . $i,
                 'store_date' => '2022-01-01',
                 'store_time' => '00:00:00',
-                'check_status' => rand(0, 1),
                 'product_checker' => $i,
                 'domestic_checker' => $i,
+                'shift_id' => $i,
+                'note' => 'note' . $i,
+                'status' => rand(0, 1),
             ]);
         }
     }

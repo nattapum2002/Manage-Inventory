@@ -43,8 +43,8 @@ Route::get('/', [App\Http\Controllers\LoginController::class, 'index'])->name('L
 Route::post('/Login', [App\Http\Controllers\LoginController::class, 'login'])->name('Login');
 Route::get('/Logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('Logout');
 
-Route::get('NewItem',function(){
-    return view('Admin.Stock.additem');
+Route::get('NewItem', function () {
+    return view('Stock.additem');
 })->name('NewItem');
 Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
 Route::get('/Admin/ShowStock', [App\Http\Controllers\ShowStock::class, 'Admin_index'])->name('AdminShowStock');
@@ -64,12 +64,14 @@ Route::get('/ManageQueue', function () {
 
 Route::get('/ManageShift', [App\Http\Controllers\ShiftController::class, 'index'])->name('ManageShift');
 Route::get('/ManageShift/Toggle/{shift_id}/{status}', [App\Http\Controllers\ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
-Route::get('/ManageShift/DetailShift/{shift_id}', [App\Http\Controllers\ShiftController::class, 'DetailShift'])->name('DetailShift');
+Route::get('/ManageShift/EditShift/{shift_id}', [App\Http\Controllers\ShiftController::class, 'EditShift'])->name('EditShift');
+Route::post('/ManageShift/EditShift/Save', [App\Http\Controllers\ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
 Route::get('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [App\Http\Controllers\ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
 Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
+Route::get('/ManageShift/DeleteShift/{shift_id}/{user_id}', [App\Http\Controllers\ShiftController::class, 'DeleteShift'])->name('DeleteShift');
 
-Route::get('AddItem',function(){
+Route::get('AddItem', function () {
     return view('Admin.ManageStock.addstock');
 })->name('Add item');
 

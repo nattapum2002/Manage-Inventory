@@ -11,7 +11,10 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <a href="{{ route('AddShift') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                            <div class="d-flex justify-content-between">
+                                <h3 class="card-title"></h3>
+                                <a href="{{ route('AddShift') }}" class="btn btn-success"><i class="fas fa-plus"></i></a>
+                            </div>
                         </div>
                         <div class="card-body">
                             <table id="Shifttable" class="table table-bordered table-striped">
@@ -21,6 +24,7 @@
                                         <th>ชื่อกะ</th>
                                         <th>เวลาเริ่มกะ</th>
                                         <th>เวลาสิ้นสุดกะ</th>
+                                        <th>จำนวนพนักงาน</th>
                                         <th>สถานะ</th>
                                         <th></th>
                                     </tr>
@@ -32,10 +36,12 @@
                                             <td>{{ $shift->shift_name }}</td>
                                             <td>{{ $shift->start_shift }}</td>
                                             <td>{{ $shift->end_shift }}</td>
+                                            <td>{{ $usersCounts->where('shift_id', $shift->shift_id)->count() }}
+                                            </td>
                                             <td>{{ $shift->status ? 'ใช้งาน' : 'ไม่ใช้งาน' }}</td>
                                             <td>
-                                                <a href="{{ route('DetailShift', $shift->shift_id) }}"
-                                                    class="btn btn-primary"><i class="far fa-file-alt"></i>
+                                                <a href="{{ route('EditShift', $shift->shift_id) }}"
+                                                    class="btn btn-primary"><i class="fas fa-edit"></i>
                                                 </a>
                                                 <a href="{{ route('ManageShift.Toggle', [$shift->shift_id, $shift->status ? 0 : 1]) }}"
                                                     class="btn {{ $shift->status ? 'btn-danger' : 'btn-success' }}">
@@ -50,6 +56,7 @@
                                     <th>ชื่อกะ</th>
                                     <th>เวลาเริ่มกะ</th>
                                     <th>เวลาสิ้นสุดกะ</th>
+                                    <th>จำนวนพนักงาน</th>
                                     <th>สถานะ</th>
                                     <th></th>
                                 </tfoot>
