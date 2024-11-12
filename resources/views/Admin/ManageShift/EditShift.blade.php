@@ -16,10 +16,14 @@
                                     <tr>
                                         <th colspan="5">
                                             <div class="row">
-                                                <div class="col-3">รหัสกะ : {{ $shifts[0]->shift_id }}</div>
-                                                <div class="col-3">ชื่อกะ : {{ $shifts[0]->shift_name }}</div>
-                                                <div class="col-3">เวลาเริ่ม : {{ $shifts[0]->start_shift }}</div>
-                                                <div class="col-3">เวลาสิ้นสุด : {{ $shifts[0]->end_shift }}</div>
+                                                <div class="col-lg-3 col-md-6 col-sm-12">ชื่อกะ :
+                                                    {{ $shifts[0]->shift_name }}</div>
+                                                <div class="col-lg-3 col-md-6 col-sm-12">เวลาเริ่ม :
+                                                    {{ $shifts[0]->start_shift }}</div>
+                                                <div class="col-lg-3 col-md-6 col-sm-12">เวลาสิ้นสุด :
+                                                    {{ $shifts[0]->end_shift }}</div>
+                                                <div class="col-lg-3 col-md-6 col-sm-12">วันที่ :
+                                                    {{ $shifts[0]->date }}</div>
                                             </div>
                                         </th>
                                     </tr>
@@ -75,7 +79,8 @@
                                                     id="cancel_edit_shift_{{ $shift->user_id }}"
                                                     style="display:none;">ยกเลิก</button>
                                                 <a href="{{ route('DeleteShift', ['shift_id' => $shift->shift_id, 'user_id' => $shift->user_id]) }}"
-                                                    class="btn btn-danger">ลบ</a>
+                                                    class="btn btn-danger"
+                                                    style="{{ $shifts->count() < 2 ? 'display:none;' : '' }}">ลบ</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -109,13 +114,18 @@
                                         placeholder="เวลาเริ่มกะ" value="{{ $shifts[0]->start_shift }}">
                                     <input type="time" class="form-control" id="end_shift" name="end_shift"
                                         placeholder="เวลาเลิกกะ" value="{{ $shifts[0]->end_shift }}">
+                                    <input type="text" class="form-control" id="date" name="date"
+                                        placeholder="วันที่" value="{{ $shifts[0]->date }}">
+                                    <input type="text" class="form-control" id="note" name="note"
+                                        placeholder="หมายเหตุ" value="{{ $shifts[0]->note }}">
                                 </article>
 
                                 <article id="add-user-shift">
 
                                 </article>
                                 <div class="d-flex justify-content-center mt-3">
-                                    <button type="button" class="btn btn-primary mr-3" id="add-user">เพิ่มพนักงาน</button>
+                                    <button type="button" class="btn btn-primary mr-3"
+                                        id="add-user">เพิ่มพนักงาน</button>
                                     <button type="submit" class="btn btn-success">บันทึก</button>
                                 </div>
                             </form>

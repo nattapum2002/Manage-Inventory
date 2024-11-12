@@ -40,11 +40,9 @@
                                         placeholder="ตำแหน่ง" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="status">สถานะ</label>
-                                    <select name="status" class="form-control" id="status" required>
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
-                                    </select>
+                                    <label for="start_date">วันเริ่มงาน</label>
+                                    <input type="date" class="form-control" id="start_date" name="start_date"
+                                        placeholder="วันเริ่มงาน" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="user_type">ประเภทผู้ใช้</label>
@@ -55,11 +53,6 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="email">อีเมล</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        placeholder="อีเมล" required>
-                                </div>
-                                <div class="form-group">
                                     <label for="password">รหัสผ่าน</label>
                                     <input type="password" class="form-control" id="password" name="password"
                                         placeholder="รหัสผ่าน" required>
@@ -68,6 +61,18 @@
                                     <label for="password-confirm">ยืนยันรหัสผ่าน</label>
                                     <input type="password" class="form-control" id="password-confirm"
                                         name="password_confirmation" placeholder="ยืนยันรหัสผ่าน" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="note">หมายเหตุ</label>
+                                    <input type="text" class="form-control" id="note" name="note"
+                                        placeholder="หมายเหตุ">
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">สถานะ</label>
+                                    <select name="status" class="form-control" id="status" required>
+                                        <option value="0">0</option>
+                                        <option selected value="1">1</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="card-footer">

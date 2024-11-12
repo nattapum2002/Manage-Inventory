@@ -73,6 +73,8 @@ class ShiftController extends Controller
                     'shift_name' => $data['shift_name'], // Data to update/insert
                     'start_shift' => $data['start_shift'],
                     'end_shift' => $data['end_shift'],
+                    'date' => $data['date'],
+                    'note' => $data['note'] ?? null,
                     'status' => 1
                 ]
             );

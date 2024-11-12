@@ -38,10 +38,11 @@ class UserController extends Controller
             'name' => $request->name,
             'surname' => $request->surname,
             'position' => $request->position,
-            'user_type' => $request->user_type,
-            'email' => $request->email,
-            'status' => $request->status,
+            'start_date' => $request->start_date,
             'password' => Hash::make($request->password),
+            'user_type' => $request->user_type,
+            'note' => $request->note,
+            'status' => $request->status,
         ]);
 
         return redirect()->route('ManageUsers')->with('success', 'Profile has been created successfully.');
@@ -77,10 +78,11 @@ class UserController extends Controller
             'name' => $request->name,
             'surname' => $request->surname,
             'position' => $request->position,
-            'user_type' => $request->user_type,
-            'email' => $request->email,
-            'status' => $request->status,
+            'start_date' => $request->start_date,
             'password' => $request->password,
+            'user_type' => $request->user_type,
+            'note' => $request->note,
+            'status' => $request->status,
         ]);
 
         return redirect()->route('ManageUsers')->with('success', 'Profile has been updated successfully.');
