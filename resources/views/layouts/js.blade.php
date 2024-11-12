@@ -453,6 +453,11 @@
                 }
             }
         });
+        $('#queue-all-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        })
     });
 </script>
 <script>

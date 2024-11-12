@@ -33,6 +33,14 @@
                 </li>
                 @if (Auth::user()->user_type == 'Admin')
                     <li class="nav-item">
+                        <a href="{{route('AdminShowStock')}}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                จัดการสินค้าในคลัง
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('ManageLockStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>

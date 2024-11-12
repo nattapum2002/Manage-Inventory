@@ -20,14 +20,19 @@ class managestock extends Controller
     public function show_slip($date)
     {
         $show_slip = DB::table('product_store')
-            ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker')
+            ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker,MAX(check_status) as status')
             ->groupBy('product_slip_id')
             ->where('store_date', $date)
             ->get();
         // dd($show_slip);
         return view('Admin.ManageStock.manageslipstock', compact('show_slip', 'date'));
     }
-
+    public function check_slip($id){
+        DB::table('product_store')
+        ->where('product_slip_id', $id)
+        ->update(['check_status' => '1' , 'domestic_checker' => auth()->user()->user_id]);
+        return redirect()->back();
+    }
     public function show_slip_detail($slip_id)
     {
         $show_detail = DB::table('product_store')
@@ -118,15 +123,47 @@ class managestock extends Controller
     {
         $productId = $request->input('product_id');
         $productData = $request->input('product_edit');
+        $productCode = $request->input('product_code');
         $product_store = DB::table('product_store')->where('id', $productId)->update([
             'department' => $productData['department'],
             'amount' => $productData['amount'],
             'weight' => $productData['weight'],
             'note' => $productData['comment'],
         ]);
+
+        $this->calculateStock($productCode, $productData['amount'], $productData['weight']);
         return response()->json([
             "status" => true,
-            "data" => '200'
+            "data" => $productCode
+        ]);
+    }
+
+    public function calculateStock($id, $amount, $weight)
+    {
+        $getData = DB::table('stock')->where('product_id', $id)->first();
+
+        $newAmount = 0 ;
+        $newWeight = 0 ;
+
+        if ($getData->amount > $amount) {
+            $newAmount = $getData->amount - $amount;
+        }else if($getData->amount < $amount){
+            $newAmount = $getData->amount + $amount;
+        } else {
+            $newAmount = $amount;
+        }
+
+        if ($getData->weight > $weight) {
+            $newWeight = $getData->weight - $weight;
+        }else if($getData->weight < $weight){
+            $newWeight = $getData->weight + $weight;
+        } else {
+            $newWeight = $weight;
+        }
+        // อัปเดตข้อมูลในตาราง stock
+        DB::table('stock')->where('product_id', $id)->update([
+            'amount' => $newAmount,
+            'weight' => $newWeight,
         ]);
     }
 }
