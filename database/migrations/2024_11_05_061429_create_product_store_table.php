@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('department');
             $table->date('store_date');
             $table->time('store_time');
-            $table->string('product_checker');
-            $table->string('domestic_checker');
+            $table->boolean('product_checker');
+            $table->boolean('domestic_checker');
             $table->string('shift_id');
             $table->string('note')->nullable();
             $table->boolean('status');
