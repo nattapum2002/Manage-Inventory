@@ -84,6 +84,16 @@
 
         $('#item-row').append(`
         <div class="row" id="item-${item_count}">
+             <div class="col">
+                <label for="room_id_${item_count}" class="form-label">ห้องเก็บ</label>
+                    <div class="input-group">
+                        <select name="room[${item_count}]" class="form-control" id="room_id_${item_count}">
+                            <option value="" selected>เลือกห้องเก็บ</option>
+                            <option value="Cold-A">Cold-A</option>
+                            <option value="Cold-C">Cold-C</option>
+                        </select>
+                    </div>
+            </div>
             <div class="col">
                 <label for="item_id_${item_count}" class="form-label">${item_count} รหัสสินค้า</label>
                 <div class="input-group">
@@ -124,17 +134,18 @@
     `);
 
         // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
-        initializeAutocomplete(`#item_name_${item_count}`, `#item_id_${item_count}`);
+        initializeAutocomplete(`#item_name_${item_count}`, `#item_id_${item_count}`,`#room_id_${item_count}`);
     });
 
     // ฟังก์ชัน autocomplete
-    function initializeAutocomplete(nameSelector, idSelector) {
+    function initializeAutocomplete(nameSelector, idSelector ,roomSelector) {
         $(nameSelector).autocomplete({
             source: function(request, response) {
                 $.ajax({
                     url: "{{ route('autocomplete') }}",
                     data: {
-                        query: request.term
+                        query: request.term,
+                        room: $(roomSelector).val()
                     },
                     success: function(data) {
                         response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
@@ -142,10 +153,11 @@
                 });
             },
             minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
-            select: function(event, ui) {
+            select: function(event, ui ,response) {
                 // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
                 $(idSelector).val(ui.item.id); // เติมรหัสสินค้าในช่องรหัสสินค้า
                 $(nameSelector).val(ui.item.value); // เติมชื่อสินค้าในช่องชื่อสินค้า
+                console.log(response);
             }
         });
 
@@ -153,7 +165,7 @@
             $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
         });
     }
-    initializeAutocomplete('#item_name_1', '#item_id_1');
+    initializeAutocomplete('#item_name_1', '#item_id_1', '#room_id_1');
 
     // ฟังก์ชันสำหรับลบแถว
     $(document).on('click', '.remove-item', function() {

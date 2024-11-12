@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('product_store_detail', function (Blueprint $table) {
             $table->id();
             $table->string('product_id');
-            $table->string('product_name');
             $table->integer('weight');
             $table->integer('amount');
             $table->string('product_slip_id');

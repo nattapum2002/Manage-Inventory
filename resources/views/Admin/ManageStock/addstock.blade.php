@@ -7,11 +7,11 @@
 @section('content')
     <section class="content">
         @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session()->get('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-         </div>
-         @endif
+            </div>
+        @endif
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -35,11 +35,11 @@
                         <aside class="input-group me-3">
                             <!-- เริ่มต้นด้วย span -->
                             <input type="text" class="form-control" id="product_checker" name="product_checker"
-                                   value="{{ Auth::user()->user_id }}" placeholder="กรอกรหัสพนักงาน">
+                                value="{{ Auth::user()->user_id }}" placeholder="กรอกรหัสพนักงาน">
                             <span class="input-group-text">Product Checker</span> <!-- ย้ายไปท้ายสุด -->
                         </aside>
                     </div>
-                        {{-- <aside class="input-group">
+                    {{-- <aside class="input-group">
                             <span class="input-group-text">Domestic Checker</span>
                             <input type="text" class="form-control" id="domestic_checker" name="domestic_checker" placeholder="กรอกรหัสพนักงาน">
                         </aside> --}}
@@ -82,6 +82,16 @@
                     <article id="item-row">
                         <div class="row" id="item-1">
                             <div class="col">
+                                <label for="room_id_1" class="form-label">ห้องเก็บ</label>
+                                <div class="input-group">
+                                    <select name="room[1]" class="form-control" id="room_id_1">
+                                        <option value="" selected>เลือกห้องเก็บ</option>
+                                        <option value="Cold-A">Cold-A</option>
+                                        <option value="Cold-C">Cold-C</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
                                 <label for="item_id_1" class="form-label">1 รหัสสินค้า</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="item_id_1" name="item_id[1]"
@@ -110,7 +120,8 @@
                             <div class="col">
                                 <label for="item_comment_1" class="form-label">หมายเหตุ</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="item_comment_1" name="item_comment[1]">
+                                    <input type="text" class="form-control" id="item_comment_1"
+                                        name="item_comment[1]">
                                 </div>
                             </div>
                             <div class="col">

@@ -20,7 +20,7 @@
                                     <div class="col-2">ใบสลิปที่ : {{ $show_detail[0]->product_slip_number }}</div>
                                     <div class="col-2">Date : {{ $show_detail[0]->store_date ?? 'N/A' }}</div>
                                     <time class="col-2">Time : {{ $show_detail[0]->store_time ?? 'N/A' }}</time>
-                                    <div class="col-2">{!! $show_detail[0]->check_status == 1 ? '<p class="text-success">ตรวจสอบแล้ว</p>' : '<p class="text-danger">รอตรวจสอบ</p>' !!}</div>
+                                    <div class="col-2">{!! $show_detail[0]->status == 1 ? '<p class="text-success">ตรวจสอบแล้ว</p>' : '<p class="text-danger">รอตรวจสอบ</p>' !!}</div>
                                 </div>
                             </th>
                         </tr>
@@ -58,9 +58,9 @@
                                         style="display:none;">
                                 </td>
                                 <td>
-                                    <span id="comment_{{ $item->id }}">{{ $item->comment }}</span>
+                                    <span id="comment_{{ $item->id }}">{{ $item->note }}</span>
                                     <input type="text" class="form-control" name=""
-                                        id="edit_comment_{{ $item->id }}" value="{{ $item->comment }}"
+                                        id="edit_comment_{{ $item->id }}" value="{{ $item->note }}"
                                         style="display:none;">
                                 </td>
                                 <td>
