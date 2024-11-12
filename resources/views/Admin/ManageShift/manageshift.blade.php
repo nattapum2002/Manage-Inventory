@@ -24,6 +24,7 @@
                                         <th>ชื่อกะ</th>
                                         <th>เวลาเริ่มกะ</th>
                                         <th>เวลาสิ้นสุดกะ</th>
+                                        <th>วันที่</th>
                                         <th>จำนวนพนักงาน</th>
                                         <th>สถานะ</th>
                                         <th></th>
@@ -36,6 +37,7 @@
                                             <td>{{ $shift->shift_name }}</td>
                                             <td>{{ $shift->start_shift }}</td>
                                             <td>{{ $shift->end_shift }}</td>
+                                            <td>{{ $shift->date }}</td>
                                             <td>{{ $usersCounts->where('shift_id', $shift->shift_id)->count() }}
                                             </td>
                                             <td>{{ $shift->status ? 'ใช้งาน' : 'ไม่ใช้งาน' }}</td>
@@ -56,6 +58,7 @@
                                     <th>ชื่อกะ</th>
                                     <th>เวลาเริ่มกะ</th>
                                     <th>เวลาสิ้นสุดกะ</th>
+                                    <th>วันที่</th>
                                     <th>จำนวนพนักงาน</th>
                                     <th>สถานะ</th>
                                     <th></th>

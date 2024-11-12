@@ -35,25 +35,17 @@
                                         value="{{ $User->position }}" required>
                                 </div>
                                 <div class="form-group">
+                                    <label for="start_date">วันเริ่มงาน</label>
+                                    <input type="date" class="form-control" id="start_date" name="start_date"
+                                        placeholder="วันเริ่มงาน" required>
+                                </div>
+                                <div class="form-group">
                                     <label for="user_type">ประเภทผู้ใช้</label>
                                     <select name="user_type" class="form-control" id="user_type"
                                         value="{{ $User->user_type }}" required>
                                         <option value="Admin">Admin</option>
                                         <option value="User">User</option>
                                         <option value="Manager">Manager</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">อีเมล</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        value="{{ $User->email }}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="status">สถานะ</label>
-                                    <select name="status" class="form-control" id="status" value="{{ $User->status }}"
-                                        required>
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -64,6 +56,19 @@
                                     <label for="password-confirm">ยืนยันรหัสผ่าน</label>
                                     <input type="password" class="form-control" id="password-confirm"
                                         name="password_confirmation" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="note">หมายเหตุ</label>
+                                    <input type="text" class="form-control" id="note" name="note"
+                                        placeholder="หมายเหตุ">
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">สถานะ</label>
+                                    <select name="status" class="form-control" id="status" value="{{ $User->status }}"
+                                        required>
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">บันทึก</button>
