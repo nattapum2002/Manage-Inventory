@@ -20,7 +20,7 @@ class managestock extends Controller
     public function show_slip($date)
     {
         $show_slip = DB::table('product_store')
-            ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker,MAX(check_status) as status')
+            ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker,MAX(status) as status')
             ->groupBy('product_slip_id')
             ->where('store_date', $date)
             ->get();
@@ -35,21 +35,23 @@ class managestock extends Controller
     }
     public function show_slip_detail($slip_id)
     {
-        $show_detail = DB::table('product_store')
-            ->Join('stock', 'product_store.product_id', '=', 'stock.product_id')
-            ->where('product_slip_id', $slip_id)
-            ->select('product_store.*', 'stock.product_name', 'stock.product_id')
-            ->get();
+        $show_detail = DB::table('product_store_detail')
+        ->join('stock', 'product_store_detail.product_id', '=', 'stock.product_id')
+        ->join('product_store', 'product_store.product_slip_id', '=', 'product_store_detail.product_slip_id')
+        ->where('product_store.product_slip_id', $slip_id)  // ระบุชื่อตารางที่ชัดเจน
+        ->select('product_store.*', 'product_store_detail.*', 'stock.product_name', 'stock.product_id')
+        ->get();
         return view('Admin.ManageStock.manageslipdetail', compact('show_detail', 'slip_id'));
     }
 
     public function autocomplete(Request $request)
     {
         $query = $request->get('query');
-
+        $room = $request->get('room');
         // ดึงข้อมูลเฉพาะฟิลด์ที่ต้องการ เช่น product_name และ product_id
         $data = DB::table('stock')
             ->select('product_name', 'product_id') // เลือกเฉพาะฟิลด์ product_name และ product_id
+            ->where('storage_room', 'like', '%' . $room . '%')
             ->where('product_name', 'like', '%' . $query . '%')
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
             ->get();
@@ -64,7 +66,7 @@ class managestock extends Controller
             ];
         }
 
-        return response()->json($results);
+        return response()->json( $results);
     }
 
     public function create(Request $request)
@@ -79,6 +81,7 @@ class managestock extends Controller
             'item_amount.*' => 'required',
             'item_weight.*' => 'required',
             'product_checker' => 'required||integer',
+            'room' => 'required',
         ], [
             'slip_id.required' => 'กรุณากรอกรหัสสลิป',
             'slip_number.required' => 'กรุณากรอกหมายเลขสลิป',
@@ -96,18 +99,23 @@ class managestock extends Controller
         $data = $request->all();
 
         DB::transaction(function () use ($data) {
-            foreach ($data['item_id'] as $key => $value) {
                 DB::table('product_store')->insert([
                     'product_slip_id' => $data['slip_id'],
                     'product_slip_number' => $data['slip_number'],
-                    'product_id' => $data['item_id'][$key],
-                    'amount' => $data['item_amount'][$key],
-                    'weight' => $data['item_weight'][$key],
                     'department' => $data['department'],
                     'store_date' => $data['date'],
                     'store_time' => $data['time'],
                     'product_checker' => $data['product_checker'],
                     'domestic_checker' => 'N/A',
+                    'shift_id'   => 1,
+                    'status' => 0,
+                ]);
+            foreach ($data['item_id'] as $key => $value) {
+                DB::table('product_store_detail')->insert([
+                    'product_slip_id' => $data['slip_id'],
+                    'product_id' => $data['item_id'][$key],
+                    'amount' => $data['item_amount'][$key],
+                    'weight' => $data['item_weight'][$key],
                     'note' => $data['item_comment'][$key],
                     'status' => 0,
                 ]);
