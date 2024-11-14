@@ -14,14 +14,13 @@ return new class extends Migration
         Schema::create('product_receipt_plan_detail', function (Blueprint $table) {
             $table->id();
             $table->string('product_id');
-            $table->string('product_name');
-            $table->integer('weight');
-            $table->integer('increase_weight');
-            $table->integer('reduce_weight');
-            $table->integer('total_weight');
+            $table->float('product_quantity');
+            $table->float('increase_quantity');
+            $table->float('reduce_quantity');
+            $table->float('total_quantity');
             $table->string('product_receipt_plan_id');
             $table->string('note')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

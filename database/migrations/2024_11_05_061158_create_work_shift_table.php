@@ -19,7 +19,7 @@ return new class extends Migration
             $table->time('end_shift');
             $table->date('date');
             $table->string('note')->nullable();
-            $table->boolean('status')->default(0);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

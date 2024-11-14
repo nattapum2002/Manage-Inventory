@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('pallet', function (Blueprint $table) {
             $table->id();
             $table->string('pallet_id');
-            $table->string('pallet_no');
-            $table->string('room');
-            $table->string('order_id');
+            $table->string('pallet_number');
+            $table->string('pallet_name');
+            $table->string('storage_room')->nullable();
+            $table->string('order_number');
             $table->string('note')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

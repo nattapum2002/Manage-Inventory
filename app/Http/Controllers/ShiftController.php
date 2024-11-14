@@ -25,6 +25,7 @@ class ShiftController extends Controller
 
     public function SaveEditShift(Request $request)
     {
+        dd($request->all());
         $shiftId = $request->input('shift_id');
         $shiftData = $request->input('shift_edit');
         DB::table('shift_users')->where('shift_id', $shiftId)->update([

@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lock_team', function (Blueprint $table) {
+        Schema::create('product_detail', function (Blueprint $table) {
             $table->id();
-            $table->string('team_id');
-            $table->string('team_name');
-            $table->date('date');
+            $table->string('product_id');
+            $table->string('product_number');
+            $table->string('product_name');
+            $table->string('product_uom')->nullable();
+            $table->string('product_uom2')->nullable();
             $table->string('note')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lock_team');
+        Schema::dropIfExists('product_detail');
     }
 };

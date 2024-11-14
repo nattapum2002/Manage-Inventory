@@ -21,13 +21,17 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UserSeeder::class,
-            ProductStoreSeeder::class,
-            StockSeeder::class,
-            CustomerOrderSeeder::class,
-            PalletSeeder::class,
-            CustomerQueueSeeder::class,
-            WorkShiftSeeder::class,
-            ShiftUsersSeeder::class,
+            // ProductStoreSeeder::class,
+            // StockSeeder::class,
+            // CustomerOrderSeeder::class,
+            // PalletSeeder::class,
+            // CustomerQueueSeeder::class,
+            // WorkShiftSeeder::class,
+            // ShiftUsersSeeder::class,
+            // CustomerSeeder::class,
+            // LockTeamSeeder::class,
+            // LockTeamUserSeeder::class,
+            // CustomerOrderDetailSeeder::class,
         ]);
     }
 }

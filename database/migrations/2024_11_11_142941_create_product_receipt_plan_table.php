@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('shift_id');
             $table->string('note')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

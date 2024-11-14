@@ -24,7 +24,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="{{route('ShowStock')}}" class="nav-link">
+                    <a href="{{ route('ShowStock') }}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>
                             สินค้าในคลัง
@@ -33,7 +33,7 @@
                 </li>
                 @if (Auth::user()->user_type == 'Admin')
                     <li class="nav-item">
-                        <a href="{{route('AdminShowStock')}}" class="nav-link">
+                        <a href="{{ route('AdminShowStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 จัดการสินค้าในคลัง
@@ -77,6 +77,14 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 Manage Users
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('excel.form') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Excel
                             </p>
                         </a>
                     </li>
