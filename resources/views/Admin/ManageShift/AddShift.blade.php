@@ -51,13 +51,6 @@
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label for="date">วันที่</label>
-                                            <input type="date" class="form-control" id="date" name="date"
-                                                placeholder="วันที่">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-12">
-                                        <div class="form-group">
                                             <label for="note">หมายเหตุ</label>
                                             <input type="text" class="form-control" id="note" name="note"
                                                 placeholder="หมายเหตุ">

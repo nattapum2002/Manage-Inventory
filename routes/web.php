@@ -77,6 +77,12 @@ Route::get('/ManageLockStock/Detail/AddPallet/AutoCompleteAddPallet', [App\Http\
 Route::post('/ManageLockStock/Detail/{order_id}/Save', [App\Http\Controllers\LockController::class, 'SavePallet'])->name('SavePallet');
 Route::get('/ManageLockStock/Detail/{order_id}/Pallet/{pallet_id}', [App\Http\Controllers\LockController::class, 'DetailPallets'])->name('DetailPallets');
 
+Route::get('/ProductReceiptPlan', [App\Http\Controllers\ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Add', [App\Http\Controllers\ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Add/Save', [App\Http\Controllers\ProductReceiptPlanController::class, 'SaveProductReceiptPlan'])->name('SaveProductReceiptPlan');
+Route::get('/ProductReceiptPlan/Edit/{product_receipt_plan_id}', [App\Http\Controllers\ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Edit/Save', [App\Http\Controllers\ProductReceiptPlanController::class, 'SaveEditProductReceiptPlan'])->name('SaveEditProductReceiptPlan');
+
 Route::get('AddItem', function () {
     return view('Admin.ManageStock.addstock');
 })->name('Add item');

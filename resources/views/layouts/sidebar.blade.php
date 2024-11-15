@@ -88,6 +88,14 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ProductReceiptPlan') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                1. Product Pickup Plan
+                            </p>
+                        </a>
+                    </li>
                 @elseif (Auth::user()->user_type == 'Manager')
                     <li class="nav-item">
                         <a href="{{ route('ProductStore') }}" class="nav-link">
