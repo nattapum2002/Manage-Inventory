@@ -83,7 +83,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '172.16.4.13'),
             'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'manageinventory'),
+            'database' => env('DB_DATABASE', 'MISungroup'),
             'username' => env('DB_USERNAME', 'sa'),
             'password' => env('DB_PASSWORD', 'Sun233234'),
             'charset' => 'utf8',

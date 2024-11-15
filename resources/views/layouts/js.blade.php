@@ -98,6 +98,8 @@
                 <label for="item_id_${item_count}" class="form-label">${item_count} รหัสสินค้า</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="item_id_${item_count}" name="item_id[${item_count}]" readonly>
+                    <input type="hidden" class="form-control" id="save_item_id_${item_count}" name="save_item_id[${item_count}]"
+                                        readonly="">
                 </div>
             </div>
             <div class="col">
@@ -109,13 +111,25 @@
             <div class="col">
                 <label for="item_amount_${item_count}" class="form-label">จำนวน</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="item_amount_${item_count}" name="item_amount[${item_count}]">
+                    <input type="number" class="form-control" id="item_quantity_${item_count}" name="item_quantity[${item_count}]">
+                </div>
+            </div>
+             <div class="col">
+                <label for="item_um_${item_count}" class="form-label">หน่วย</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="item_um_${item_count}" name="item_um[${item_count}]" disabled>
                 </div>
             </div>
             <div class="col">
-                <label for="item_weight_${item_count}" class="form-label">น้ำหนัก(KG.)</label>
+                <label for="item_weight_${item_count}" class="form-label">จำนวน</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="item_weight_${item_count}" name="item_weight[${item_count}]">
+                    <input type="number" class="form-control" id="item_quantity2_${item_count}" name="item_quantity2[${item_count}]">
+                </div>
+            </div>
+            <div class="col">
+                <label for="item_um2_${item_count}" class="form-label">หน่วย</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="item_um2_${item_count}" name="item_um2[${item_count}]" disabled>
                 </div>
             </div>
             <div class="col">
@@ -134,30 +148,37 @@
     `);
 
         // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
-        initializeAutocomplete(`#item_name_${item_count}`, `#item_id_${item_count}`,`#room_id_${item_count}`);
+        initializeAutocomplete(`#item_name_${item_count}`, `#item_id_${item_count}`,`#item_um_${item_count}`,`#item_um2_${item_count}`,`#room_id_${item_count}`,`#save_item_id_${item_count}`);
     });
 
     // ฟังก์ชัน autocomplete
-    function initializeAutocomplete(nameSelector, idSelector ,roomSelector) {
+    function initializeAutocomplete(nameSelector, idSelector,umSelector,um2Selector,roomSelector,save_item_idSelector) {
         $(nameSelector).autocomplete({
             source: function(request, response) {
                 $.ajax({
                     url: "{{ route('autocomplete') }}",
                     data: {
                         query: request.term,
-                        room: $(roomSelector).val()
+                        // room: $(roomSelector).val()
                     },
                     success: function(data) {
                         response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
                     }
                 });
             },
             minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
             select: function(event, ui ,response) {
                 // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
-                $(idSelector).val(ui.item.id); // เติมรหัสสินค้าในช่องรหัสสินค้า
+                $(idSelector).val(ui.item.product_no); // เติมรหัสสินค้าในช่องรหัสสินค้า
                 $(nameSelector).val(ui.item.value); // เติมชื่อสินค้าในช่องชื่อสินค้า
-                console.log(response);
+                $(umSelector).val(ui.item.item_um ? ui.item.item_um : 'ไม่มี');
+                $(um2Selector).val(ui.item.item_um2 ? ui.item.item_um2 : 'ไม่มี');
+                $(save_item_idSelector).val(ui.item.id);
+                // $(roomSelector).val(ui.item.room);
+                console.log(200);
             }
         });
 
@@ -165,7 +186,7 @@
             $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
         });
     }
-    initializeAutocomplete('#item_name_1', '#item_id_1', '#room_id_1');
+    initializeAutocomplete('#item_name_1', '#item_id_1','#item_um_1','#item_um2_1', '#room_id_1','#save_item_id_1');
 
     // ฟังก์ชันสำหรับลบแถว
     $(document).on('click', '.remove-item', function() {
@@ -176,7 +197,7 @@
 {{-- สคริปต์ SlipDetail --}}
 <script>
     $(document).ready(function() {
-        let fields = ['department', 'amount', 'weight', 'comment'];
+        let fields = ['department', 'quantity', 'quantity2', 'comment'];
 
         function hideEdit(edit_slip_productId) {
             fields.forEach(function(field) {
@@ -466,6 +487,16 @@
             }
         });
         $('#queue-all-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        })
+        $('#stat-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        })
+        $('#date-stat-table').DataTable({
             info: false,
             ordering: true,
             paging: true

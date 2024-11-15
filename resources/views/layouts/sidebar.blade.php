@@ -24,16 +24,40 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="{{route('ShowStock')}}" class="nav-link">
+                    <a href="" class="nav-link has-dropdown">
                         <i class="far fa-circle nav-icon"></i>
                         <p>
-                            สินค้าในคลัง
+                            N/A
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('ShowStatDate') }}" class="nav-link has-dropdown">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            รายการสินค้าเข้าออก
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('ShowStockA') }}" class="nav-link has-dropdown">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            สินค้าในคลัง : Cold-A
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('ShowStockC') }}" class="nav-link has-dropdown">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            สินค้าในคลัง : Cold-C
                         </p>
                     </a>
                 </li>
                 @if (Auth::user()->user_type == 'Admin')
                     <li class="nav-item">
-                        <a href="{{route('AdminShowStock')}}" class="nav-link">
+                        <a href="{{ route('AdminShowStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 จัดการสินค้าในคลัง
@@ -114,6 +138,14 @@
                         </a>
                     </li>
                 @elseif (Auth::user()->user_type == 'User')
+                    <li class="nav-item">
+                        <a href="{{ route('ManageStock') }}" class="nav-link has-dropdown">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                เพิ่ม/เช็ค จำนวนสินค้า
+                            </p>
+                        </a>
+                    </li>
                 @endif
             </ul>
         </nav>

@@ -16,18 +16,24 @@
                     <th>รหัสสินค้า</th>
                     <th>ชื่อสินค้า</th>
                     <th>จำนวนทั้งหมด</th>
-                    <th>น้ำหนักทั้งหมด</th>
+                    <th>หน่วย</th>
+                    <th>จำนวนทั้งหมด</th>
+                    <th>หน่วย</th>
+                    <th>ห้องเก็บ</th>
                     <th>จัดการ</th>
                 </thead>
                 <tbody>
                     @foreach ($data as $item )
                     <tr>
-                        <td>{{$item->product_id}}</td>
-                        <td>{{$item->product_name}}</td>
-                        <td>{{$item->amount}}</td>
-                        <td>{{$item->weight}}</td>
+                        <td>{{$item->item_no}}</td>
+                        <td>{{$item->item_desc1}}</td>
+                        <td>{{$item->quantity}}</td>
+                        <td>{{$item->quantity_UM}}</td>
+                        <td>{{$item->quantity2}}</td>
+                        <td>{{$item->quantity_UM2}}</td>
+                        <td>{{$item->storage_room}}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{route('Edit name',$item->product_id)}}">แก้ไข</a>
+                            <a class="btn btn-primary" href="{{route('Edit name',$item->item_no)}}">แก้ไข</a>
                         </td>
                     </tr>
                     @endforeach

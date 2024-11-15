@@ -14,13 +14,13 @@
                 <table id="item_per_slip" class="table table-striped">
                     <thead>
                         <tr>
-                            <th colspan="7">
+                            <th colspan="9">
                                 <div class="row">
                                     <div class="col-2">รหัสสลิป : {{ $slip_id }}</div>
-                                    <div class="col-2">ใบสลิปที่ : {{ $show_detail[0]->product_slip_number }}</div>
+                                    <div class="col-2">ใบสลิปที่ : {{ $show_slip->product_slip_number }}</div>
                                     <div class="col-2">Date : {{ $show_detail[0]->store_date ?? 'N/A' }}</div>
                                     <time class="col-2">Time : {{ $show_detail[0]->store_time ?? 'N/A' }}</time>
-                                    <div class="col-2">{!! $show_detail[0]->status == 1 ? '<p class="text-success">ตรวจสอบแล้ว</p>' : '<p class="text-danger">รอตรวจสอบ</p>' !!}</div>
+                                    <div class="col-2">{!! $show_slip->status == 1 ? '<p class="text-success">ตรวจสอบแล้ว</p>' : '<p class="text-danger">รอตรวจสอบ</p>' !!}</div>
                                 </div>
                             </th>
                         </tr>
@@ -28,8 +28,10 @@
                             <th>รหัสสินค้า</th>
                             <th>รายละเอียดสินค้า</th>
                             <th>แผนก</th>
-                            <th>จำนวนถุง</th>
-                            <th>น้ำหนัก(KG.)</th>
+                            <th>จำนวน</th>
+                            <th>หน่วย</th>
+                            <th>จำนวน</th>
+                            <th>หน่วย</th>
                             <th>หมายเหตุ</th>
                             <th>จัดการ</th>
                         </tr>
@@ -37,9 +39,9 @@
                     <tbody>
                         @foreach ($show_detail as $item)
                             <tr>
-                                <td>{{ $item->product_id }}</td>
+                                <td>{{ $item->item_no }}</td>
                                 <td>
-                                    <span id="product_name_{{ $item->id }}">{{ $item->product_name }}</span>
+                                    <span id="product_name_{{ $item->id }}">{{ $item->item_desc1 }}</span>
                                 </td>
                                 <td>
                                     <span id="department_{{ $item->id }}">{{ $item->department }}</span>
@@ -47,16 +49,18 @@
                                         value="{{ $item->department }}" style="display:none;">
                                 </td>
                                 <td>
-                                    <span id="amount_{{ $item->id }}">{{ $item->amount }}</span>
-                                    <input type="number" class="form-control" id="edit_amount_{{ $item->id }}"
-                                        value="{{ $item->amount }}" style="display:none;">
+                                    <span id="quantity_{{ $item->id }}">{{ $item->quantity }}</span>
+                                    <input type="number" class="form-control" id="edit_quantity_{{ $item->id }}"
+                                        value="{{ $item->quantity  }}" style="display:none;">
                                 </td>
+                                <td><span id="unit_{{ $item->id }}">{{ $item->item_um }}</span></td>
                                 <td>
-                                    <span id="weight_{{ $item->id }}">{{ $item->weight }}</span>
+                                    <span id="quantity2_{{ $item->id }}">{{ $item->quantity2  }}</span>
                                     <input type="number" class="form-control" name=""
-                                        id="edit_weight_{{ $item->id }}" value="{{ $item->weight }}"
+                                        id="edit_quantity2_{{ $item->id }}" value="{{ $item->quantity2  }}"
                                         style="display:none;">
                                 </td>
+                                <td><span id="unit_{{ $item->id }}">{{ $item->item_um2 }}</span></td>
                                 <td>
                                     <span id="comment_{{ $item->id }}">{{ $item->note }}</span>
                                     <input type="text" class="form-control" name=""
@@ -75,13 +79,15 @@
                             <th>รหัสสินค้า</th>
                             <th>รายละเอียดสินค้า</th>
                             <th>แผนก</th>
-                            <th>จำนวนถุง</th>
-                            <th>น้ำหนัก(KG.)</th>
+                            <th>จำนวน</th>
+                            <th>หน่วย</th>
+                            <th>จำนวน</th>
+                            <th>หน่วย</th>
                             <th>หมายเหตุ</th>
                             <th>จัดการ</th>
                         </tr>
                         <tr>
-                            <th colspan="7">
+                            <th colspan="9">
                                 <div class="row">
                                     <div class="col-6"></div>
                                     <div class="col-2">

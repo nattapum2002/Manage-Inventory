@@ -96,6 +96,8 @@
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="item_id_1" name="item_id[1]"
                                         readonly="">
+                                    <input type="hidden" class="form-control" id="save_item_id_1" name="save_item_id[1]"
+                                        readonly="">
                                 </div>
                             </div>
                             <div class="col">
@@ -108,13 +110,25 @@
                             <div class="col">
                                 <label for="item_amount_1" class="form-label">จำนวน</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="item_amount_1" name="item_amount[1]">
+                                    <input type="number" class="form-control" id="item_quantity_1" name="item_quantity[1]">
                                 </div>
                             </div>
                             <div class="col">
-                                <label for="item_weight_1" class="form-label">น้ำหนัก(KG.)</label>
+                                <label for="item_um_1" class="form-label">หน่วย</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="item_weight_1" name="item_weight[1]">
+                                    <input type="text" class="form-control" id="item_um_1" name="item_um[1]" disabled>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="item_weight_1" class="form-label">จำนวน</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="item_quantity2_1" name="item_quantity2[1]">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="item_um2_1" class="form-label">หน่วย</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="item_um2_1" name="item_um2[1]" disabled>
                                 </div>
                             </div>
                             <div class="col">
