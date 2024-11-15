@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('product_store_detail', function (Blueprint $table) {
             $table->id();
             $table->string('product_id');
-            $table->integer('weight');
-            $table->integer('amount');
+            $table->float('ordered_quantity')->nullable();
+            $table->float('ordered_quantity2')->nullable();
             $table->string('product_slip_id');
             $table->string('note')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

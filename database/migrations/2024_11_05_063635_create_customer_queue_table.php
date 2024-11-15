@@ -14,14 +14,18 @@ return new class extends Migration
         Schema::create('customer_queue', function (Blueprint $table) {
             $table->id();
             $table->string('queue_id');
+            $table->string('queue_number');
             $table->integer('no');
             $table->time('queue_time');
+            $table->date('queue_date');
             $table->integer('queue_no');
             $table->time('entry_time');
+            $table->date('entry_date');
             $table->time('release_time');
+            $table->date('release_date');
             $table->string('customer_id');
             $table->string('note')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

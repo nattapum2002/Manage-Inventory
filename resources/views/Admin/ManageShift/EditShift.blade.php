@@ -18,12 +18,11 @@
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ชื่อกะ :
                                                     {{ $shifts[0]->shift_name }}</div>
+                                                <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">เวลาเริ่ม :
                                                     {{ $shifts[0]->start_shift }}</div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">เวลาสิ้นสุด :
                                                     {{ $shifts[0]->end_shift }}</div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12">วันที่ :
-                                                    {{ $shifts[0]->date }}</div>
                                             </div>
                                         </th>
                                     </tr>
@@ -114,8 +113,6 @@
                                         placeholder="เวลาเริ่มกะ" value="{{ $shifts[0]->start_shift }}">
                                     <input type="time" class="form-control" id="end_shift" name="end_shift"
                                         placeholder="เวลาเลิกกะ" value="{{ $shifts[0]->end_shift }}">
-                                    <input type="text" class="form-control" id="date" name="date"
-                                        placeholder="วันที่" value="{{ $shifts[0]->date }}">
                                     <input type="text" class="form-control" id="note" name="note"
                                         placeholder="หมายเหตุ" value="{{ $shifts[0]->note }}">
                                 </article>
@@ -124,8 +121,7 @@
 
                                 </article>
                                 <div class="d-flex justify-content-center mt-3">
-                                    <button type="button" class="btn btn-primary mr-3"
-                                        id="add-user">เพิ่มพนักงาน</button>
+                                    <button type="button" class="btn btn-primary mr-3" id="add-user">เพิ่มพนักงาน</button>
                                     <button type="submit" class="btn btn-success">บันทึก</button>
                                 </div>
                             </form>
@@ -133,5 +129,6 @@
                     </div>
                 </div>
             </div>
+        </div>
     </section>
 @endsection

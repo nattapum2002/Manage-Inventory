@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('stock', function (Blueprint $table) {
             $table->id();
             $table->string('product_id');
-            $table->string('product_name');
-            $table->integer('weight');
-            $table->integer('amount');
+            $table->float('ordered_quantity')->nullable();
+            $table->float('ordered_quantity2')->nullable();
             $table->string('storage_room');
             $table->string('note')->nullable();
             $table->boolean('status');

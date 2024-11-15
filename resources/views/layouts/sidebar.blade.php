@@ -24,7 +24,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="" class="nav-link has-dropdown">
+                    <a href="{{ route('ShowStock') }}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>
                             N/A
@@ -101,6 +101,22 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 Manage Users
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('excel.form') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Excel
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ProductReceiptPlan') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                1. Product Pickup Plan
                             </p>
                         </a>
                     </li>

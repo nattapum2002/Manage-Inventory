@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('product_receipt_plan', function (Blueprint $table) {
             $table->id();
-            $table->string('product_receipt_id');
+            $table->string('product_receipt_plan_id');
+            $table->string('product_receipt_plan_name');
             $table->date('date');
             $table->string('shift_id');
             $table->string('note')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('customer', function (Blueprint $table) {
             $table->id();
             $table->string('customer_id');
+            $table->string('customer_number');
             $table->string('customer_name');
             $table->string('customer_grade');
             $table->string('note')->nullable();
-            $table->boolean('status')->default(0);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

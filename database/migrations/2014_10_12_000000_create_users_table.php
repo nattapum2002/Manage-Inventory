@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('note')->nullable();
             // $table->string('email')->unique();
             // $table->timestamp('email_verified_at')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

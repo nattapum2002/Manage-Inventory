@@ -14,13 +14,12 @@ return new class extends Migration
         Schema::create('customer_order_detail', function (Blueprint $table) {
             $table->id();
             $table->string('product_id');
-            $table->string('product_name');
-            $table->integer('amount_order');
-            $table->integer('amount_paid');
-            $table->string('bag_color');
-            $table->string('order_id');
+            $table->float('ordered_quantity')->nullable();
+            $table->float('ordered_quantity2')->nullable();
+            $table->string('bag_color')->nullable();
+            $table->string('order_number');
             $table->string('note')->nullable();
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

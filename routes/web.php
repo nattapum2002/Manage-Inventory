@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExcelImportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,7 +38,9 @@ Route::get('/manageshift', function () {
 //     return view('Admin.ManageStock.managerecivestock');
 // })->name('ManageStock');
 
-
+Route::get('/uploadExcel', [ExcelImportController::class, 'showUploadForm'])->name('excel.form');
+Route::post('/upload-preview', [ExcelImportController::class, 'uploadAndPreview'])->name('excel.preview');
+Route::post('/save-data', [ExcelImportController::class, 'saveExcelData'])->name('excel.save');
 
 Route::get('/', [App\Http\Controllers\LoginController::class, 'index'])->name('Login.index');
 Route::post('/Login', [App\Http\Controllers\LoginController::class, 'login'])->name('Login');
@@ -55,15 +58,11 @@ Route::get('ShowStatDate', [App\Http\Controllers\ShowStat::class, 'show_date'])-
 Route::get('/ShowStock/Cold-A', [App\Http\Controllers\ShowStock::class, 'stock_coldA'])->name('ShowStockA');
 Route::get('/ShowStock/Cold-C', [App\Http\Controllers\ShowStock::class, 'stock_coldC'])->name('ShowStockC');
 Route::get('/Admin/ShowStock', [App\Http\Controllers\ShowStock::class, 'Admin_index'])->name('AdminShowStock');
-Route::get('/Edit-name/{product_id}',[App\Http\Controllers\ShowStock::class, 'Detail'])->name('Edit name');
+Route::get('/Edit-name/{product_id}', [App\Http\Controllers\ShowStock::class, 'Detail'])->name('Edit name');
 Route::post('Updatename', [App\Http\Controllers\ShowStock::class, 'edit_name'])->name('Updatename');
 Route::get('/Admin/Dashboard', function () {
     return view('Admin.Dashboard.index');
 })->name('Dashboard.Admin');
-
-Route::get('/ManageLockStock', function () {
-    return view('Admin.ManageLockStock.managelockstock');
-})->name('ManageLockStock');
 
 Route::get('/ManageQueue', function () {
     return view('Admin.ManageQueue.managequeue');
@@ -77,6 +76,19 @@ Route::get('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class
 Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [App\Http\Controllers\ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
 Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
 Route::get('/ManageShift/DeleteShift/{shift_id}/{user_id}', [App\Http\Controllers\ShiftController::class, 'DeleteShift'])->name('DeleteShift');
+
+Route::get('/ManageLockStock', [App\Http\Controllers\LockController::class, 'index'])->name('ManageLockStock');
+Route::get('/ManageLockStock/Detail/{order_id}', [App\Http\Controllers\LockController::class, 'DetailLockStock'])->name('DetailLockStock');
+Route::get('/ManageLockStock/Detail/{order_id}/AddPallet', [App\Http\Controllers\LockController::class, 'AddPallet'])->name('AddPallet');
+Route::get('/ManageLockStock/Detail/AddPallet/AutoCompleteAddPallet', [App\Http\Controllers\LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
+Route::post('/ManageLockStock/Detail/{order_id}/Save', [App\Http\Controllers\LockController::class, 'SavePallet'])->name('SavePallet');
+Route::get('/ManageLockStock/Detail/{order_id}/Pallet/{pallet_id}', [App\Http\Controllers\LockController::class, 'DetailPallets'])->name('DetailPallets');
+
+Route::get('/ProductReceiptPlan', [App\Http\Controllers\ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Add', [App\Http\Controllers\ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Add/Save', [App\Http\Controllers\ProductReceiptPlanController::class, 'SaveProductReceiptPlan'])->name('SaveProductReceiptPlan');
+Route::get('/ProductReceiptPlan/Edit/{product_receipt_plan_id}', [App\Http\Controllers\ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Edit/Save', [App\Http\Controllers\ProductReceiptPlanController::class, 'SaveEditProductReceiptPlan'])->name('SaveEditProductReceiptPlan');
 
 Route::get('AddItem', function () {
     return view('Admin.ManageStock.addstock');

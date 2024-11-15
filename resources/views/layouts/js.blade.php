@@ -170,7 +170,7 @@
                 });
             },
             minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
-            select: function(event, ui ,response) {
+            select: function(event, ui, response) {
                 // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
                 $(idSelector).val(ui.item.product_no); // เติมรหัสสินค้าในช่องรหัสสินค้า
                 $(nameSelector).val(ui.item.value); // เติมชื่อสินค้าในช่องชื่อสินค้า
@@ -358,6 +358,7 @@
     }
     initializeShiftAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
 </script>
+
 <script>
     $(document).ready(function() {
         let fields = ['user_id', 'name', 'surname', 'position'];
@@ -456,6 +457,114 @@
     }
 </script>
 
+<script>
+    var product_count = 1;
+
+    $('#add-product').click(function() {
+        product_count++;
+        $('#add-products').append(`
+            <div class="row" id="product-${product_count}">
+                <div class="col-11">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="product_id[${product_count}]" class="form-label">รหัสสินค้า</label>
+                                <input type="text" class="form-control" id="product_id${product_count}"
+                                    name="product_id[${product_count}]" readonly>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="product_name[${product_count}]" class="form-label">รายการ</label>
+                                <input type="text" class="form-control" id="product_name${product_count}"
+                                    name="product_name[${product_count}]">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="amount_order[${product_count}]" class="form-label">สั่งจ่าย</label>
+                                <input type="text" class="form-control" id="amount_order${product_count}"
+                                    name="amount_order[${product_count}]" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="bag_color[${product_count}]" class="form-label">สีถุง</label>
+                                <input type="text" class="form-control" id="bag_color${product_count}"
+                                    name="bag_color[${product_count}]" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="note[${product_count}]" class="form-label">หมายเหตุ</label>
+                                <input type="text" class="form-control" id="note${product_count}" name="note[${product_count}]"
+                                    disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-1">
+                        <label for="remove-product" class="form-label">#</label>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger remove-product">ลบ</button>
+                    </div>
+                </div>
+            </div>
+        `);
+        // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
+        initializePalletAutocomplete(`#product_name${product_count}`, `#product_id${product_count}`,
+            `#amount_order${product_count}`,
+            `#bag_color${product_count}`,
+            `#note${product_count}`
+        );
+    });
+
+    // ฟังก์ชันสำหรับลบแถว
+    $(document).on('click', '.remove-product', function() {
+        $(this).closest('[id^="product-"]').remove();
+    });
+
+    // ฟังก์ชันสำหรับ autocomplete
+    function initializePalletAutocomplete(product_nameSelector, product_idSelector, amount_orderSelector,
+        bag_colorSelector, noteSelector) {
+        $(product_nameSelector).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{{ route('AutoCompleteAddPallet') }}",
+                    data: {
+                        query: request.term
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                    },
+                    // error: function(xhr, status, error) {
+                    //     alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
+                    //     console.log(xhr.responseText);
+                    // }
+                });
+            },
+            minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
+            select: function(event, ui) {
+                // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
+                $(product_idSelector).val(ui.item.product_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
+                $(product_nameSelector).val(ui.item.product_name); // เติมชื่อสินค้าในช่องชื่อสินค้า
+                $(amount_orderSelector).val(ui.item.amount_order);
+                $(bag_colorSelector).val(ui.item.bag_color);
+                $(noteSelector).val(ui.item.note);
+            }
+        });
+
+        $(product_nameSelector).focus(function() {
+            $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
+        });
+    }
+    initializePalletAutocomplete(`#product_name0`, `#product_id0`, `#amount_order0`, `#bag_color0`, `#note0`);
+</script>
 
 <script>
     $(document).ready(function() {
@@ -503,6 +612,7 @@
         })
     });
 </script>
+
 <script>
     $(function() {
         $("#userstable").DataTable({
@@ -613,6 +723,45 @@
             }
         });
         $("#Shifttable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#locktable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#pallte").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#ProductReceiptPlanTable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
