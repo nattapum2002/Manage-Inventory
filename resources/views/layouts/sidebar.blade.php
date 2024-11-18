@@ -89,6 +89,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('ManageTeam') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Manage Team
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('ManageStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>

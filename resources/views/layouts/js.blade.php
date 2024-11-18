@@ -148,11 +148,13 @@
     `);
 
         // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
-        initializeAutocomplete(`#item_name_${item_count}`, `#item_id_${item_count}`,`#item_um_${item_count}`,`#item_um2_${item_count}`,`#room_id_${item_count}`,`#save_item_id_${item_count}`);
+        initializeAutocomplete(`#item_name_${item_count}`, `#item_id_${item_count}`, `#item_um_${item_count}`,
+            `#item_um2_${item_count}`, `#room_id_${item_count}`, `#save_item_id_${item_count}`);
     });
 
     // ฟังก์ชัน autocomplete
-    function initializeAutocomplete(nameSelector, idSelector,umSelector,um2Selector,roomSelector,save_item_idSelector) {
+    function initializeAutocomplete(nameSelector, idSelector, umSelector, um2Selector, roomSelector,
+        save_item_idSelector) {
         $(nameSelector).autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -186,7 +188,7 @@
             $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
         });
     }
-    initializeAutocomplete('#item_name_1', '#item_id_1','#item_um_1','#item_um2_1', '#room_id_1','#save_item_id_1');
+    initializeAutocomplete('#item_name_1', '#item_id_1', '#item_um_1', '#item_um2_1', '#room_id_1', '#save_item_id_1');
 
     // ฟังก์ชันสำหรับลบแถว
     $(document).on('click', '.remove-item', function() {
@@ -653,6 +655,19 @@
             }
         });
         $("#ProductReceiptPlanTable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#Teamtable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
