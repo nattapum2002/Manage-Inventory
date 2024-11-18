@@ -47,9 +47,16 @@ Route::post('/Login', [App\Http\Controllers\LoginController::class, 'login'])->n
 Route::get('/Logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('Logout');
 
 Route::get('NewItem', function () {
-    return view('Stock.additem');
+    return view('Admin.Stock.additem');
 })->name('NewItem');
-Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
+Route::get('ShowStat/Dispense/{date}', function ($date) {
+    return view('Stat.ShowDispenseStat', compact('date'));
+})->name('Show_dispense_stat');
+Route::get('ShowStat/Imported/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat'])->name('Show_imported_stat');
+Route::get('ShowStatDate', [App\Http\Controllers\ShowStat::class, 'show_date'])->name('ShowStatDate');
+// Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
+Route::get('/ShowStock/Cold-A', [App\Http\Controllers\ShowStock::class, 'stock_coldA'])->name('ShowStockA');
+Route::get('/ShowStock/Cold-C', [App\Http\Controllers\ShowStock::class, 'stock_coldC'])->name('ShowStockC');
 Route::get('/Admin/ShowStock', [App\Http\Controllers\ShowStock::class, 'Admin_index'])->name('AdminShowStock');
 Route::get('/Edit-name/{product_id}', [App\Http\Controllers\ShowStock::class, 'Detail'])->name('Edit name');
 Route::post('Updatename', [App\Http\Controllers\ShowStock::class, 'edit_name'])->name('Updatename');
