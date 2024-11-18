@@ -76,11 +76,11 @@ Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::clas
 Route::get('/ManageShift/DeleteShift/{shift_id}/{user_id}', [App\Http\Controllers\ShiftController::class, 'DeleteShift'])->name('DeleteShift');
 
 Route::get('/ManageLockStock', [App\Http\Controllers\LockController::class, 'index'])->name('ManageLockStock');
-Route::get('/ManageLockStock/Detail/{order_id}', [App\Http\Controllers\LockController::class, 'DetailLockStock'])->name('DetailLockStock');
-Route::get('/ManageLockStock/Detail/{order_id}/AddPallet', [App\Http\Controllers\LockController::class, 'AddPallet'])->name('AddPallet');
-Route::get('/ManageLockStock/Detail/AddPallet/AutoCompleteAddPallet', [App\Http\Controllers\LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
-Route::post('/ManageLockStock/Detail/{order_id}/Save', [App\Http\Controllers\LockController::class, 'SavePallet'])->name('SavePallet');
-Route::get('/ManageLockStock/Detail/{order_id}/Pallet/{pallet_id}', [App\Http\Controllers\LockController::class, 'DetailPallets'])->name('DetailPallets');
+Route::get('/ManageLockStock/Detail/{order_number}', [App\Http\Controllers\LockController::class, 'DetailLockStock'])->name('DetailLockStock');
+Route::get('/ManageLockStock/Detail/{order_number}/AddPallet', [App\Http\Controllers\LockController::class, 'AddPallet'])->name('AddPallet');
+Route::get('/ManageLockStock/Detail/AddPallet/AutoCompleteAddPallet/{order_number}', [App\Http\Controllers\LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
+Route::post('/ManageLockStock/Detail/{order_number}/Save', [App\Http\Controllers\LockController::class, 'SavePallet'])->name('SavePallet');
+Route::get('/ManageLockStock/Detail/{order_number}/Pallet/{pallet_id}', [App\Http\Controllers\LockController::class, 'DetailPallets'])->name('DetailPallets');
 
 Route::get('/ProductReceiptPlan', [App\Http\Controllers\ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
 Route::post('/ProductReceiptPlan/Add', [App\Http\Controllers\ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');

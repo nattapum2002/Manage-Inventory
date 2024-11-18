@@ -25,7 +25,7 @@
                                 <tbody>
                                     @foreach ($CustomerOrders as $CustomerOrder)
                                         <tr>
-                                            <td>{{ $CustomerOrder->order_number }}</td>
+                                            <td>{{ intval($CustomerOrder->order_number) }}</td>
                                             <td>{{ $CustomerOrder->customer_name }}</td>
                                             <td>{{ $CustomerOrder->team_name ?? 'ไม่มี' }}</td>
                                             <td>{{ $CustomerOrder->note }}</td>

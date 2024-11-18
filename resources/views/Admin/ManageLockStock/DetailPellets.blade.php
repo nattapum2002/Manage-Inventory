@@ -51,7 +51,7 @@
                                             <td>{{ $CustomerOrder->note }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
-                                                <a href="{{ route('DetailLockStock', $CustomerOrder->order_id) }}"
+                                                <a href="{{ route('DetailLockStock', $CustomerOrder->order_number) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>
@@ -77,11 +77,11 @@
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     รวมสั่งจ่าย :
-                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_id', $Pallets[0]->order_id)->sum('amount_order') }}
+                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_order') }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     รวมจ่ายจริง :
-                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_id', $Pallets[0]->order_id)->sum('amount_paid') }}
+                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_paid') }}
                                                 </div>
                                             </div>
                                         </th>
