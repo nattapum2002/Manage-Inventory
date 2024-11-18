@@ -25,13 +25,13 @@
                                 <tbody>
                                     @foreach ($CustomerOrders as $CustomerOrder)
                                         <tr>
-                                            <td>{{ $CustomerOrder->order_id }}</td>
+                                            <td>{{ intval($CustomerOrder->order_number) }}</td>
                                             <td>{{ $CustomerOrder->customer_name }}</td>
                                             <td>{{ $CustomerOrder->team_name }}</td>
                                             <td>{{ $CustomerOrder->note }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
-                                                <a href="{{ route('DetailLockStock', $CustomerOrder->order_id) }}"
+                                                <a href="{{ route('DetailLockStock', $CustomerOrder->order_number) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>

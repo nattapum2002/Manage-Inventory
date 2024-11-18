@@ -68,14 +68,73 @@
                                     <tbody>
                                         @foreach ($ProductReceiptPlansDetails as $Product)
                                             <tr>
-                                                <td>{{ $Product->product_id }}</td>
-                                                <td>{{ $Product->product_name }}</td>
-                                                <td>{{ $Product->product_quantity }}</td>
-                                                <td>{{ $Product->increase_quantity }}</td>
-                                                <td>{{ $Product->reduce_quantity }}</td>
-                                                <td>{{ $Product->total_quantity }}</td>
-                                                <td>{{ $Product->note ?? 'N/A' }}</td>
                                                 <td>
+                                                    <span id="product_id_{{ $Product->product_id }}">
+                                                        {{ $Product->product_id }}
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_product_id_{{ $Product->product_id }}" name="product_id"
+                                                        value="{{ $Product->product_id }}" style="display:none;" readonly>
+                                                </td>
+                                                <td>
+                                                    <span id="product_name_{{ $Product->product_name }}">
+                                                        {{ $Product->product_name }}
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_product_name_{{ $Product->product_name }}"
+                                                        name="product_name" value="{{ $Product->product_name }}"
+                                                        style="display:none;">
+                                                </td>
+                                                <td>
+                                                    <span id="product_quantity_{{ $Product->product_quantity }}">
+                                                        {{ $Product->product_quantity }}
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_product_quantity_{{ $Product->product_quantity }}"
+                                                        name="product_quantity" value="{{ $Product->product_quantity }}"
+                                                        style="display:none;">
+                                                </td>
+                                                <td>
+                                                    <span id="increase_quantity_{{ $Product->increase_quantity }}">
+                                                        {{ $Product->increase_quantity }}
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_increase_quantity_{{ $Product->increase_quantity }}"
+                                                        name="increase_quantity" value="{{ $Product->increase_quantity }}"
+                                                        style="display:none;">
+                                                </td>
+                                                <td>
+                                                    <span id="reduce_quantity_{{ $Product->reduce_quantity }}">
+                                                        {{ $Product->reduce_quantity }}
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_reduce_quantity_{{ $Product->reduce_quantity }}"
+                                                        name="reduce_quantity" value="{{ $Product->reduce_quantity }}"
+                                                        style="display:none;">
+                                                </td>
+                                                <td>
+                                                    <span id="total_quantity_{{ $Product->total_quantity }}">
+                                                        {{ $Product->total_quantity }}
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_total_quantity_{{ $Product->total_quantity }}"
+                                                        name="total_quantity" value="{{ $Product->total_quantity }}"
+                                                        style="display:none;">
+                                                </td>
+                                                <td>
+                                                    <span id="note_{{ $Product->note }}">
+                                                        {{ $Product->note ?? 'N/A' }}
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_note_{{ $Product->note }}" name="note"
+                                                        value="{{ $Product->note ?? 'N/A' }}" style="display:none;">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary edit_product"
+                                                        data-product-id="{{ $Product->product_id }}">แก้ไข</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="cancel_edit_product_{{ $Product->product_id }}"
+                                                        style="display:none;">ยกเลิก</button>
                                                     {{-- <a href="#" class="btn btn-danger btn-sm"
                                                         onclick="DeleteProductReceiptPlanDetail({{ $Product->product_receipt_plan_detail_id }})">
                                                         <i class="fas fa-trash"></i>

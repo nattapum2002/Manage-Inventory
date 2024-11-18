@@ -67,7 +67,7 @@
                                                 <td>{{ $row[3] }}</td>
                                                 <td>{{ $row[4] }}</td>
                                                 <td>{{ $row[5] }}</td>
-                                                <td>{{ $row[6] }}</td>
+                                                <td>{{ $row[6] ?? 'N/A' }}</td>
                                                 <td></td>
                                             </tr>
                                         @endforeach

@@ -17,14 +17,14 @@
                             <table id="locktable" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th colspan="8">
+                                        <th colspan="10">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     ชื่อลูกค้า : {{ $CustomerOrders[0]->customer_name }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    {{-- ทีม : {{ $CustomerOrders[0]->team_name }} --}}
+                                                    ทีม : {{ $CustomerOrders[0]->team_name }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     วันที่ : {{ $CustomerOrders[0]->date }}
@@ -35,8 +35,10 @@
                                     <tr>
                                         <th>รหัสสินค้า</th>
                                         <th>รายการ</th>
-                                        <th>สั่งจ่าย</th>
-                                        <th>จ่ายจริง</th>
+                                        <th>จำนวน</th>
+                                        <th>UOM</th>
+                                        <th>จำนวน</th>
+                                        <th>UOM2</th>
                                         <th>สีถุง</th>
                                         <th>หมายเหตุ</th>
                                         <th>สถานะ</th>
@@ -44,17 +46,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($CustomerOrders as $CustomerOrder)
+                                    @foreach ($CustomerOrderDetails as $CustomerOrder)
                                         <tr>
                                             <td>{{ $CustomerOrder->product_id }}</td>
                                             <td>{{ $CustomerOrder->product_name }}</td>
-                                            <td>{{ $CustomerOrder->amount_order }}</td>
-                                            <td>{{ $CustomerOrder->amount_paid }}</td>
+                                            <td>{{ $CustomerOrder->ordered_quantity }}</td>
+                                            <td>{{ $CustomerOrder->product_uom }}</td>
+                                            <td>{{ $CustomerOrder->ordered_quantity2 }}</td>
+                                            <td>{{ $CustomerOrder->product_uom2 }}</td>
                                             <td>{{ $CustomerOrder->bag_color }}</td>
                                             <td>{{ $CustomerOrder->note }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
-                                                {{-- <a href="{{ route('DetailLockStock', $CustomerOrder->order_id) }}"
+                                                {{-- <a href="{{ route('DetailLockStock', $CustomerOrder->order_number) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a> --}}
                                             </td>
                                         </tr>
@@ -64,15 +68,17 @@
                                     <tr>
                                         <th>รหัสสินค้า</th>
                                         <th>รายการ</th>
-                                        <th>สั่งจ่าย</th>
-                                        <th>จ่ายจริง</th>
+                                        <th>จำนวน</th>
+                                        <th>UOM</th>
+                                        <th>จำนวน</th>
+                                        <th>UOM2</th>
                                         <th>สีถุง</th>
                                         <th>หมายเหตุ</th>
                                         <th>สถานะ</th>
                                         <th></th>
                                     </tr>
                                     <tr>
-                                        <th colspan="8">
+                                        <th colspan="10">
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
                                                     หมายเหตุ : {{ $CustomerOrders[0]->note }}
@@ -93,7 +99,7 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3 class="card-title">พาเลท (Pallets)</h3>
-                                <a href="{{ route('AddPallet', $CustomerOrders[0]->order_id) }}"
+                                <a href="{{ route('AddPallet', $CustomerOrders[0]->order_number) }}"
                                     class="btn btn-primary">เพิ่มพาเลท</a>
                             </div>
                         </div>
@@ -123,7 +129,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($Pallets->where('order_id', $CustomerOrders[0]->order_id) as $Pallet)
+                                    @foreach ($Pallets->where('order_number', $CustomerOrders[0]->order_number) as $Pallet)
                                         <tr>
                                             <td>{{ $Pallet->pallet_id }}</td>
                                             <td>{{ $Pallet->pallet_no }}</td>
@@ -131,7 +137,7 @@
                                             <td>{{ $Pallet->note }}</td>
                                             <td>{{ $Pallet->status }}</td>
                                             <td>
-                                                <a href="{{ route('DetailPallets', ['order_id' => $Pallet->order_id, 'pallet_id' => $Pallet->pallet_id]) }}"
+                                                <a href="{{ route('DetailPallets', ['order_number' => $Pallet->order_number, 'pallet_id' => $Pallet->pallet_id]) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>
