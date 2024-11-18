@@ -12,10 +12,8 @@ class LockController extends Controller
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
-            ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
-            ->select('customer_order.order_number', 'customer.customer_name', 'lock_team.team_name', 'customer_order.note', 'customer_order.status')
-            ->distinct()
             ->get();
+            // dd($CustomerOrders);
         return view('Admin.ManageLockStock.managelockstock', compact('CustomerOrders'));
     }
 
@@ -24,18 +22,15 @@ class LockController extends Controller
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
-            ->where('customer_order.order_number', '=', $order_number)
-            ->get();
-        $CustomerOrderDetails = DB::table('customer_order_detail')
-            ->join('product_detail', 'customer_order_detail.product_id', '=', 'product_detail.product_id')
-            ->where('customer_order_detail.order_number', '=', $order_number)
+            ->join('customer_order_detail', 'customer_order.order_id', '=', 'customer_order_detail.order_id')
+            ->where('customer_order.order_id', '=', $order_id)
             ->get();
         $LockTeams = DB::table('lock_team')
             ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
             ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
             ->get();
         $Pallets = DB::table('pallet')->get();
-        return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets', 'CustomerOrderDetails'));
+        return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets'));
     }
 
     public function AddPallet($order_number)
@@ -60,7 +55,8 @@ class LockController extends Controller
                     'room' => $data['room'],
                     'order_number' => $order_number,
                     'note' => $data['note'] ?? null,
-                    'status' => 0
+                    'status' => 0,
+                    'created_at' => now(),
                 ]
             );
 

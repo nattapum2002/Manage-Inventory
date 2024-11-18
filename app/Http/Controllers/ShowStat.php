@@ -16,7 +16,7 @@ class ShowStat extends Controller
     return view('Stat.Statdate', compact('show_per_date'));
     }
 
-    public function show_stat($date)
+    public function show_stat_imported($date)
 {
     // Fetch the product data in one query for the given date
     $data = DB::table('product_store')
@@ -65,6 +65,11 @@ class ShowStat extends Controller
     }
     return view('Stat.ShowimportedStat', ['summary' => $summary , 'date' => $date]);
 }
+    public function show_stat_dispense($date){
+        dd($date);
+
+        return view('Stat.ShowDispenseStat', compact('date'));
+    }
 
     
 }
