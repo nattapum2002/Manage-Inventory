@@ -11,24 +11,26 @@ class LockController extends Controller
     {
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
+            // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
             ->get();
+            // dd($CustomerOrders);
         return view('Admin.ManageLockStock.managelockstock', compact('CustomerOrders'));
     }
 
-    public function DetailLockStock($order_id)
+    public function DetailLockStock($order_number)
     {
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
-            ->join('customer_order_detail', 'customer_order.order_id', '=', 'customer_order_detail.order_id')
-            ->where('customer_order.order_id', '=', $order_id)
+            ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
+            ->where('customer_order.order_number', '=', $order_number)
             ->get();
         $LockTeams = DB::table('lock_team')
             ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
             ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
             ->get();
         $Pallets = DB::table('pallet')->get();
+        dd($CustomerOrders);
         return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets'));
     }
 
@@ -55,7 +57,8 @@ class LockController extends Controller
                     'room' => $data['room'],
                     'order_id' => $order_id,
                     'note' => $data['note'] ?? null,
-                    'status' => 0
+                    'status' => 0,
+                    'created_at' => now(),
                 ]
             );
 
