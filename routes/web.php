@@ -49,10 +49,8 @@ Route::get('/Logout', [App\Http\Controllers\LoginController::class, 'logout'])->
 Route::get('NewItem', function () {
     return view('Admin.Stock.additem');
 })->name('NewItem');
-Route::get('ShowStat/Dispense/{date}', function ($date) {
-    return view('Stat.ShowDispenseStat', compact('date'));
-})->name('Show_dispense_stat');
-Route::get('ShowStat/Imported/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat'])->name('Show_imported_stat');
+Route::get('ShowStat/Dispense/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat_dispense'])->name('Show_dispense_stat');
+Route::get('ShowStat/Imported/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat_imported'])->name('Show_imported_stat');
 Route::get('ShowStatDate', [App\Http\Controllers\ShowStat::class, 'show_date'])->name('ShowStatDate');
 // Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
 Route::get('/ShowStock/Cold-A', [App\Http\Controllers\ShowStock::class, 'stock_coldA'])->name('ShowStockA');
