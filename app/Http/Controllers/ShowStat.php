@@ -21,7 +21,7 @@ class ShowStat extends Controller
     // Fetch the product data in one query for the given date
     $data = DB::table('product_store')
         ->where('store_date', $date)
-        // ->where('product_store.status', 1)
+        ->where('product_store.status', 1)
         ->join('product_store_detail', 'product_store.product_slip_id', '=', 'product_store_detail.product_slip_id')
         ->join('stock', 'product_store_detail.product_id', '=', 'stock.product_id')
         ->join('product', 'stock.product_id', '=', 'product.item_id')
@@ -38,7 +38,7 @@ class ShowStat extends Controller
         ')
         ->groupBy('stock.product_id','product.item_desc1','product.item_um','product.item_um2' ,'product.item_no') // เพิ่มการ group โดยใช้ทั้ง product_id และ product_name
         ->get();
-
+    // dd($data);
     // Initialize the summary array
     $summary = [];
 
@@ -66,9 +66,34 @@ class ShowStat extends Controller
     return view('Stat.ShowimportedStat', ['summary' => $summary , 'date' => $date]);
 }
     public function show_stat_dispense($date){
-        dd($date);
 
-        return view('Stat.ShowDispenseStat', compact('date'));
+        $data = DB::table('pallet')
+        ->whereDate('pallet.created_at', $date)
+        ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
+        ->join('stock', 'pallet_order.product_id', '=', 'stock.product_id')
+        ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
+        ->selectRaw('
+            product.item_um,
+            product.item_um2,   
+            stock.product_id,
+            product.item_desc1,
+            product.item_no,
+            MAX(stock.quantity) as quantity,
+            MAX(stock.quantity2) as quantity2,
+            SUM(pallet_order.quantity) as total_quantity,
+            SUM(pallet_order.quantity2) as total_quantity2
+        ')
+        ->groupBy(
+            'stock.product_id',
+            'product.item_desc1',
+            'product.item_no',
+            'product.item_um',
+            'product.item_um2'
+        )
+        ->get();
+
+        // dd($data);
+        return view('Stat.ShowDispenseStat', compact(['data','date']));
     }
 
     

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('Users', App\Http\Controllers\UserController::class);
 
-Route::resource('ManageStock', App\Http\Controllers\managestock::class);
+Route::resource('ManageStock', App\Http\Controllers\ManageImportProduct::class);
 //Admin Routes
 
 Route::get('/manageshift', function () {
@@ -92,13 +92,13 @@ Route::get('AddItem', function () {
     return view('Admin.ManageStock.addstock');
 })->name('Add item');
 
-Route::get('/ManageStock', [App\Http\Controllers\managestock::class, 'index'])->name('ManageStock');
-Route::get('/ManageSlip/{date}', [App\Http\Controllers\managestock::class, 'show_slip'])->name('ManageSlip');
-Route::get('/SlipDetail/{slip_id}', [App\Http\Controllers\managestock::class, 'show_slip_detail'])->name('SlipDetail');
-Route::post('/EditSlipDetail', [App\Http\Controllers\managestock::class, 'edit'])->name('EditSlip');
-Route::post('/Add-Slip', [App\Http\Controllers\managestock::class, 'create'])->name('AddSlip');
-Route::get('/check-slip/{id}', [App\Http\Controllers\managestock::class, 'check_slip'])->name('CheckSlip');
-Route::get('autocomplete', [App\Http\Controllers\managestock::class, 'autocomplete'])->name('autocomplete');
+Route::get('/ManageStock', [App\Http\Controllers\ManageImportProduct::class, 'index'])->name('ManageStock');
+Route::get('/ManageSlip/{date}', [App\Http\Controllers\ManageImportProduct::class, 'show_slip'])->name('ManageSlip');
+Route::get('/SlipDetail/{slip_id}', [App\Http\Controllers\ManageImportProduct::class, 'show_slip_detail'])->name('SlipDetail');
+Route::post('/EditSlipDetail', [App\Http\Controllers\ManageImportProduct::class, 'edit'])->name('EditSlip');
+Route::post('/Add-Slip', [App\Http\Controllers\ManageImportProduct::class, 'create'])->name('AddSlip');
+Route::get('/check-slip/{id}', [App\Http\Controllers\ManageImportProduct::class, 'check_slip'])->name('CheckSlip');
+Route::get('autocomplete', [App\Http\Controllers\ManageImportProduct::class, 'autocomplete'])->name('autocomplete');
 //
 
 Route::get('/ManageUsers', [App\Http\Controllers\UserController::class, 'index'])->name('ManageUsers');

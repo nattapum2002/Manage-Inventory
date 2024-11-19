@@ -95,7 +95,7 @@
                                     <div class="col-2">
                                         Domestic Checker : {{ $show_detail[0]->domestic_checker ?? 'N/A' }}</div>
                                     <div class="col-2">
-                                        <a class="btn btn-success" type="button" href="{{route('CheckSlip', $slip_id)}}">ยืนยัน</a>
+                                        <a class="btn btn-success {{ $show_slip->status == 1 ? 'disabled' : ''}}" type="button" href="{{route('CheckSlip', $slip_id)}}">{{ $show_slip->status == 1 ? 'ตรวจสอบแล้ว' : 'ยืนยัน'}}</a>
                                     </div>
                                 </div>
                                
