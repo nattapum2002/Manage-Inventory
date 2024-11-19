@@ -281,44 +281,44 @@
     $('#add-user').click(function() {
         user_count++;
         $('#add-user-shift').append(`
-            <div class="row" id="user-${user_count}">
-                <div class="col-11">
-                    <div class="row">
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="user_id[${user_count}]" class="form-label">รหัสพนักงาน</label>
-                                <input type="text" class="form-control" id="user_id${user_count}" name="user_id[${user_count}]" readonly>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="name[${user_count}]" class="form-label">ชื่อ</label>
-                                <input type="text" class="form-control" id="name${user_count}" name="name[${user_count}]">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="surname[${user_count}]" class="form-label">นามสกุล</label>
-                                <input type="text" class="form-control" id="surname${user_count}" name="surname[${user_count}]" disabled>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="position[${user_count}]" class="form-label">ตำแหน่ง</label>
-                                <input type="text" class="form-control" id="position${user_count}" name="position[${user_count}]" disabled>
-                            </div>
+        <div class="row" id="user-${user_count}">
+            <div class="col-11">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="user_id[${user_count}]" class="form-label">รหัสพนักงาน</label>
+                            <input type="text" class="form-control" id="user_id${user_count}" name="user_id[${user_count}]" readonly>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-1">
-                        <label for="remove-user" class="form-label">#</label>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-danger remove-user">ลบ</button>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="name[${user_count}]" class="form-label">ชื่อ</label>
+                            <input type="text" class="form-control" id="name${user_count}" name="name[${user_count}]">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="surname[${user_count}]" class="form-label">นามสกุล</label>
+                            <input type="text" class="form-control" id="surname${user_count}" name="surname[${user_count}]" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="position[${user_count}]" class="form-label">ตำแหน่ง</label>
+                            <input type="text" class="form-control" id="position${user_count}" name="position[${user_count}]" disabled>
+                        </div>
                     </div>
                 </div>
             </div>
-        `);
+
+            <div class="col-1">
+                    <label for="remove-user" class="form-label">#</label>
+                <div class="form-group">
+                    <button type="button" class="btn btn-danger remove-user">ลบ</button>
+                </div>
+            </div>
+        </div>
+    `);
         // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
         initializeShiftAutocomplete(`#name${user_count}`, `#user_id${user_count}`, `#surname${user_count}`,
             `#position${user_count}`);
@@ -359,104 +359,6 @@
         });
     }
     initializeShiftAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
-</script>
-
-<script>
-    $(document).ready(function() {
-        let fields = ['user_id', 'name', 'surname', 'position'];
-
-        function hideEdit(edit_shift_productId) {
-            fields.forEach(function(field) {
-                $('#span_shift_' + field + '_' + edit_shift_productId).show();
-                $('#edit_shift_' + field + '_' + edit_shift_productId).hide();
-            });
-            $('.save_shift_btn').text('แก้ไข').removeClass('btn-success')
-                .addClass('btn-primary').removeClass('save_shift_btn').addClass('edit_shift');
-            $('#cancel_edit_shift_' + edit_shift_productId).hide();
-        }
-
-        $(document).on('click', '.edit_shift', function() {
-            let edit_shift_productId = $(this).data('shift-id');
-            fields.forEach(function(field) {
-                $('#span_shift_' + field + '_' + edit_shift_productId).hide();
-                $('#edit_shift_' + field + '_' + edit_shift_productId).show();
-            });
-            $('#cancel_edit_shift_' + edit_shift_productId).show();
-            $(this).text('บันทึก').removeClass('btn-primary').addClass('btn-success')
-                .removeClass('edit_shift').addClass('save_shift_btn').attr('type', 'button');
-
-            $('#cancel_edit_shift_' + edit_shift_productId).click(function() {
-                hideEdit(edit_shift_productId);
-            });
-
-            // Initialize autocomplete for each field when edit mode is activated
-            initializeEditShiftAutocomplete('#edit_shift_name_' + edit_shift_productId,
-                '#edit_shift_user_id_' +
-                edit_shift_productId, '#edit_shift_surname_' + edit_shift_productId,
-                '#edit_shift_position_' + edit_shift_productId);
-        });
-
-        $(document).on('click', '.save_shift_btn', function() {
-            let edit_shift_productId = $(this).data('shift-id');
-            let data_shift = {};
-
-            $.each(fields, function(index, field) {
-                data_shift[field] = $('#edit_shift_' + field + '_' + edit_shift_productId)
-                    .val();
-            });
-
-            $.ajax({
-                url: "{{ route('SaveEditShift') }}",
-                method: "POST",
-                dataType: "json",
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    shift_id: edit_shift_productId,
-                    shift_edit: data_shift,
-                },
-                success: function(response) {
-                    fields.forEach(function(field) {
-                        $('#span_shift_' + field + '_' + edit_shift_productId).text(
-                            data_shift[field]);
-                    });
-                    hideEdit(edit_shift_productId);
-                    alert('บันทึกข้อมูลสำเร็จ');
-                    console.log(response);
-                },
-                error: function(xhr, status, error) {
-                    alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
-                    console.log(xhr);
-                }
-            });
-        });
-    });
-
-    function initializeEditShiftAutocomplete(nameSelector, idSelector, surnameSelector, positionSelector) {
-        $(nameSelector).autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "{{ route('AutoCompleteAddShift') }}",
-                    data: {
-                        query: request.term
-                    },
-                    success: function(data) {
-                        response(data);
-                    }
-                });
-            },
-            minLength: 0,
-            select: function(event, ui) {
-                $(idSelector).val(ui.item.user_id);
-                $(nameSelector).val(ui.item.name);
-                $(surnameSelector).val(ui.item.surname);
-                $(positionSelector).val(ui.item.position);
-            }
-        });
-
-        $(nameSelector).focus(function() {
-            $(this).autocomplete('search', '');
-        });
-    }
 </script>
 
 <script>

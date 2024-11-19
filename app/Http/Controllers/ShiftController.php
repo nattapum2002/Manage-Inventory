@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\DB;
 
 class ShiftController extends Controller
 {
+    public $select_shifts = [
+        ['select_name' => 'A'],
+        ['select_name' => 'B'],
+        ['select_name' => 'C'],
+        ['select_name' => 'D'],
+        ['select_name' => 'E'],
+        ['select_name' => 'F'],
+    ];
+
     public function index()
     {
         $shifts = DB::table('work_shift')->get();
@@ -16,26 +25,71 @@ class ShiftController extends Controller
 
     public function EditShift($shift_id)
     {
+        $work_shifts = DB::table('work_shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
+
+        $filtered_shifts = array_filter($this->select_shifts, function ($team) use ($work_shifts) {
+            return !in_array($team['select_name'], $work_shifts);
+        });
+
         $shifts = DB::table('work_shift')
             ->join('shift_users', 'work_shift.shift_id', '=', 'shift_users.shift_id')
             ->join('users', 'shift_users.user_id', '=', 'users.user_id')
             ->where('work_shift.shift_id', $shift_id)->get();
-        return view('Admin.ManageShift.EditShift', compact('shifts'));
+        return view('Admin.ManageShift.EditShift', compact('shifts', 'filtered_shifts'));
     }
 
     public function SaveEditShift(Request $request)
     {
-        dd($request->all());
-        $shiftId = $request->input('shift_id');
-        $shiftData = $request->input('shift_edit');
-        DB::table('shift_users')->where('shift_id', $shiftId)->update([
-            'user_id' => $shiftData['user_id'],
+        // Validate the incoming data
+        $validated = $request->validate([
+            'shift_id' => 'required|exists:shift_users,shift_id', // ตรวจสอบ shift_id ในตาราง shift_users
+            'shift_edit.user_id' => 'required|exists:users,id', // ตรวจสอบ user_id ในตาราง users
+            'shift_edit.old_user_id' => 'required|exists:shift_users,user_id', // ตรวจสอบ old_user_id ในตาราง shift_users
         ]);
+
+        // Extract the validated data
+        $shift_id = $validated['shift_id'];
+        $new_user_id = $validated['shift_edit']['user_id'];
+        $old_user_id = $validated['shift_edit']['old_user_id'];
+
+        // หาก user_id เดิมและใหม่เหมือนกัน ไม่ต้องดำเนินการ
+        if ($new_user_id === $old_user_id) {
+            return response()->json([
+                "status" => false,
+                "data" => "No changes needed.",
+            ]);
+        }
+
+        // ตรวจสอบว่าความสัมพันธ์ใหม่มีอยู่แล้วหรือไม่
+        $existingRelation = DB::table('shift_users')
+            ->where('shift_id', $shift_id)
+            ->where('user_id', $new_user_id)
+            ->exists();
+
+        if ($existingRelation) {
+            return response()->json([
+                "status" => false,
+                "data" => "The relationship already exists.",
+            ]);
+        }
+
+        // ใช้ Transaction เพื่อความปลอดภัยของข้อมูล
+        DB::transaction(function () use ($shift_id, $old_user_id, $new_user_id) {
+            // อัปเดตข้อมูลในตาราง shift_users
+            DB::table('shift_users')
+                ->where('shift_id', $shift_id)
+                ->where('user_id', $old_user_id)
+                ->update([
+                    'user_id' => $new_user_id,
+                ]);
+        });
+
         return response()->json([
             "status" => true,
-            "data" => '200'
+            "data" => "The shift assignment has been updated successfully.",
         ]);
     }
+
 
     public function Toggle($shift_id, $status)
     {
@@ -48,24 +102,17 @@ class ShiftController extends Controller
 
     public function AddShift(Request $request)
     {
-        if ($request->isMethod('GET')) {
-            return view('Admin.ManageShift.AddShift');
-        }
-        // dd($request->all());
-        // $request->validate([
-        //     'shift_id' => 'required',
-        //     'shift_name' => 'required',
-        //     'start_shift' => 'required',
-        //     'end_shift' => 'required',
-        //     // 'name' => 'required',
-        // ], [
-        //     'shift_id.required' => 'กรุณากรอกรหัสกะ',
-        //     'shift_name.required' => 'กรุณากรอกชื่อกะ',
-        //     'start_shift.required' => 'กรุณากรอกเวลาเริ่มกะ',
-        //     'end_shift.required' => 'กรุณากรอกเวลาสิ้นสุดกะ',
-        //     // 'name.required' => 'กรุณากรอกชื่อพนักงาน',
-        // ]);
+        $work_shifts = DB::table('work_shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
 
+        $filtered_shifts = array_filter($this->select_shifts, function ($team) use ($work_shifts) {
+            return !in_array($team['select_name'], $work_shifts);
+        });
+
+        return view('Admin.ManageShift.AddShift', compact('filtered_shifts'));
+    }
+
+    public function SaveAddShift(Request $request)
+    {
         $data = $request->all();
         DB::transaction(function () use ($data) {
             DB::table('work_shift')->updateOrInsert(

@@ -13,7 +13,7 @@ class LockController extends Controller
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
             ->get();
-            // dd($CustomerOrders);
+        // dd($CustomerOrders);
         return view('Admin.ManageLockStock.managelockstock', compact('CustomerOrders'));
     }
 

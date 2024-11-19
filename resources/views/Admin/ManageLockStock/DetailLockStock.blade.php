@@ -46,7 +46,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($CustomerOrderDetails as $CustomerOrder)
+                                    @foreach ($CustomerOrders as $CustomerOrder)
                                         <tr>
                                             <td>{{ $CustomerOrder->product_id }}</td>
                                             <td>{{ $CustomerOrder->product_name }}</td>

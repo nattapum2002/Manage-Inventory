@@ -26,12 +26,10 @@
                                             <label for="shift_name">ชื่อกะพนักงาน</label>
                                             <select class="form-control" id="shift_name" name="shift_name">
                                                 <option selected value="">เลือกชื่อกะพนักงาน</option>
-                                                <option value="A">A</option>
-                                                <option value="B">B</option>
-                                                <option value="C">C</option>
-                                                <option value="D">D</option>
-                                                <option value="F">F</option>
-                                                <option value="G">G</option>
+                                                @foreach ($filtered_shifts as $shift)
+                                                    <option value="{{ $shift['select_name'] }}">{{ $shift['select_name'] }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
