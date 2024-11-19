@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    รายการสินค้าเข้า : {{ $date }}
+    รายการสินค้าออก: {{ $date }}
 @endsection
 @section('content')
     <main>
@@ -12,23 +12,25 @@
                         <th>รหัสสินค้า</th>
                         <th>ชื่อสินค้า</th>
                         <th class="text-center">ทั้งหมด(คงเหลือ)</th>
-                        <th class="text-center">ออก(จำนวน)</th>   
+                        <th class="text-center">ออก(จำนวน)</th> 
+                        <th>หน่วย</th>
+                        <th class="text-center">ทั้งหมด(คงเหลือ)</th>
+                        <th class="text-center">ออก(จำนวน)</th>  
+                        <th>หน่วย</th>
                     </thead>
                     <tbody>
-                        {{-- @foreach ($summary as $productId => $item)
+                        @foreach ($data as $item)
                         <tr>
-                            <td>{{ $productId }}</td> <!-- แสดง product_id -->
-                            <td>{{ $item['product_name'] }}</td> <!-- เข้าถึง 'product_name' -->
-                            <td class="text-success">+ {{ $item['total_amount'] }}</td> <!-- เข้าถึง 'total_amount' -->
-                            <td class="text-center">{{ $item['all_amount'] }}</td>
+                            <td>{{ $item->item_no }}</td> <!-- แสดง product_id -->
+                            <td>{{ $item->item_desc1 }}</td> <!-- เข้าถึง 'product_name' -->
+                            <td class="text-center">{{$item->quantity}}</td>
+                            <td class="text-center text-danger">- {{ $item->total_quantity}}</td> 
+                            <td>{{$item->item_um}}</td>
+                            <td class="text-center">{{$item->quantity2}}</td>
+                            <td class="text-center text-danger ">- {{ $item->total_quantity2 }}</td>
+                            <td>{{$item->item_um}}</td>
                         </tr>
-                        @endforeach --}}
-                        <tr>
-                            <td>000001</td>
-                            <td>ตับไก่ A</td>
-                            <td class="text-center">100</td>
-                            <td class="text-danger text-center">- 20</td>
-                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </article>

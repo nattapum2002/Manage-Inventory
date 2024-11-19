@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class managestock extends Controller
+
+class ManageImportProduct extends Controller
 {
     //
     public function index()
@@ -31,7 +32,17 @@ class managestock extends Controller
         DB::table('product_store')
         ->where('product_slip_id', $id)
         ->update(['status' => 1 , 'domestic_checker' => auth()->user()->user_id]);
-        return redirect()->back();
+        $this->sum($id);
+        return redirect()->back()->with('success', 'Data check successfully');
+    }
+    function sum($id){
+        $sum = DB::table('product_store_detail')
+        ->where('product_slip_id', $id)
+        ->get();
+        foreach ($sum as $item) {
+            DB::table('stock')->where('product_id', $item->product_id)->increment('quantity', $item->quantity);
+            DB::table('stock')->where('product_id', $item->product_id)->increment('quantity2', $item->quantity2);
+        }
     }
     public function show_slip_detail($slip_id)
     {
@@ -44,6 +55,7 @@ class managestock extends Controller
         $show_slip = DB::table('product_store')
         ->where('product_slip_id', $slip_id)
         ->first();
+
         return view('Admin.ManageStock.manageslipdetail', compact('show_detail', 'slip_id','show_slip'));
     }
 
@@ -127,8 +139,8 @@ class managestock extends Controller
                     'status' => 0,
                 ]);
 
-                DB::table('stock')->where('product_id', $data['save_item_id'][$key])->increment('quantity', $data['item_quantity'][$key]);
-                DB::table('stock')->where('product_id', $data['save_item_id'][$key])->increment('quantity2', $data['item_quantity2'][$key]);
+                // DB::table('stock')->where('product_id', $data['save_item_id'][$key])->increment('quantity', $data['item_quantity'][$key]);
+                // DB::table('stock')->where('product_id', $data['save_item_id'][$key])->increment('quantity2', $data['item_quantity2'][$key]);
             }
         });
 
