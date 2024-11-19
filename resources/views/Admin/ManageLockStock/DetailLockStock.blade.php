@@ -24,7 +24,7 @@
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    ทีม : {{ $CustomerOrders[0]->team_name }}
+                                                    ทีม : {{ $CustomerOrders[0]->team_name ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     วันที่ : {{ $CustomerOrders[0]->date }}

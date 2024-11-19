@@ -27,7 +27,7 @@
                                         <tr>
                                             <td>{{ intval($CustomerOrder->order_number) }}</td>
                                             <td>{{ $CustomerOrder->customer_name }}</td>
-                                            <td>{{ $CustomerOrder->team_name ?? 'ไม่มี' }}</td>
+                                            <td>{{ $CustomerOrder->team_name ?? 'N/A' }}</td>
                                             <td>{{ $CustomerOrder->note }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
