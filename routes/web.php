@@ -1,6 +1,16 @@
 <?php
 
 use App\Http\Controllers\ExcelImportController;
+use App\Http\Controllers\LockController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ManageStock;
+use App\Http\Controllers\ProductReceiptPlanController;
+use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\ShowStat;
+use App\Http\Controllers\ShowStock;
+use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,9 +52,9 @@ Route::get('/uploadExcel', [ExcelImportController::class, 'showUploadForm'])->na
 Route::post('/upload-preview', [ExcelImportController::class, 'uploadAndPreview'])->name('excel.preview');
 Route::post('/save-data', [ExcelImportController::class, 'saveExcelData'])->name('excel.save');
 
-Route::get('/', [App\Http\Controllers\LoginController::class, 'index'])->name('Login.index');
-Route::post('/Login', [App\Http\Controllers\LoginController::class, 'login'])->name('Login');
-Route::get('/Logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('Logout');
+Route::get('/', [LoginController::class, 'index'])->name('Login.index');
+Route::post('/Login', [LoginController::class, 'login'])->name('Login');
+Route::get('/Logout', [LoginController::class, 'logout'])->name('Logout');
 
 Route::get('NewItem', function () {
     return view('Admin.Stock.additem');
@@ -66,27 +76,40 @@ Route::get('/ManageQueue', function () {
     return view('Admin.ManageQueue.managequeue');
 })->name('ManageQueue');
 
-Route::get('/ManageShift', [App\Http\Controllers\ShiftController::class, 'index'])->name('ManageShift');
-Route::get('/ManageShift/Toggle/{shift_id}/{status}', [App\Http\Controllers\ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
-Route::get('/ManageShift/EditShift/{shift_id}', [App\Http\Controllers\ShiftController::class, 'EditShift'])->name('EditShift');
-Route::post('/ManageShift/EditShift/Save', [App\Http\Controllers\ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
-Route::get('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
-Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [App\Http\Controllers\ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
-Route::post('/ManageShift/AddShift', [App\Http\Controllers\ShiftController::class, 'AddShift'])->name('AddShift');
-Route::get('/ManageShift/DeleteShift/{shift_id}/{user_id}', [App\Http\Controllers\ShiftController::class, 'DeleteShift'])->name('DeleteShift');
+Route::prefix('ManageShift')->group(function () {
+    Route::get('/ManageShift', [ShiftController::class, 'index'])->name('ManageShift');
+    Route::get('/ManageShift/Toggle/{shift_id}/{status}', [ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
+    Route::get('/ManageShift/EditShift/{shift_id}', [ShiftController::class, 'EditShift'])->name('EditShift');
+    Route::post('/ManageShift/EditShift/Save', [ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
+    Route::get('/ManageShift/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
+    Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
+    Route::post('/ManageShift/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
+    Route::get('/ManageShift/DeleteShift/{shift_id}/{user_id}', [ShiftController::class, 'DeleteShift'])->name('DeleteShift');
+});
 
-Route::get('/ManageLockStock', [App\Http\Controllers\LockController::class, 'index'])->name('ManageLockStock');
-Route::get('/ManageLockStock/Detail/{order_number}', [App\Http\Controllers\LockController::class, 'DetailLockStock'])->name('DetailLockStock');
-Route::get('/ManageLockStock/Detail/{order_number}/AddPallet', [App\Http\Controllers\LockController::class, 'AddPallet'])->name('AddPallet');
-Route::get('/ManageLockStock/Detail/AddPallet/AutoCompleteAddPallet/{order_number}', [App\Http\Controllers\LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
-Route::post('/ManageLockStock/Detail/{order_number}/Save', [App\Http\Controllers\LockController::class, 'SavePallet'])->name('SavePallet');
-Route::get('/ManageLockStock/Detail/{order_number}/Pallet/{pallet_id}', [App\Http\Controllers\LockController::class, 'DetailPallets'])->name('DetailPallets');
+Route::prefix('ManageTeam')->group(function () {
+    Route::get('/', [TeamController::class, 'index'])->name('ManageTeam');
+    Route::get('/Toggle/{team_id}/{status}', [TeamController::class, 'Toggle'])->name('ManageTeam.Toggle');
+    Route::get('/EditTeam/{team_id}', [TeamController::class, 'EditTeam'])->name('EditTeam');
+    Route::post('/EditTeam/Save', [TeamController::class, 'SaveEditTeam'])->name('SaveEditTeam');
+    Route::get('/AddTeam', [TeamController::class, 'AddTeam'])->name('AddTeam');
+    Route::get('/AddTeam/AutoCompleteAddTeam', [TeamController::class, 'AutoCompleteAddTeam'])->name('AutoCompleteAddTeam');
+    Route::post('/AddTeam', [TeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
+    Route::get('/DeleteTeam/{team_id}/{user_id}', [TeamController::class, 'DeleteTeam'])->name('DeleteTeam');
+});
 
-Route::get('/ProductReceiptPlan', [App\Http\Controllers\ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
-Route::post('/ProductReceiptPlan/Add', [App\Http\Controllers\ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
-Route::post('/ProductReceiptPlan/Add/Save', [App\Http\Controllers\ProductReceiptPlanController::class, 'SaveProductReceiptPlan'])->name('SaveProductReceiptPlan');
-Route::get('/ProductReceiptPlan/Edit/{product_receipt_plan_id}', [App\Http\Controllers\ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
-Route::post('/ProductReceiptPlan/Edit/Save', [App\Http\Controllers\ProductReceiptPlanController::class, 'SaveEditProductReceiptPlan'])->name('SaveEditProductReceiptPlan');
+Route::get('/ManageLockStock', [LockController::class, 'index'])->name('ManageLockStock');
+Route::get('/ManageLockStock/Detail/{order_number}', [LockController::class, 'DetailLockStock'])->name('DetailLockStock');
+Route::get('/ManageLockStock/Detail/{order_number}/AddPallet', [LockController::class, 'AddPallet'])->name('AddPallet');
+Route::get('/ManageLockStock/Detail/AddPallet/AutoCompleteAddPallet/{order_number}', [LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
+Route::post('/ManageLockStock/Detail/{order_number}/Save', [LockController::class, 'SavePallet'])->name('SavePallet');
+Route::get('/ManageLockStock/Detail/{order_number}/Pallet/{pallet_id}', [LockController::class, 'DetailPallets'])->name('DetailPallets');
+
+Route::get('/ProductReceiptPlan', [ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Add', [ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Add/Save', [ProductReceiptPlanController::class, 'SaveProductReceiptPlan'])->name('SaveProductReceiptPlan');
+Route::get('/ProductReceiptPlan/Edit/{product_receipt_plan_id}', [ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
+Route::post('/ProductReceiptPlan/Edit/Save', [ProductReceiptPlanController::class, 'SaveEditProductReceiptPlan'])->name('SaveEditProductReceiptPlan');
 
 Route::get('AddItem', function () {
     return view('Admin.ManageStock.addstock');
@@ -101,17 +124,17 @@ Route::get('/check-slip/{id}', [App\Http\Controllers\ManageImportProduct::class,
 Route::get('autocomplete', [App\Http\Controllers\ManageImportProduct::class, 'autocomplete'])->name('autocomplete');
 //
 
-Route::get('/ManageUsers', [App\Http\Controllers\UserController::class, 'index'])->name('ManageUsers');
+Route::get('/ManageUsers', [UserController::class, 'index'])->name('ManageUsers');
 
 Route::get('/ManageUsers/Createuser', function () {
     return view('Admin.ManageUsers.createuser');
 })->name('Createuser');
 
-Route::post('/ManageUsers/Createuser', [App\Http\Controllers\UserController::class, 'create'])->name('ManageUsers.Createuser');
-Route::get('/ManageUsers/Toggle/{user_id}/{status}', [App\Http\Controllers\UserController::class, 'toggle'])->name('ManageUsers.Toggle');
-Route::get('/ManageUsers/Edituser/{user_id}', [App\Http\Controllers\UserController::class, 'edit'])->name('Edituser');
+Route::post('/ManageUsers/Createuser', [UserController::class, 'create'])->name('ManageUsers.Createuser');
+Route::get('/ManageUsers/Toggle/{user_id}/{status}', [UserController::class, 'toggle'])->name('ManageUsers.Toggle');
+Route::get('/ManageUsers/Edituser/{user_id}', [UserController::class, 'edit'])->name('Edituser');
 
-Route::post('/ManageUsers/Edituser/{user_id}', [App\Http\Controllers\UserController::class, 'update'])->name('Edituser.update');
+Route::post('/ManageUsers/Edituser/{user_id}', [UserController::class, 'update'])->name('Edituser.update');
 
 Route::get('/Profile', function () {
     return view('Admin.profile');
@@ -119,18 +142,18 @@ Route::get('/Profile', function () {
 
 //Manager Routes
 
-Route::get('/Manager/Dashboard', [App\Http\Controllers\StatisticsController::class, 'index'])->name('Dashboard.Manager');
+Route::get('/Manager/Dashboard', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
 
-Route::get('/Manager/ProductStore', [App\Http\Controllers\StatisticsController::class, 'ProductStore'])->name('ProductStore');
-Route::get('/Manager/ProductStore/{slip_id}', [App\Http\Controllers\StatisticsController::class, 'DetailProductStore'])->name('DetailProductStore');
+Route::get('/Manager/ProductStore', [StatisticsController::class, 'ProductStore'])->name('ProductStore');
+Route::get('/Manager/ProductStore/{slip_id}', [StatisticsController::class, 'DetailProductStore'])->name('DetailProductStore');
 
-Route::get('/Manager/ProductStock', [App\Http\Controllers\StatisticsController::class, 'ProductStock'])->name('ProductStock');
+Route::get('/Manager/ProductStock', [StatisticsController::class, 'ProductStock'])->name('ProductStock');
 
-Route::get('/Manager/CustomerOrder', [App\Http\Controllers\StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
-Route::get('/Manager/CustomerOrder/{order_id}', [App\Http\Controllers\StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
+Route::get('/Manager/CustomerOrder', [StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
+Route::get('/Manager/CustomerOrder/{order_id}', [StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
 
-Route::get('/Manager/Pallet', [App\Http\Controllers\StatisticsController::class, 'Pallet'])->name('Pallet');
-Route::get('/Manager/Pallet/{pallet_id}', [App\Http\Controllers\StatisticsController::class, 'DetailPallet'])->name('DetailPallet');
+Route::get('/Manager/Pallet', [StatisticsController::class, 'Pallet'])->name('Pallet');
+Route::get('/Manager/Pallet/{pallet_id}', [StatisticsController::class, 'DetailPallet'])->name('DetailPallet');
 
 Route::get('/Manager/Profile', function () {
     return view('Manager.profile');
