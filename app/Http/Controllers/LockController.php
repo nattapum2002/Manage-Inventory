@@ -11,7 +11,7 @@ class LockController extends Controller
     {
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
+            ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
             ->get();
             // dd($CustomerOrders);
         return view('Admin.ManageLockStock.managelockstock', compact('CustomerOrders'));
