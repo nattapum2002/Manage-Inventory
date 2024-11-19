@@ -77,14 +77,14 @@ Route::get('/ManageQueue', function () {
 })->name('ManageQueue');
 
 Route::prefix('ManageShift')->group(function () {
-    Route::get('/ManageShift', [ShiftController::class, 'index'])->name('ManageShift');
-    Route::get('/ManageShift/Toggle/{shift_id}/{status}', [ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
-    Route::get('/ManageShift/EditShift/{shift_id}', [ShiftController::class, 'EditShift'])->name('EditShift');
-    Route::post('/ManageShift/EditShift/Save', [ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
-    Route::get('/ManageShift/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
-    Route::get('/ManageShift/AddShift/AutoCompleteAddShift', [ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
-    Route::post('/ManageShift/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
-    Route::get('/ManageShift/DeleteShift/{shift_id}/{user_id}', [ShiftController::class, 'DeleteShift'])->name('DeleteShift');
+    Route::get('/', [ShiftController::class, 'index'])->name('ManageShift');
+    Route::get('/Toggle/{shift_id}/{status}', [ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
+    Route::get('/EditShift/{shift_id}', [ShiftController::class, 'EditShift'])->name('EditShift');
+    Route::post('/EditShift/Save', [ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
+    Route::get('/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
+    Route::get('/AddShift/AutoCompleteAddShift', [ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
+    Route::post('/AddShift', [ShiftController::class, 'SaveAddShift'])->name('SaveAddShift');
+    Route::get('/DeleteShift/{shift_id}/{user_id}', [ShiftController::class, 'DeleteShift'])->name('DeleteShift');
 });
 
 Route::prefix('ManageTeam')->group(function () {
@@ -98,18 +98,22 @@ Route::prefix('ManageTeam')->group(function () {
     Route::get('/DeleteTeam/{team_id}/{user_id}', [TeamController::class, 'DeleteTeam'])->name('DeleteTeam');
 });
 
-Route::get('/ManageLockStock', [LockController::class, 'index'])->name('ManageLockStock');
-Route::get('/ManageLockStock/Detail/{order_number}', [LockController::class, 'DetailLockStock'])->name('DetailLockStock');
-Route::get('/ManageLockStock/Detail/{order_number}/AddPallet', [LockController::class, 'AddPallet'])->name('AddPallet');
-Route::get('/ManageLockStock/Detail/AddPallet/AutoCompleteAddPallet/{order_number}', [LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
-Route::post('/ManageLockStock/Detail/{order_number}/Save', [LockController::class, 'SavePallet'])->name('SavePallet');
-Route::get('/ManageLockStock/Detail/{order_number}/Pallet/{pallet_id}', [LockController::class, 'DetailPallets'])->name('DetailPallets');
+Route::prefix('ManageLockStock')->group(function () {
+    Route::get('/', [LockController::class, 'index'])->name('ManageLockStock');
+    Route::get('/{order_number}', [LockController::class, 'DetailLockStock'])->name('DetailLockStock');
+    Route::get('/Detail/{order_number}/AddPallet', [LockController::class, 'AddPallet'])->name('AddPallet');
+    Route::get('/Detail/AddPallet/AutoCompleteAddPallet/{order_number}', [LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
+    Route::post('/Detail/{order_number}/Save', [LockController::class, 'SavePallet'])->name('SavePallet');
+    Route::get('/Detail/{order_number}/Pallet/{pallet_id}', [LockController::class, 'DetailPallets'])->name('DetailPallets');
+});
 
-Route::get('/ProductReceiptPlan', [ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
-Route::post('/ProductReceiptPlan/Add', [ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
-Route::post('/ProductReceiptPlan/Add/Save', [ProductReceiptPlanController::class, 'SaveProductReceiptPlan'])->name('SaveProductReceiptPlan');
-Route::get('/ProductReceiptPlan/Edit/{product_receipt_plan_id}', [ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
-Route::post('/ProductReceiptPlan/Edit/Save', [ProductReceiptPlanController::class, 'SaveEditProductReceiptPlan'])->name('SaveEditProductReceiptPlan');
+Route::prefix('ProductReceiptPlan')->group(function () {
+    Route::get('/', [ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
+    Route::post('/Add', [ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
+    Route::post('/Add/Save', [ProductReceiptPlanController::class, 'SaveProductReceiptPlan'])->name('SaveProductReceiptPlan');
+    Route::get('/Edit/{product_receipt_plan_id}', [ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
+    Route::post('/Edit/Save', [ProductReceiptPlanController::class, 'SaveEditProductReceiptPlan'])->name('SaveEditProductReceiptPlan');
+});
 
 Route::get('AddItem', function () {
     return view('Admin.ManageStock.addstock');

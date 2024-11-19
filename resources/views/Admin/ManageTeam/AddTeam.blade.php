@@ -30,7 +30,6 @@
                                                     <option value="{{ $team['select_name'] }}">{{ $team['select_name'] }}
                                                     </option>
                                                 @endforeach
-
                                             </select>
                                         </div>
                                     </div>
