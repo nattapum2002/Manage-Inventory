@@ -110,9 +110,12 @@ Route::prefix('ManageLockStock')->group(function () {
 Route::prefix('ProductReceiptPlan')->group(function () {
     Route::get('/', [ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
     Route::post('/Add', [ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
-    Route::post('/Add/Save', [ProductReceiptPlanController::class, 'SaveProductReceiptPlan'])->name('SaveProductReceiptPlan');
+    Route::post('/Add/Save', [ProductReceiptPlanController::class, 'SaveAddProductReceiptPlan'])->name('SaveAddProductReceiptPlan');
     Route::get('/Edit/{product_receipt_plan_id}', [ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
-    Route::post('/Edit/Save', [ProductReceiptPlanController::class, 'SaveEditProductReceiptPlan'])->name('SaveEditProductReceiptPlan');
+    Route::post('/Edit/AddProduct', [ProductReceiptPlanController::class, 'AddProduct'])->name('AddProduct');
+    Route::post('/Edit/SaveEditDetail', [ProductReceiptPlanController::class, 'SaveEditDetail'])->name('SaveEditDetail');
+    Route::post('/Edit/SaveEditProduct', [ProductReceiptPlanController::class, 'SaveEditProduct'])->name('SaveEditProduct');
+    Route::get('/Edit/Product/Autocomplete', [ProductReceiptPlanController::class, 'AutocompleteProduct'])->name('AutocompleteProduct');
 });
 
 Route::get('AddItem', function () {

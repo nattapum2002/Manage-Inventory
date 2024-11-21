@@ -17,14 +17,14 @@
                                         <th colspan="8">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">พาเลท :
-                                                    {{ $Pallets[0]->pallet_no }}
+                                                    {{ $Pallets[0]->pallet_no ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ห้อง :
-                                                    {{ $Pallets[0]->room }}
+                                                    {{ $Pallets[0]->room ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">สถานะ :
-                                                    {{ $Pallets[0]->status }}
+                                                    {{ $Pallets[0]->status ?? 'N/A' }}
                                                 </div>
                                             </div>
                                         </th>
@@ -44,11 +44,11 @@
                                     @foreach ($Pallets as $CustomerOrder)
                                         <tr>
                                             <td>{{ $CustomerOrder->product_id }}</td>
-                                            <td>{{ $CustomerOrder->product_name }}</td>
-                                            <td>{{ $CustomerOrder->amount_order }}</td>
-                                            <td>{{ $CustomerOrder->amount_paid }}</td>
-                                            <td>{{ $CustomerOrder->bag_color }}</td>
-                                            <td>{{ $CustomerOrder->note }}</td>
+                                            <td>{{ $CustomerOrder->product_name ?? 'N/A' }}</td>
+                                            <td>{{ $CustomerOrder->ordered_quantity ?? 'N/A' }}</td>
+                                            <td>{{ $CustomerOrder->amount_paid ?? 'N/A' }}</td>
+                                            <td>{{ $CustomerOrder->bag_color ?? 'N/A' }}</td>
+                                            <td>{{ $CustomerOrder->note ?? 'N/A' }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
                                                 <a href="{{ route('DetailLockStock', $CustomerOrder->order_number) }}"
@@ -72,16 +72,16 @@
                                         <th colspan="8">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    หมายเหตุ : {{ $Pallets[0]->note }}
+                                                    หมายเหตุ : {{ $Pallets[0]->note ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     รวมสั่งจ่าย :
-                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_order') }}
+                                                    {{-- {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_order') ?? 'N/A' }} --}}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     รวมจ่ายจริง :
-                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_paid') }}
+                                                    {{-- {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_paid') ?? 'N/A' }} --}}
                                                 </div>
                                             </div>
                                         </th>

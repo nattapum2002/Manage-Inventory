@@ -7,30 +7,43 @@ use Illuminate\Support\Facades\DB;
 
 class LockController extends Controller
 {
+    public $select_teams = [
+        ['select_name' => 'A'],
+        ['select_name' => 'B'],
+        ['select_name' => 'C'],
+        ['select_name' => 'D'],
+        ['select_name' => 'E'],
+        ['select_name' => 'F'],
+    ];
     public function index()
     {
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
+            ->select('customer_order.order_number', 'customer_order.note', 'customer_order.status', 'customer.customer_name', 'lock_team.team_name')
+            ->distinct()
             ->get();
         // dd($CustomerOrders);
         return view('Admin.ManageLockStock.managelockstock', compact('CustomerOrders'));
     }
 
-    public function DetailLockStock($order_id)
+    public function DetailLockStock($order_number)
     {
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
+            ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
             ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
-            ->where('customer_order.order_number', '=', $order_id)
+            ->join('product_detail', 'customer_order_detail.product_id', '=', 'product_detail.product_id')
+            ->where('customer_order.order_number', '=', $order_number)
             ->get();
         $LockTeams = DB::table('lock_team')
             ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
             ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
             ->get();
         $Pallets = DB::table('pallet')->get();
-        return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets'));
+        $team_names = DB::table('lock_team')->get();
+
+        return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets', 'team_names'));
     }
 
     public function AddPallet($order_number)

@@ -14,24 +14,25 @@
                             <h3 class="card-title">รายละเอียดคำสั่งซื้อ (Order detail)</h3>
                         </div>
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="customer_name">ชื่อลูกค้า</label>
+                                        <input type="text" class="form-control" id="customer_name" name="customer_name"
+                                            placeholder="ชื่อลูกค้า"
+                                            value="{{ $CustomerOrders[0]->customer_name ?? 'N/A' }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+
+                                </div>
+                            </div>
+                            <hr>
                             <table id="locktable" class="table table-bordered table-striped">
                                 <thead>
-                                    <tr>
-                                        <th colspan="10">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    ชื่อลูกค้า : {{ $CustomerOrders[0]->customer_name }}
-                                                </div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12"></div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    ทีม : {{ $CustomerOrders[0]->team_name ?? 'N/A' }}
-                                                </div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    วันที่ : {{ $CustomerOrders[0]->date }}
-                                                </div>
-                                            </div>
-                                        </th>
-                                    </tr>
                                     <tr>
                                         <th>รหัสสินค้า</th>
                                         <th>รายการ</th>
@@ -99,26 +100,48 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3 class="card-title">พาเลท (Pallets)</h3>
+
                                 <a href="{{ route('AddPallet', $CustomerOrders[0]->order_number) }}"
                                     class="btn btn-primary">เพิ่มพาเลท</a>
                             </div>
                         </div>
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="customer_name">ชื่อลูกค้า</label>
+                                        <input type="text" class="form-control" id="customer_name" name="customer_name"
+                                            placeholder="ชื่อลูกค้า"
+                                            value="{{ $CustomerOrders[0]->customer_name ?? 'N/A' }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="team_name">ชื่อทีม</label>
+                                        <select class="form-control" id="team_name" name="team_name">
+                                            <option selected value="{{ $CustomerOrders[0]->team_name ?? '' }}">
+                                                {{ $CustomerOrders[0]->team_name ?? 'เลือกชื่อทีม' }}
+                                            </option>
+                                            @foreach ($team_names->where('team_name', '!=', $CustomerOrders[0]->team_name ?? '') as $team)
+                                                <option value="{{ $team->team_name }}">
+                                                    {{ $team->team_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="date">วันที่</label>
+                                        <input type="date" class="form-control" id="date" name="date"
+                                            placeholder="วันที่"
+                                            value="{{ isset($CustomerOrders[0]->date) ? $CustomerOrders[0]->date : '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                             <table id="pallte" class="table table-bordered table-striped">
                                 <thead>
-                                    <tr>
-                                        <th colspan="6">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-md-6 col-sm-12">ชื่อลูกค้า :
-                                                    {{ $CustomerOrders[0]->customer_name }}</div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12"></div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12">ทีม :
-                                                    {{ $CustomerOrders[0]->team_name }}</div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12">วันที่ :
-                                                    {{ $CustomerOrders[0]->date }}</div>
-                                            </div>
-                                        </th>
-                                    </tr>
                                     <tr>
                                         <th>รหัสพาเลท</th>
                                         <th>หมายเลข</th>
@@ -132,9 +155,9 @@
                                     @foreach ($Pallets->where('order_number', $CustomerOrders[0]->order_number) as $Pallet)
                                         <tr>
                                             <td>{{ $Pallet->pallet_id }}</td>
-                                            <td>{{ $Pallet->pallet_no }}</td>
-                                            <td>{{ $Pallet->room }}</td>
-                                            <td>{{ $Pallet->note }}</td>
+                                            <td>{{ $Pallet->pallet_no ?? 'N/A' }}</td>
+                                            <td>{{ $Pallet->room ?? 'N/A' }}</td>
+                                            <td>{{ $Pallet->note ?? 'N/A' }}</td>
                                             <td>{{ $Pallet->status }}</td>
                                             <td>
                                                 <a href="{{ route('DetailPallets', ['order_number' => $Pallet->order_number, 'pallet_id' => $Pallet->pallet_id]) }}"
@@ -159,8 +182,9 @@
                                                     หมายเหตุ : {{ $CustomerOrders[0]->note }}
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    พนักงานจัด :
                                                     @foreach ($LockTeams->where('team_id', $CustomerOrders[0]->team_id) as $LockTeam)
-                                                        พนักงานจัด : {{ $LockTeam->name }}
+                                                        {{ $LockTeam->name }}
                                                     @endforeach
                                                 </div>
                                             </div>
