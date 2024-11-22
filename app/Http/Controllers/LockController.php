@@ -33,7 +33,7 @@ class LockController extends Controller
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
             ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
-            ->join('product_detail', 'customer_order_detail.product_id', '=', 'product_detail.product_id')
+            ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
             ->where('customer_order.order_number', '=', $order_number)
             ->get();
         $LockTeams = DB::table('lock_team')
@@ -103,9 +103,9 @@ class LockController extends Controller
         $query = $request->get('query');
         // ดึงข้อมูลเฉพาะฟิลด์ที่ต้องการ เช่น product_name และ product_id
         $data = DB::table('customer_order_detail')
-            ->join('product_detail', 'customer_order_detail.product_id', '=', 'product_detail.product_id')
-            ->select('customer_order_detail.product_id', 'product_detail.product_name', 'ordered_quantity', 'product_uom', 'ordered_quantity2', 'product_uom2', 'bag_color', 'product_detail.note', 'product_detail.status') // เลือกเฉพาะฟิลด์ product_name และ product_id
-            ->where('product_name', 'like', '%' . $query . '%')
+            ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
+            ->select('customer_order_detail.product_id', 'product.item_desc1', 'ordered_quantity', 'product_uom', 'ordered_quantity2', 'product_uom2', 'bag_color') // เลือกเฉพาะฟิลด์ product_name และ product_id
+            ->where('item_desc1', 'like', '%' . $query . '%')
             ->where('order_number', '=', $order_number)
             ->distinct()
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
@@ -115,9 +115,9 @@ class LockController extends Controller
         $results = [];
         foreach ($data as $item) {
             $results[] = [
-                'label' => $item->product_name,
-                'value' => $item->product_name,
-                'product_id' => $item->product_id,
+                'label' => $item->item_desc1,
+                'value' => $item->item_desc1,
+                'product_id' => $item->item_id,
                 'ordered_quantity' => $item->ordered_quantity,
                 'bag_color' => $item->bag_color,
                 'note' => $item->note,

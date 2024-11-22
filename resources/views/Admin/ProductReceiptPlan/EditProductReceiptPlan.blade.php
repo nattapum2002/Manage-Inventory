@@ -19,7 +19,7 @@
                                             <label for="product_receipt_plan_id">รหัสแผนรับสินค้า</label>
                                             <input type="text" class="form-control" id="product_receipt_plan_id"
                                                 name="product_receipt_plan_id" value="{{ $product_receipt_plan_id }}"
-                                                placeholder="รหัสแผนรับสินค้า" disabled>
+                                                placeholder="รหัสแผนรับสินค้า" readonly>
                                             @error('product_receipt_plan_id')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -100,47 +100,47 @@
                                             </td>
                                             <td>
                                                 <span id="span_product_name_{{ $Product->product_id }}">
-                                                    {{ $Product->product_name }}
+                                                    {{ $Product->item_desc1 }}
                                                 </span>
                                                 <input type="text" class="form-control"
                                                     id="edit_product_name_{{ $Product->product_id }}"
-                                                    name="edit_product_name" value="{{ $Product->product_name }}"
+                                                    name="edit_product_name" value="{{ $Product->item_desc1 }}"
                                                     style="display:none;" readonly>
                                             </td>
                                             <td>
                                                 <span id="span_product_quantity_{{ $Product->product_id }}">
-                                                    {{ $Product->product_quantity }}
+                                                    {{ $Product->weight }}
                                                 </span>
                                                 <input type="number" class="form-control"
                                                     id="edit_product_quantity_{{ $Product->product_id }}"
-                                                    name="edit_product_quantity" value="{{ $Product->product_quantity }}"
+                                                    name="edit_product_quantity" value="{{ $Product->weight }}"
                                                     style="display:none;">
                                             </td>
                                             <td>
                                                 <span id="span_increase_quantity_{{ $Product->product_id }}">
-                                                    {{ $Product->increase_quantity }}
+                                                    {{ $Product->increase_weight }}
                                                 </span>
                                                 <input type="number" class="form-control"
                                                     id="edit_increase_quantity_{{ $Product->product_id }}"
-                                                    name="edit_increase_quantity" value="{{ $Product->increase_quantity }}"
+                                                    name="edit_increase_quantity" value="{{ $Product->increase_weight }}"
                                                     style="display:none;">
                                             </td>
                                             <td>
                                                 <span id="span_reduce_quantity_{{ $Product->product_id }}">
-                                                    {{ $Product->reduce_quantity }}
+                                                    {{ $Product->reduce_weight }}
                                                 </span>
                                                 <input type="number" class="form-control"
                                                     id="edit_reduce_quantity_{{ $Product->product_id }}"
-                                                    name="edit_reduce_quantity" value="{{ $Product->reduce_quantity }}"
+                                                    name="edit_reduce_quantity" value="{{ $Product->reduce_weight }}"
                                                     style="display:none;">
                                             </td>
                                             <td>
                                                 <span id="span_total_quantity_{{ $Product->product_id }}">
-                                                    {{ $Product->total_quantity }}
+                                                    {{ $Product->total_weight }}
                                                 </span>
                                                 <input type="number" class="form-control"
                                                     id="edit_total_quantity_{{ $Product->product_id }}"
-                                                    name="edit_total_quantity" value="{{ $Product->total_quantity }}"
+                                                    name="edit_total_quantity" value="{{ $Product->total_weight }}"
                                                     style="display:none;" readonly>
                                             </td>
                                             <td>

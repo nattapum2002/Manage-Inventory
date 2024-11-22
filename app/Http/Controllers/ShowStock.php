@@ -26,7 +26,7 @@ class ShowStock extends Controller
     public function Admin_index()
     {
         $data = DB::table('stock')
-            ->join('product_detail', 'product_detail.product_id', '=', 'stock.product_id')
+            ->join('product', 'product.item_id', '=', 'stock.product_id')
             ->get();
         return view('Admin.Stock.showstock', compact('data'));
     }

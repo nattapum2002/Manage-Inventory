@@ -21,7 +21,7 @@ class ProductReceiptPlanController extends Controller
 
         $shifts = DB::table('work_shift')->select('shift_id', 'shift_name')->distinct()->get();
 
-        $ProductDetail = DB::table('product_detail')->select('product_id', 'product_name')->distinct()->get();
+        $ProductDetail = DB::table('product')->select('item_id', 'item_desc1')->distinct()->get();
 
         return view('Admin.ProductReceiptPlan.ProductReceiptPlan', compact('ProductReceiptPlans', 'shifts', 'ProductDetail'));
     }
@@ -56,7 +56,7 @@ class ProductReceiptPlanController extends Controller
 
         $shift = DB::table('work_shift')->select('shift_id', 'shift_name')->where('shift_id', $filteredRequest['shift_id'])->first();
 
-        $ProductDetail = DB::table('product_detail')->select('product_id', 'product_name')->distinct()->get();
+        $ProductDetail = DB::table('product')->select('item_id', 'item_desc1')->distinct()->get();
 
         // ส่งข้อมูลไปยัง View เพื่อแสดงพรีวิว
         return view('Admin.ProductReceiptPlan.AddProductReceiptPlan', [
@@ -107,10 +107,10 @@ class ProductReceiptPlanController extends Controller
             foreach ($rows as $row) {
                 DB::table('product_receipt_plan_detail')->insert([
                     'product_id' => $row[0],
-                    'product_quantity' => $row[2] ?? 0,
-                    'increase_quantity' => $row[3] ?? 0,
-                    'reduce_quantity' => $row[4] ?? 0,
-                    'total_quantity' => $row[5] ?? 0,
+                    'weight' => $row[2] ?? 0,
+                    'increase_weight' => $row[3] ?? 0,
+                    'reduce_weight' => $row[4] ?? 0,
+                    'total_weight' => $row[5] ?? 0,
                     'product_receipt_plan_id' => $request->input('product_receipt_plan_id'),
                     'note' => $row[6],
                     'status' => 1,
@@ -135,12 +135,12 @@ class ProductReceiptPlanController extends Controller
             ->first();
 
         $ProductReceiptPlansDetails = DB::table('product_receipt_plan_detail')
-            ->join('product_detail', 'product_receipt_plan_detail.product_id', '=', 'product_detail.product_id')
+            ->join('product', 'product_receipt_plan_detail.product_id', '=', 'product.item_id')
             ->where('product_receipt_plan_id', $product_receipt_plan_id)
-            ->select('product_receipt_plan_detail.*', 'product_detail.product_name')
+            ->select('product_receipt_plan_detail.*', 'product.item_desc1')
             ->get();
 
-        $product_details = DB::table('product_detail')->select('product_id', 'product_name')->distinct()->get();
+        $product_details = DB::table('product')->select('item_id', 'item_desc1')->distinct()->get();
 
         $shifts = DB::table('work_shift')->select('shift_id', 'shift_name')->where('shift_name', '!=', $ProductReceiptPlans->shift_name)->distinct()->get();
 
@@ -164,10 +164,10 @@ class ProductReceiptPlanController extends Controller
                         ['product_id' => $productId],
                         [
                             'product_receipt_plan_id' => $data['product_receipt_plan_id'],
-                            'product_quantity' => $data['product_quantity'][$key] ?? 0,
-                            'increase_quantity' => $data['increase_quantity'][$key] ?? 0,
-                            'reduce_quantity' => $data['reduce_quantity'][$key] ?? 0,
-                            'total_quantity' => $data['total_quantity'][$key] ?? 0,
+                            'weight' => $data['product_quantity'][$key] ?? 0,
+                            'increase_weight' => $data['increase_quantity'][$key] ?? 0,
+                            'reduce_weight' => $data['reduce_quantity'][$key] ?? 0,
+                            'total_weight' => $data['total_quantity'][$key] ?? 0,
                             'note' => $data['note'][$key] ?? 'N/A',
                             'updated_at' => now(),
                         ]
@@ -200,7 +200,7 @@ class ProductReceiptPlanController extends Controller
         $product_receipt_name = 'กะ ' . $shift_data->shift_name . ' : ' . (new DateTime($request->input('date')))->format('d/m/Y');
 
         DB::table('product_receipt_plan')->where('product_receipt_plan_id', $request->input('product_receipt_plan_id'))->update([
-            'product_receipt_name' => $product_receipt_name,
+            'product_receipt_plan_name' => $product_receipt_name,
             'shift_id' => $request->input('shift_id'),
             'date' => $request->input('date'),
             'note' => $request->input('note'),
@@ -216,10 +216,10 @@ class ProductReceiptPlanController extends Controller
         // $query->validate([
         //     'product_id' => 'required|string',
         //     'old_product_id' => 'required|string',
-        //     'product_quantity' => 'required|numeric',
-        //     'increase_quantity' => 'required|numeric',
-        //     'reduce_quantity' => 'required|numeric',
-        //     'total_quantity' => 'required|numeric',
+        //     'weight' => 'required|numeric',
+        //     'increase_weight' => 'required|numeric',
+        //     'reduce_weight' => 'required|numeric',
+        //     'total_weight' => 'required|numeric',
         //     'note' => 'nullable|string',
         //     'product_receipt_plan_id' => 'required|string',
         // ]);
@@ -231,10 +231,10 @@ class ProductReceiptPlanController extends Controller
                     ->where('product_receipt_plan_id', $request->product_receipt_plan_id)
                     ->where('product_id', $request->product_edit['product_id'])
                     ->update([
-                        'product_quantity' => $request->product_edit['product_quantity'],
-                        'increase_quantity' => $request->product_edit['increase_quantity'],
-                        'reduce_quantity' => $request->product_edit['reduce_quantity'],
-                        'total_quantity' => $request->product_edit['total_quantity'],
+                        'weight' => $request->product_edit['product_quantity'],
+                        'increase_weight' => $request->product_edit['increase_quantity'],
+                        'reduce_weight' => $request->product_edit['reduce_quantity'],
+                        'total_weight' => $request->product_edit['total_quantity'],
                         'note' => $request->product_edit['note'],
                         'updated_at' => now(),
                     ]);
@@ -248,10 +248,10 @@ class ProductReceiptPlanController extends Controller
                 DB::table('product_receipt_plan_detail')->insert([
                     'product_receipt_plan_id' => $request->product_receipt_plan_id,
                     'product_id' => $request->product_edit['product_id'],
-                    'product_quantity' => $request->product_edit['product_quantity'],
-                    'increase_quantity' => $request->product_edit['increase_quantity'],
-                    'reduce_quantity' => $request->product_edit['reduce_quantity'],
-                    'total_quantity' => $request->product_edit['total_quantity'],
+                    'weight' => $request->product_edit['product_quantity'],
+                    'increase_weight' => $request->product_edit['increase_quantity'],
+                    'reduce_weight' => $request->product_edit['reduce_quantity'],
+                    'total_weight' => $request->product_edit['total_quantity'],
                     'note' => $request->product_edit['note'],
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -277,9 +277,9 @@ class ProductReceiptPlanController extends Controller
         $query = $request->input('query');
 
         // ค้นหาข้อมูลจากตาราง product_detail
-        $data = DB::table('product_detail')
-            ->select('product_id', 'product_name') // เลือกฟิลด์ที่ต้องการ
-            ->where('product_id', 'like', '%' . $query . '%') // ค้นหาข้อมูล
+        $data = DB::table('product')
+            ->select('item_id', 'item_desc1') // เลือกฟิลด์ที่ต้องการ
+            ->where('item_id', 'like', '%' . $query . '%') // ค้นหาข้อมูล
             ->distinct()
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
             ->get();
@@ -288,9 +288,9 @@ class ProductReceiptPlanController extends Controller
         $results = [];
         foreach ($data as $item) {
             $results[] = [
-                'label' => $item->product_id . ' - ' . $item->product_name,
-                'value' => $item->product_id,
-                'product_name' => $item->product_name,
+                'label' => $item->item_id . ' - ' . $item->item_desc1,
+                'value' => $item->item_id,
+                'product_name' => $item->item_desc1,
             ];
         }
 
