@@ -128,40 +128,6 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-6 col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="customer_name">ชื่อลูกค้า</label>
-                                        <input type="text" class="form-control" id="customer_name" name="customer_name"
-                                            placeholder="ชื่อลูกค้า"
-                                            value="{{ $CustomerOrders[0]->customer_name ?? 'N/A' }}" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="team_name">ชื่อทีม</label>
-                                        <select class="form-control" id="team_name" name="team_name">
-                                            <option selected value="{{ $CustomerOrders[0]->team_name ?? '' }}">
-                                                {{ $CustomerOrders[0]->team_name ?? 'เลือกชื่อทีม' }}
-                                            </option>
-                                            @foreach ($team_names->where('team_name', '!=', $CustomerOrders[0]->team_name ?? '') as $team)
-                                                <option value="{{ $team->team_name }}">
-                                                    {{ $team->team_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="date">วันที่</label>
-                                        <input type="date" class="form-control" id="date" name="date"
-                                            placeholder="วันที่"
-                                            value="{{ isset($CustomerOrders[0]->date) ? $CustomerOrders[0]->date : '' }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
                             <table id="pallte" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
