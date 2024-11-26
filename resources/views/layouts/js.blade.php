@@ -83,67 +83,72 @@
         item_count++;
 
         $('#item-row').append(`
+        <hr>
         <div class="row" id="item-${item_count}">
-             <div class="col">
-                <label for="room_id_${item_count}" class="form-label">ห้องเก็บ</label>
-                    <div class="input-group">
-                        <select name="room[${item_count}]" class="form-control" id="room_id_${item_count}">
-                            <option value="" selected>เลือกห้องเก็บ</option>
-                            <option value="Cold-A">Cold-A</option>
-                            <option value="Cold-C">Cold-C</option>
-                        </select>
-                    </div>
+            <div class="col-lg-2 col-md-3 col-sm-12">
+                <div class="form-group">
+                    <label for="room_id_${item_count}" class="form-label">ห้องเก็บ</label>
+                    <select name="room[${item_count}]" class="form-control" id="room_id_${item_count}">
+                        <option value="" selected>เลือกห้องเก็บ</option>
+                        <option value="Cold-A">Cold-A</option>
+                        <option value="Cold-C">Cold-C</option>
+                    </select>
+                </div>
             </div>
-            <div class="col">
-                <label for="item_id_${item_count}" class="form-label">${item_count} รหัสสินค้า</label>
-                <div class="input-group">
+            <div class="col-lg-2 col-md-3 col-sm-12">
+                <div class="form-group">
+                    <label for="item_id_${item_count}" class="form-label">${item_count} รหัสสินค้า</label>
                     <input type="text" class="form-control" id="item_id_${item_count}" name="item_id[${item_count}]" readonly>
                     <input type="hidden" class="form-control" id="save_item_id_${item_count}" name="save_item_id[${item_count}]"
                                         readonly="">
                 </div>
             </div>
-            <div class="col">
-                <label for="item_name_${item_count}" class="form-label">ชื่อสินค้า</label>
-                <div class="input-group">
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="form-group">
+                    <label for="item_name_${item_count}" class="form-label">ชื่อสินค้า</label>
                     <input type="text" class="form-control" id="item_name_${item_count}" name="item_name[${item_count}]">
                 </div>
             </div>
-            <div class="col">
-                <label for="item_amount_${item_count}" class="form-label">จำนวน</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="item_quantity_${item_count}" name="item_quantity[${item_count}]">
-                </div>
-            </div>
-             <div class="col">
-                <label for="item_um_${item_count}" class="form-label">หน่วย</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="item_um_${item_count}" name="item_um[${item_count}]" disabled>
-                </div>
-            </div>
-            <div class="col">
-                <label for="item_weight_${item_count}" class="form-label">จำนวน</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="item_quantity2_${item_count}" name="item_quantity2[${item_count}]">
-                </div>
-            </div>
-            <div class="col">
-                <label for="item_um2_${item_count}" class="form-label">หน่วย</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="item_um2_${item_count}" name="item_um2[${item_count}]" disabled>
-                </div>
-            </div>
-            <div class="col">
-                <label for="item_comment_${item_count}" class="form-label">หมายเหตุ</label>
-                <div class="input-group">
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <div class="form-group">
+                    <label for="item_comment_${item_count}" class="form-label">หมายเหตุ</label>
                     <input type="text" class="form-control" id="item_comment_${item_count}" name="item_comment[${item_count}]">
                 </div>
             </div>
-            <div class="col">
-                <label for="remove-item" class="form-label">จัดการ</label>
-                <div class="input-group text-center">
-                    <button type="button" class="btn btn-danger remove-item">ลบ</button>
+                <div class="col-11">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label for="item_amount_${item_count}" class="form-label">จำนวน</label>
+                                <input type="number" class="form-control" id="item_quantity_${item_count}" name="item_quantity[${item_count}]">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label for="item_um_${item_count}" class="form-label">หน่วย</label>
+                                <input type="text" class="form-control" id="item_um_${item_count}" name="item_um[${item_count}]" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label for="item_weight_${item_count}" class="form-label">จำนวน</label>
+                                <input type="number" class="form-control" id="item_quantity2_${item_count}" name="item_quantity2[${item_count}]">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label for="item_um2_${item_count}" class="form-label">หน่วย</label>
+                                <input type="text" class="form-control" id="item_um2_${item_count}" name="item_um2[${item_count}]" disabled>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="col-1">
+                        <div class="form-group text-center">
+                            <label for="remove-item" class="form-label">จัดการ</label>
+                            <button type="button" class="btn btn-danger remove-item">ลบ</button>
+                        </div>
+                </div>
         </div>
     `);
 
@@ -507,5 +512,19 @@
         });
     });
 </script>
+
+{{-- <script>
+    // ตั้งเวลาให้ Alert หายไปอัตโนมัติ
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.auto-dismiss-alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.remove('show'); // ซ่อน Alert
+                alert.classList.add('fade'); // เพิ่มเอฟเฟกต์ fade-out
+            }, 3000); // แสดง 3 วินาที
+        });
+    });
+</script> --}}
+
 
 @yield('script')

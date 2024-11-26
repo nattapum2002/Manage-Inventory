@@ -38,7 +38,7 @@
         <div class="content-wrapper">
             <section class="content-header">
                 <div class="container-fluid">
-                    <div class="row mb-2">
+                    <div class="row mb-1">
                         <div class="col-sm-6">
                             <h1 class="m-0">@yield('title')</h1>
                         </div>
@@ -53,8 +53,26 @@
                             </ol>
                         </div>
                     </div>
+                    @if (session('success') || session('error') || session('info'))
+                        @php
+                            $alertType = session('success')
+                                ? 'alert-success'
+                                : (session('error')
+                                    ? 'alert-danger'
+                                    : 'alert-info');
+                            $message = session('success') ?? (session('error') ?? session('info'));
+                        @endphp
+
+                        <div class="alert {{ $alertType }} alert-dismissible fade show auto-dismiss-alert"
+                            role="alert">
+                            {{ $message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
                 </div>
             </section>
+
             @yield('content')
         </div>
 

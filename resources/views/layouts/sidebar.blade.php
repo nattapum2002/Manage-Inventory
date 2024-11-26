@@ -114,18 +114,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('excel.form') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Excel
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="{{ route('ProductReceiptPlan') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 1. Product Pickup Plan
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('TransferSlip') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                2. Transfer Slip
                             </p>
                         </a>
                     </li>

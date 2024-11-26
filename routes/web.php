@@ -11,7 +11,10 @@ use App\Http\Controllers\ShowStat;
 use App\Http\Controllers\ShowStock;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SlipController;
+use App\Http\Controllers\CustomerQueueController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -72,9 +75,12 @@ Route::get('/Admin/Dashboard', function () {
     return view('Admin.Dashboard.index');
 })->name('Dashboard.Admin');
 
-Route::get('/ManageQueue', function () {
-    return view('Admin.ManageQueue.managequeue');
-})->name('ManageQueue');
+Route::prefix('ManageQueue')->group(function () {
+    Route::get('/', [CustomerQueueController::class, 'index'])->name('ManageQueue');
+    Route::post('/FilterDate', [CustomerQueueController::class, 'ManageQueueFilterDate'])->name('ManageQueueFilterDate');
+    Route::post('/Add', [CustomerQueueController::class, 'AddCustomerQueue'])->name('AddCustomerQueue');
+    Route::post('/Add/Save', [CustomerQueueController::class, 'SaveAddCustomerQueue'])->name('SaveAddCustomerQueue');
+});
 
 Route::prefix('ManageShift')->group(function () {
     Route::get('/', [ShiftController::class, 'index'])->name('ManageShift');
@@ -115,7 +121,14 @@ Route::prefix('ProductReceiptPlan')->group(function () {
     Route::post('/Edit/AddProduct', [ProductReceiptPlanController::class, 'AddProduct'])->name('AddProduct');
     Route::post('/Edit/SaveEditDetail', [ProductReceiptPlanController::class, 'SaveEditDetail'])->name('SaveEditDetail');
     Route::post('/Edit/SaveEditProduct', [ProductReceiptPlanController::class, 'SaveEditProduct'])->name('SaveEditProduct');
-    Route::get('/Edit/Product/Autocomplete', [ProductReceiptPlanController::class, 'AutocompleteProduct'])->name('AutocompleteProduct');
+    Route::get('/AutocompleteProduct', [ProductReceiptPlanController::class, 'AutocompleteProduct'])->name('AutocompleteProduct');
+});
+
+Route::prefix('slip')->group(function () {
+    Route::get('/AutoCompleteSlip', [SlipController::class, 'AutoCompleteSlip'])->name('AutoCompleteSlip');
+    Route::get('/TransferSlip', [SlipController::class, 'TransferSlip'])->name('TransferSlip');
+    Route::post('/TransferSlip/Add', [SlipController::class, 'AddTransferSlip'])->name('AddTransferSlip');
+    Route::post('/TransferSlip/Add/Save', [SlipController::class, 'SaveAddTransferSlip'])->name('SaveAddTransferSlip');
 });
 
 Route::get('AddItem', function () {

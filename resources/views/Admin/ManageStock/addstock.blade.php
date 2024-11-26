@@ -24,25 +24,28 @@
         <form class="add-stock" method="POST" action="{{ route('AddSlip') }}">
             @csrf
             <div class="card">
-                <div class="card-header row">
-                    <aside class="col">
-                        <h3 class="mb-0">กรอกข้อมูลชุดการผลิต</h3>
-                    </aside>
-                    <div class="col">
+                <div class="card-header">
+                    <div class="row">
 
-                    </div>
-                    <div class="col d-flex w-50">
-                        <aside class="input-group me-3">
-                            <!-- เริ่มต้นด้วย span -->
-                            <input type="text" class="form-control" id="product_checker" name="product_checker"
-                                value="{{ Auth::user()->user_id }}" placeholder="กรอกรหัสพนักงาน">
-                            <span class="input-group-text">Product Checker</span> <!-- ย้ายไปท้ายสุด -->
+                        <aside class="col">
+                            <h3 class="mb-0">กรอกข้อมูลชุดการผลิต</h3>
                         </aside>
+                        <div class="col">
+
+                        </div>
+                        <div class="col d-flex w-50">
+                            <aside class="input-group me-3">
+                                <!-- เริ่มต้นด้วย span -->
+                                <input type="text" class="form-control" id="product_checker" name="product_checker"
+                                    value="{{ Auth::user()->user_id }}" placeholder="กรอกรหัสพนักงาน">
+                                <span class="input-group-text">Product Checker</span> <!-- ย้ายไปท้ายสุด -->
+                            </aside>
+                        </div>
+                        {{-- <aside class="input-group">
+                                <span class="input-group-text">Domestic Checker</span>
+                                <input type="text" class="form-control" id="domestic_checker" name="domestic_checker" placeholder="กรอกรหัสพนักงาน">
+                            </aside> --}}
                     </div>
-                    {{-- <aside class="input-group">
-                            <span class="input-group-text">Domestic Checker</span>
-                            <input type="text" class="form-control" id="domestic_checker" name="domestic_checker" placeholder="กรอกรหัสพนักงาน">
-                        </aside> --}}
                 </div>
                 <div class="card-body">
                     <article class="row">
@@ -81,9 +84,9 @@
 
                     <article id="item-row">
                         <div class="row" id="item-1">
-                            <div class="col">
-                                <label for="room_id_1" class="form-label">ห้องเก็บ</label>
-                                <div class="input-group">
+                            <div class="col-lg-2 col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="room_id_1" class="form-label">ห้องเก็บ</label>
                                     <select name="room[1]" class="form-control" id="room_id_1">
                                         <option value="" selected>เลือกห้องเก็บ</option>
                                         <option value="Cold-A">Cold-A</option>
@@ -91,58 +94,56 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col">
-                                <label for="item_id_1" class="form-label">1 รหัสสินค้า</label>
-                                <div class="input-group">
+                            <div class="col-lg-2 col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="item_id_1" class="form-label">รหัสสินค้า</label>
                                     <input type="text" class="form-control" id="item_id_1" name="item_id[1]"
                                         readonly="">
                                     <input type="hidden" class="form-control" id="save_item_id_1" name="save_item_id[1]"
                                         readonly="">
                                 </div>
                             </div>
-                            <div class="col">
-                                <label for="item_name_1" class="form-label">ชื่อสินค้า</label>
-                                <div class="input-group">
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="item_name_1" class="form-label">ชื่อสินค้า</label>
                                     <input type="text" class="form-control ui-autocomplete-input" id="item_name_1"
                                         name="item_name[1]" autocomplete="off">
                                 </div>
                             </div>
-                            <div class="col">
-                                <label for="item_amount_1" class="form-label">จำนวน</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="item_quantity_1" name="item_quantity[1]">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="item_um_1" class="form-label">หน่วย</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="item_um_1" name="item_um[1]" disabled>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="item_weight_1" class="form-label">จำนวน</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="item_quantity2_1" name="item_quantity2[1]">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="item_um2_1" class="form-label">หน่วย</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="item_um2_1" name="item_um2[1]" disabled>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="item_comment_1" class="form-label">หมายเหตุ</label>
-                                <div class="input-group">
+                            <div class="col-lg-4 col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="item_comment_1" class="form-label">หมายเหตุ</label>
                                     <input type="text" class="form-control" id="item_comment_1"
                                         name="item_comment[1]">
                                 </div>
                             </div>
-                            <div class="col">
-                                <label for="remove-item" class="form-label">จัดการ</label>
-                                {{-- <div class="input-group text-center">
-                                    <button type="button" class="btn btn-danger remove-item">ลบ</button>
-                                </div> --}}
+                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="item_amount_1" class="form-label">จำนวน</label>
+                                    <input type="number" class="form-control" id="item_quantity_1"
+                                        name="item_quantity[1]">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="item_um_1" class="form-label">หน่วย</label>
+                                    <input type="text" class="form-control" id="item_um_1" name="item_um[1]"
+                                        disabled>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="item_weight_1" class="form-label">จำนวน</label>
+                                    <input type="number" class="form-control" id="item_quantity2_1"
+                                        name="item_quantity2[1]">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="item_um2_1" class="form-label">หน่วย</label>
+                                    <input type="text" class="form-control" id="item_um2_1" name="item_um2[1]"
+                                        disabled>
+                                </div>
                             </div>
                         </div>
                     </article>
