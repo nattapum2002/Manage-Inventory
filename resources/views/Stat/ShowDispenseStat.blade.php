@@ -28,7 +28,7 @@
                             <td>{{$item->item_um}}</td>
                             <td class="text-center">{{$item->quantity2}}</td>
                             <td class="text-center text-danger ">- {{ $item->total_quantity2 }}</td>
-                            <td>{{$item->item_um}}</td>
+                            <td>{{$item->item_um2}}</td>
                         </tr>
                         @endforeach
                     </tbody>

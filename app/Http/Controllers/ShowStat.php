@@ -67,11 +67,10 @@ class ShowStat extends Controller
 }
     public function show_stat_dispense($date){
 
-        $data = DB::table('pallet')
-        ->whereDate('pallet.created_at', $date)
-        ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
-        ->join('stock', 'pallet_order.product_id', '=', 'stock.product_id')
-        ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
+        $data = DB::table('confirmOrder')
+        ->whereDate('confirmOrder.created_at', $date)
+        ->join('stock', 'confirmOrder.product_id', '=', 'stock.product_id')
+        ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
         ->selectRaw('
             product.item_um,
             product.item_um2,   
@@ -80,8 +79,8 @@ class ShowStat extends Controller
             product.item_no,
             MAX(stock.quantity) as quantity,
             MAX(stock.quantity2) as quantity2,
-            SUM(pallet_order.quantity) as total_quantity,
-            SUM(pallet_order.quantity2) as total_quantity2
+            SUM(confirmOrder.quantity) as total_quantity,
+            SUM(confirmOrder.quantity2) as total_quantity2
         ')
         ->groupBy(
             'stock.product_id',
@@ -91,7 +90,6 @@ class ShowStat extends Controller
             'product.item_um2'
         )
         ->get();
-
         // dd($data);
         return view('Stat.ShowDispenseStat', compact(['data','date']));
     }

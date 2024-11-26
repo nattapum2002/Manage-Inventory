@@ -75,6 +75,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js.map"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
+{{-- <script src="//cdn.datatables.net/plug-ins/2.1.8/i18n/th.json"></script> --}}
+
 <script>
     // ฟังก์ชันสำหรับการเพิ่ม item และเรียกใช้งาน autocomplete
     let item_count = 1;
@@ -274,7 +276,6 @@
     });
 </script>
 {{-- สคริปต์ SlipDetail --}}
-
 <script>
     var user_count = 1;
 
@@ -359,53 +360,6 @@
         });
     }
     initializeShiftAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('#stock-all-table').DataTable({
-            info: false,
-            ordering: true,
-            paging: true
-        });
-        $('#stock_per_date').DataTable({
-            info: false,
-            ordering: false,
-            paging: true
-        });
-        $('#slip_per_date').DataTable({
-            info: false,
-            ordering: true,
-            paging: true
-        });
-        $('#item_per_slip').DataTable({
-            info: false,
-            ordering: false,
-            paging: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
-        });
-        $('#queue-all-table').DataTable({
-            info: false,
-            ordering: true,
-            paging: true
-        })
-        $('#stat-table').DataTable({
-            info: false,
-            ordering: true,
-            paging: true
-        })
-        $('#date-stat-table').DataTable({
-            info: false,
-            ordering: true,
-            paging: true
-        })
-    });
 </script>
 
 <script>
@@ -582,6 +536,49 @@
                 }
             }
         });
+        $('#stock-all-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        });
+        $('#stock_per_date').DataTable({
+            info: false,
+            ordering: false,
+            paging: true
+        });
+        $('#slip_per_date').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        });
+        $('#item_per_slip').DataTable({
+            info: false,
+            ordering: false,
+            paging: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            },
+        });
+        $('#queue-all-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        })
+        $('#stat-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true,
+
+        })
+        $('#date-stat-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        })
     });
 </script>
 

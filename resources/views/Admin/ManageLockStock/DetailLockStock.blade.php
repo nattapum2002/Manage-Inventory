@@ -1,11 +1,17 @@
 @extends('layouts.master')
 
 @section('title')
-    รายละเอียดล็อคสินค้า
+    รายละเอียดล็อคสินค้า : {{ $order_id }}
 @endsection
 
 @section('content')
     <section class="content">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
@@ -27,7 +33,7 @@
                                                     ทีม : {{ $CustomerOrders[0]->team_name ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    วันที่ : {{ $CustomerOrders[0]->date }}
+                                                    วันที่ : {{ $CustomerOrders[0]->date ?? 'N/A' }}
                                                 </div>
                                             </div>
                                         </th>
@@ -48,12 +54,12 @@
                                 <tbody>
                                     @foreach ($CustomerOrders as $CustomerOrder)
                                         <tr>
-                                            <td>{{ $CustomerOrder->product_id }}</td>
-                                            <td>{{ $CustomerOrder->product_name }}</td>
-                                            <td>{{ $CustomerOrder->ordered_quantity }}</td>
-                                            <td>{{ $CustomerOrder->product_uom }}</td>
-                                            <td>{{ $CustomerOrder->ordered_quantity2 }}</td>
-                                            <td>{{ $CustomerOrder->product_uom2 }}</td>
+                                            <td>{{ $CustomerOrder->item_no }}</td>
+                                            <td>{{ $CustomerOrder->item_desc1 }}</td>
+                                            <td>{{ $CustomerOrder->order_quantity }}</td>
+                                            <td>{{ $CustomerOrder->order_quantity_UM }}</td>
+                                            <td>{{ $CustomerOrder->order_quantity2 }}</td>
+                                            <td>{{ $CustomerOrder->order_quantity_UM2  }}</td>
                                             <td>{{ $CustomerOrder->bag_color }}</td>
                                             <td>{{ $CustomerOrder->note }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
@@ -107,15 +113,15 @@
                             <table id="pallte" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th colspan="6">
+                                        <th colspan="8">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ชื่อลูกค้า :
                                                     {{ $CustomerOrders[0]->customer_name }}</div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12"></div>
+                                                {{-- <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ทีม :
-                                                    {{ $CustomerOrders[0]->team_name }}</div>
+                                                    {{ $CustomerOrders[0]->team_name ?? 'N/A' }}</div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">วันที่ :
-                                                    {{ $CustomerOrders[0]->date }}</div>
+                                                    {{ $CustomerOrders[0]->date ?? 'N/A' }}</div> --}}
                                             </div>
                                         </th>
                                     </tr>
@@ -123,21 +129,25 @@
                                         <th>รหัสพาเลท</th>
                                         <th>หมายเลข</th>
                                         <th>ห้อง</th>
+                                        <th>ทีมจัด</th>
+                                        <th>ประเภท</th>
                                         <th>หมายเหตุ</th>
                                         <th>สถานะ</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($Pallets->where('order_number', $CustomerOrders[0]->order_number) as $Pallet)
+                                    @foreach ($Pallets as $Pallet)
                                         <tr>
                                             <td>{{ $Pallet->pallet_id }}</td>
                                             <td>{{ $Pallet->pallet_no }}</td>
                                             <td>{{ $Pallet->room }}</td>
+                                            <td>{{ $Pallet->team_name }}</td>
+                                            <td>{{ $Pallet->pallet_type }}</td>
                                             <td>{{ $Pallet->note }}</td>
-                                            <td>{{ $Pallet->status }}</td>
+                                            <td>{!! $Pallet->status == 1 ? '<p class="text-success">จัดพาเลทแล้ว</p>' : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}</td>
                                             <td>
-                                                <a href="{{ route('DetailPallets', ['order_number' => $Pallet->order_number, 'pallet_id' => $Pallet->pallet_id]) }}"
+                                                <a href="{{ route('DetailPallets', ['order_number' => $order_id, 'pallet_id' => $Pallet->id]) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>
@@ -148,12 +158,14 @@
                                         <th>รหัสพาเลท</th>
                                         <th>หมายเลข</th>
                                         <th>ห้อง</th>
+                                        <th>ทีมจัด</th>
+                                        <th>ประเภท</th>
                                         <th>หมายเหตุ</th>
                                         <th>สถานะ</th>
                                         <th></th>
                                     </tr>
                                     <tr>
-                                        <th colspan="6">
+                                        <th colspan="8">
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
                                                     หมายเหตุ : {{ $CustomerOrders[0]->note }}
