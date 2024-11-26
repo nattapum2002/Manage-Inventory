@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\DB;
 
 class LockController extends Controller
 {
+    public $select_teams = [
+        ['select_name' => 'A'],
+        ['select_name' => 'B'],
+        ['select_name' => 'C'],
+        ['select_name' => 'D'],
+        ['select_name' => 'E'],
+        ['select_name' => 'F'],
+    ];
     public function index()
     {
         $CustomerOrders = DB::table('customer_order')
@@ -17,14 +25,14 @@ class LockController extends Controller
         return view('Admin.ManageLockStock.managelockstock', compact('CustomerOrders'));
     }
 
-    public function DetailLockStock($order_id)
+    public function DetailLockStock($order_number)
     {
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
+            ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
             ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
             ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
-            ->where('customer_order.order_number', '=', $order_id)
+            ->where('customer_order.order_number', '=', $order_number)
             ->get();
         // dd($CustomerOrders);
         $LockTeams = DB::table('lock_team')
@@ -32,7 +40,7 @@ class LockController extends Controller
             ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
             ->get();
         $Pallets = DB::table('pallet')
-            ->where('order_id', '=', $order_id)
+            ->where('order_id', '=', $order_number)
             ->selectRaw('pallet.id,MAX(pallet_type.pallet_type) as pallet_type ,MAX(pallet.pallet_id) as pallet_id ,MAX(pallet_no) as pallet_no, MAX(room) as room, pallet.status ,MAX(pallet.note) as note, MAX(lock_team.team_name) as team_name')
             ->join('pallet_order', 'pallet.id', '=', 'pallet_order.pallet_id')
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')

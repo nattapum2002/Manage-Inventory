@@ -28,7 +28,7 @@
                                             <td>{{ intval($CustomerOrder->order_number) }}</td>
                                             <td>{{ $CustomerOrder->customer_name }}</td>
                                             <td>{{ $CustomerOrder->team_name ?? 'N/A' }}</td>
-                                            <td>{{ $CustomerOrder->note }}</td>
+                                            <td>{{ $CustomerOrder->note ?? 'N/A' }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
                                                 <a href="{{ route('DetailLockStock', $CustomerOrder->order_number) }}"

@@ -16,17 +16,75 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <ol>
-                                <li>กรุณาเลือกไฟล์ .xlsx, .xls, .csv</li>
-                                <li>กรุณาใช้ไฟล์ <a href="{{ url('storage/FormExcel/FormProductReceiptPlan.xlsx') }}"
-                                        download>แบบฟอร์มแผนรับสินค้า</a>
-                                </li>
-                            </ol>
-                            <form action="{{ route('AddProductReceiptPlan') }}" method="POST" enctype="multipart/form-data"
-                                class="d-flex">
+                            <form action="{{ route('AddProductReceiptPlan') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <input type="file" class="form-control" name="file" accept=".xlsx, .xls, .csv">
-                                <button type="submit" class="btn btn-success">เพิ่ม</button>
+                                <div class="row">
+                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="product_receipt_plan_id">รหัสแผนรับสินค้า</label>
+                                            <input type="text" class="form-control" id="product_receipt_plan_id"
+                                                name="product_receipt_plan_id" placeholder="รหัสแผนรับสินค้า">
+                                            @error('product_receipt_plan_id')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="shift_id">กะพนักงาน</label>
+                                            <select class="form-control" id="shift_id" name="shift_id">
+                                                <option selected value="">เลือกกะพนักงาน</option>
+                                                @foreach ($shifts as $shift)
+                                                    <option value="{{ $shift->shift_id }}">{{ $shift->shift_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('shift_id')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="date">วันที่</label>
+                                            <input type="date" class="form-control" id="date" name="date"
+                                                placeholder="วันที่">
+                                            @error('date')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-10 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="note">หมายเหตุ</label>
+                                            <input type="text" class="form-control" id="note" name="note"
+                                                placeholder="หมายเหตุ">
+                                            @error('note')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="file">ไฟล์แผนรับสินค้า</label>
+                                            <ol>
+                                                <li>กรุณาเลือกไฟล์ .xlsx, .xls, .csv</li>
+                                                <li>กรุณาใช้ไฟล์ <a
+                                                        href="{{ url('storage/FormExcel/FormProductReceiptPlan.xlsx') }}"
+                                                        download>แบบฟอร์มแผนรับสินค้า</a>
+                                                </li>
+                                            </ol>
+                                            <input type="file" class="form-control" name="file"
+                                                accept=".xlsx, .xls, .csv">
+                                            @error('file')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" class="btn btn-success">เพิ่ม</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

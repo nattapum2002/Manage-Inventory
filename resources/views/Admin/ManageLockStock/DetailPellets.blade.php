@@ -17,7 +17,7 @@
                                         <th colspan="14">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">พาเลท :
-                                                    {{ $Pallets[0]->pallet_no }}
+                                                    {{ $Pallets[0]->pallet_no ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-2 col-md-6 col-sm-12">ห้อง :
@@ -88,12 +88,12 @@
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 {{-- <div class="col-lg-3 col-md-6 col-sm-12">
                                                     รวมสั่งจ่าย :
-                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_order') }}
+                                                    {{-- {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_order') ?? 'N/A' }} --}}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    รวมจ่ายจริง :
-                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_paid') }}
-                                                </div> --}}
+                                                    {{-- รวมจ่ายจริง :
+                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_paid') }} --}}
+                                                </div> 
                                             </div>
                                         </th>
                                     </tr>

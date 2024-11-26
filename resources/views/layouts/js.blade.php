@@ -362,6 +362,7 @@
     initializeShiftAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
 </script>
 
+
 <script>
     $(function() {
         $("#userstable").DataTable({
@@ -523,7 +524,7 @@
                 }
             }
         });
-        $("#Teamtable").DataTable({
+        $("#producttable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,

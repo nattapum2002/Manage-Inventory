@@ -1,8 +1,9 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <div class="brand-link d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center">
         <a href="{{ route('Dashboard.' . Auth::user()->user_type) }}" class="brand-link">
-            {{-- <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"> --}}
+            <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
+                class="brand-image img-circle elevation-3">
             <span class="brand-text font-weight-light">MIS</span>
         </a>
     </div>
