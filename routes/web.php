@@ -3,6 +3,7 @@
 use App\Http\Controllers\ExcelImportController;
 use App\Http\Controllers\LockController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ManageQueueController;
 use App\Http\Controllers\ManageStock;
 use App\Http\Controllers\ProductReceiptPlanController;
 use App\Http\Controllers\ShiftController;
@@ -102,6 +103,7 @@ Route::prefix('ManageTeam')->group(function () {
     Route::get('/AddTeam/AutoCompleteAddTeam', [TeamController::class, 'AutoCompleteAddTeam'])->name('AutoCompleteAddTeam');
     Route::post('/AddTeam', [TeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
     Route::get('/DeleteTeam/{team_id}/{user_id}', [TeamController::class, 'DeleteTeam'])->name('DeleteTeam');
+    Route::get('/AutocompleteSearchTeam', [TeamController::class, 'AutocompleteSearchTeam'])->name('AutocompleteSearchTeam');
 });
 
 Route::prefix('ManageLockStock')->group(function () {
@@ -111,6 +113,10 @@ Route::prefix('ManageLockStock')->group(function () {
     Route::get('/Detail/AddPallet/AutoCompleteAddPallet/{order_number}', [LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
     Route::post('/Detail/{order_number}/Save', [LockController::class, 'SavePallet'])->name('SavePallet');
     Route::get('/Detail/{order_number}/Pallet/{pallet_id}', [LockController::class, 'DetailPallets'])->name('DetailPallets');
+    Route::get('/Detail/forgetSession', [LockController::class, 'forgetSession'])->name('forgetSession');
+    Route::get('/Detail/removePallet/{key}', [LockController::class, 'Remove_Pallet'])->name('Remove_Pallet');
+    Route::get('/Detail/insertPallet/{order_number}', [LockController::class, 'insert_pallet'])->name('Insert_Pallet');
+    Route::get('/Detail/editPalletOrde/{order_id}/{product_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
 });
 
 Route::prefix('ProductReceiptPlan')->group(function () {

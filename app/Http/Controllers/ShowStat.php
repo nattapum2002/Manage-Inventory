@@ -70,10 +70,10 @@ class ShowStat extends Controller
     {
 
         $data = DB::table('confirmOrder')
-            ->whereDate('confirmOrder.created_at', $date)
-            ->join('stock', 'confirmOrder.product_id', '=', 'stock.product_id')
-            ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
-            ->selectRaw('
+        ->whereDate('confirmOrder.created_at', $date)
+        ->join('stock', 'confirmOrder.product_id', '=', 'stock.product_id')
+        ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
+        ->selectRaw('
             product.item_um,
             product.item_um2,
             stock.product_id,
@@ -84,14 +84,14 @@ class ShowStat extends Controller
             SUM(confirmOrder.quantity) as total_quantity,
             SUM(confirmOrder.quantity2) as total_quantity2
         ')
-            ->groupBy(
-                'stock.product_id',
-                'product.item_desc1',
-                'product.item_no',
-                'product.item_um',
-                'product.item_um2'
-            )
-            ->get();
+        ->groupBy(
+            'stock.product_id',
+            'product.item_desc1',
+            'product.item_no',
+            'product.item_um',
+            'product.item_um2'
+        )
+        ->get();
         // dd($data);
         return view('Stat.ShowDispenseStat', compact(['data', 'date']));
     }
