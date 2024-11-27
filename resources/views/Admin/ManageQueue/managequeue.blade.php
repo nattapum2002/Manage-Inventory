@@ -64,16 +64,21 @@
                             <th>เกรด</th>
                             <th>เวลา</th>
                             <th>หมายเหตุ</th>
+                            <th></th>
                         </thead>
                         <tbody id="queueTableBody">
                             @foreach ($CustomerQueues as $queue)
                                 <tr>
                                     <td>{{ $queue->queue_no }}</td>
-                                    <td>{{ $queue->order_number }}</td>
+                                    <td>{{ number_format($queue->order_number, 0, '.', '') }}</td>
                                     <td>{{ $queue->customer_name ?? 'ไม่มีชื่อ' }}</td>
                                     <td>{{ $queue->customer_grade ?? 'N/A' }}</td>
                                     <td>{{ (new DateTime($queue->queue_time))->format('H:i') }}</td>
                                     <td>{{ $queue->note }}</td>
+                                    <td>
+                                        <a href="{{ route('DetailCustomerQueue', ['order_number' => $queue->order_number]) }}"
+                                            class="btn btn-primary"><i class="fas fa-info-circle"></i></a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -84,6 +89,7 @@
                             <th>เกรด</th>
                             <th>เวลา</th>
                             <th>หมายเหตุ</th>
+                            <th></th>
                         </tfoot>
                     </table>
                 </article>

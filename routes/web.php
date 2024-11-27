@@ -81,6 +81,7 @@ Route::prefix('ManageQueue')->group(function () {
     Route::post('/FilterDate', [CustomerQueueController::class, 'ManageQueueFilterDate'])->name('ManageQueueFilterDate');
     Route::post('/Add', [CustomerQueueController::class, 'AddCustomerQueue'])->name('AddCustomerQueue');
     Route::post('/Add/Save', [CustomerQueueController::class, 'SaveAddCustomerQueue'])->name('SaveAddCustomerQueue');
+    Route::get('/Detail/{order_number}', [CustomerQueueController::class, 'DetailCustomerQueue'])->name('DetailCustomerQueue');
 });
 
 Route::prefix('ManageShift')->group(function () {

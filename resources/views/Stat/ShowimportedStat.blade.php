@@ -8,7 +8,7 @@
         <div class="container-fluid">
             <div class="card">
                 <article class="card-body">
-                    <table id="stat-table" class="table">
+                    <table id="stat-table" class="table table-striped">
                         <thead>
                             <th>รหัสสินค้า</th>
                             <th>ชื่อสินค้า</th>

@@ -578,6 +578,9 @@
             info: false,
             ordering: true,
             paging: true,
+            responsive: true,
+            lengthChange: true,
+            // autoWidth: true,
 
         })
         $('#date-stat-table').DataTable({

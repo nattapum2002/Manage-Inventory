@@ -147,7 +147,7 @@ class CustomerQueueController extends Controller
                         'order_number' => $row[1],
                         'queue_time' => $row[4],
                         'queue_date' => $row[5],
-                        'note' => $row[6] ?? 'Not Available',
+                        'note' => $row[6] ?? 'N/A',
                         'status' => 1,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -182,4 +182,36 @@ class CustomerQueueController extends Controller
             throw new \Exception('Error reading Excel file: ' . $e->getMessage());
         }
     }
+
+    public function DetailCustomerQueue($order_number)
+    {
+        $customer_queue = DB::table('customer_queue')
+            ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
+            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->where('customer_queue.order_number', '=', $order_number)
+            ->first();
+
+        return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue'));
+    }
 }
+
+
+//     +"id": "1113"
+//     +"order_number": "1141100526.0"
+//     +"queue_no": "7"
+//     +"queue_time": "12:00:00.0000000"
+//     +"queue_date": "2024-11-27"
+//     +"entry_time": null
+//     +"entry_date": null
+//     +"release_time": null
+//     +"release_date": null
+//     +"note": null
+//     +"status": "1"
+//     +"created_at": null
+//     +"updated_at": null
+//     +"order_id": "81"
+//     +"customer_id": "48999"
+//     +"team_id": null
+//     +"customer_number": "EXP-160010"
+//     +"customer_name": "OKAYA AND CO., LTD"
+//     +"customer_grade": null

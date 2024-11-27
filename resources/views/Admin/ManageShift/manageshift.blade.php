@@ -34,8 +34,8 @@
                                         <tr>
                                             <td>{{ $shift->shift_id }}</td>
                                             <td>{{ $shift->shift_name }}</td>
-                                            <td>{{ $shift->start_shift }}</td>
-                                            <td>{{ $shift->end_shift }}</td>
+                                            <td>{{ (new DateTime($shift->start_shift))->format('H:i') }}</td>
+                                            <td>{{ (new DateTime($shift->end_shift))->format('H:i') }}</td>
                                             <td>{{ $usersCounts->where('shift_id', $shift->shift_id)->count() }}
                                             </td>
                                             <td>{{ $shift->status ? 'ใช้งาน' : 'ไม่ใช้งาน' }}</td>
