@@ -8,7 +8,7 @@
     <main>
         <section class="card">
             <article class="card-header">
-                <a href="{{route('show-queue-order')}}" class="btn btn-primary">เพิ่มคิวลูกค้า</a>
+                <a href="" class="btn btn-primary">เพิ่มคิวลูกค้า</a>
             </article>
             <article class="card-body">
                 <table id="queue-all-table" class="table table-striped">

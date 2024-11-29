@@ -57,7 +57,7 @@
                                             <td>{{ $CustomerOrder->pallet_order_note ?? 'ไม่มี' }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
-                                                <a href="{{ route('EditPalletOrder',[$CustomerOrder->order_id , $CustomerOrder->product_id]) }}"
+                                                <a href="{{ route('EditPalletOrder',[$CustomerOrder->order_id , $CustomerOrder->item_id]) }}"
                                                     class="btn btn-primary">แก้ไข</a>
                                             </td>
                                         </tr>

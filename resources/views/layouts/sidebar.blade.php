@@ -40,7 +40,7 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('ShowStockA') }}" class="nav-link has-dropdown">
                         <i class="far fa-circle nav-icon"></i>
                         <p>
@@ -55,7 +55,7 @@
                             สินค้าในคลัง : Cold-C
                         </p>
                     </a>
-                </li>
+                </li> --}}
                 @if (Auth::user()->user_type == 'Admin')
                     <li class="nav-item">
                         <a href="{{ route('AdminShowStock') }}" class="nav-link">
@@ -168,6 +168,14 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 เพิ่ม/เช็ค จำนวนสินค้า
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('Em.Work.pallet') }}" class="nav-link has-dropdown">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                งานพาเลท
                             </p>
                         </a>
                     </li>

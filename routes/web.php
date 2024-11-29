@@ -12,6 +12,7 @@ use App\Http\Controllers\ShowStat;
 use App\Http\Controllers\ShowStock;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserWorkController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -142,11 +143,9 @@ Route::get('/ManageUsers', [UserController::class, 'index'])->name('ManageUsers'
 Route::get('/ManageUsers/Createuser', function () {
     return view('Admin.ManageUsers.createuser');
 })->name('Createuser');
-
 Route::post('/ManageUsers/Createuser', [UserController::class, 'create'])->name('ManageUsers.Createuser');
 Route::get('/ManageUsers/Toggle/{user_id}/{status}', [UserController::class, 'toggle'])->name('ManageUsers.Toggle');
 Route::get('/ManageUsers/Edituser/{user_id}', [UserController::class, 'edit'])->name('Edituser');
-
 Route::post('/ManageUsers/Edituser/{user_id}', [UserController::class, 'update'])->name('Edituser.update');
 
 Route::get('/Profile', function () {
@@ -177,3 +176,9 @@ Route::get('/Manager/Profile', function () {
 Route::get('/User/Dashboard', function () {
     return view('Admin.Dashboard.index');
 })->name('Dashboard.User');
+
+//employee Routes
+Route::get('/Pallet/Work/pallet' ,[UserWorkController::class, 'index'])->name('Em.Work.pallet');
+Route::get('/Pallet/Work/pallet/detail/{pallet_id}/{order_id}' ,[UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
+Route::get('/submit/{pallet_id}' ,[UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
+//employee Routes
