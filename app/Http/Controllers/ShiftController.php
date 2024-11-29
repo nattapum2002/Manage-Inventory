@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ShiftController extends Controller
 {
@@ -164,5 +165,32 @@ class ShiftController extends Controller
         }
 
         return response()->json($results);
+    }
+
+    public static function AutoSelectShift($date, $time)
+    {
+        $datetime = Carbon::parse("$date $time");
+
+        $shifts = DB::table('work_shift')->get();
+
+        foreach ($shifts as $shift) {
+            $shiftStart = Carbon::parse("$date $shift->start_shift");
+            $shiftEnd = Carbon::parse("$date $shift->end_shift");
+
+            if ($datetime->between($shiftStart, $shiftEnd)) {
+                return [
+                    'shift_id' => $shift->shift_id,
+                    'shift_name' => $shift->shift_name,
+                    'start_time' => $shift->start_shift,
+                    'end_time' => $shift->end_shift,
+                ];
+            }
+        }
+
+        // หากไม่พบกะที่ตรงกับช่วงเวลา
+        return [
+            'shift_id' => null,
+            'message' => 'ไม่พบกะที่ตรงกับช่วงเวลาที่ระบุ',
+        ];
     }
 }

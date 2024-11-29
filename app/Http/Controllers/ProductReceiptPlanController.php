@@ -180,7 +180,8 @@ class ProductReceiptPlanController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 "status" => false,
-                "message" => "Error: " . $e->getMessage(),
+                "message" => "An unexpected error occurred. Please try again later.",
+                "error" => $e->getMessage(),
             ], 500);
         }
     }
@@ -260,13 +261,13 @@ class ProductReceiptPlanController extends Controller
 
             return response()->json([
                 "status" => true,
-                "data" => "The shift assignment has been updated successfully.",
-            ]);
+                "message" => "The shift assignment has been updated successfully.",
+            ], 200);
         } catch (\Exception $e) {
-            // หากเกิดข้อผิดพลาดในระหว่างการทำงาน
             return response()->json([
                 "status" => false,
-                "message" => "Error: " . $e->getMessage(),
+                "message" => "An unexpected error occurred. Please try again later.",
+                "error" => $e->getMessage(),
             ], 500);
         }
     }

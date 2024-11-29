@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    รายละเอียดล็อคสินค้า : {{ $order_id }}
+    รายละเอียดล็อคสินค้า : {{ number_format($order_id, 0, '.', '') }}
 @endsection
 
 @section('content')
@@ -43,7 +43,7 @@
                                         <th colspan="10">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    ชื่อลูกค้า : {{ $CustomerOrders[0]->customer_name }}
+                                                    ชื่อลูกค้า : {{ $CustomerOrders[0]->customer_name ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
@@ -76,7 +76,7 @@
                                             <td>{{ $CustomerOrder->order_quantity }}</td>
                                             <td>{{ $CustomerOrder->order_quantity_UM }}</td>
                                             <td>{{ $CustomerOrder->order_quantity2 }}</td>
-                                            <td>{{ $CustomerOrder->order_quantity_UM2  }}</td>
+                                            <td>{{ $CustomerOrder->order_quantity_UM2 }}</td>
                                             <td>{{ $CustomerOrder->bag_color }}</td>
                                             <td>{{ $CustomerOrder->note }}</td>
                                             <td>{{ $CustomerOrder->status }}</td>
@@ -104,7 +104,7 @@
                                         <th colspan="10">
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
-                                                    หมายเหตุ : {{ $CustomerOrders[0]->note }}
+                                                    หมายเหตุ : {{ $CustomerOrders[0]->note ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
                                                     {{-- @foreach ($LockTeams->where('team_id', $CustomerOrders[0]->team_id) as $LockTeam)
@@ -134,7 +134,7 @@
                                         <th colspan="9">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ชื่อลูกค้า :
-                                                    {{ $CustomerOrders[0]->customer_name }}</div>
+                                                    {{ $CustomerOrders[0]->customer_name ?? 'N/A' }}</div>
                                                 {{-- <div class="col-lg-3 col-md-6 col-sm-12"></div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ทีม :
                                                     {{ $CustomerOrders[0]->team_name ?? 'N/A' }}</div>
@@ -189,7 +189,7 @@
                                         <th colspan="9">
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
-                                                    หมายเหตุ : {{ $CustomerOrders[0]->note }}
+                                                    หมายเหตุ : {{ $CustomerOrders[0]->note ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
                                                     พนักงานจัด :
