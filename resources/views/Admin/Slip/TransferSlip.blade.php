@@ -18,12 +18,13 @@
                             <div class="card-body">
                                 <article>
                                     <div class="row">
-                                        <div class="col-lg col-md-4 col-sm-12">
+                                        {{-- <div class="col-lg col-md-4 col-sm-12">
                                             <div class="form-group">
                                                 <label for="slip_id" class="form-label">กรอกหมายเลขสลิป</label>
-                                                <input type="number" class="form-control" id="slip_id" name="slip_id">
+                                                <input type="text" class="form-control" id="slip_id" name="slip_id"
+                                                    value="{{ Str::uuid() }}" readonly>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-lg col-md-4 col-sm-12">
                                             <div class="form-group">
                                                 <label for="slip_number" class="form-label">สลิปใบที่</label>

@@ -198,7 +198,7 @@ Route::get('/User/Dashboard', function () {
 })->name('Dashboard.User');
 
 //employee Routes
-Route::get('/Pallet/Work/pallet' ,[UserWorkController::class, 'index'])->name('Em.Work.pallet');
-Route::get('/Pallet/Work/pallet/detail/{pallet_id}/{order_id}' ,[UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
-Route::get('/submit/{pallet_id}' ,[UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
+Route::get('/Pallet/Work/pallet', [UserWorkController::class, 'index'])->name('Em.Work.pallet');
+Route::get('/Pallet/Work/pallet/detail/{pallet_id}/{order_id}', [UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
+Route::get('/submit/{pallet_id}', [UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
 //employee Routes

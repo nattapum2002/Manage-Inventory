@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-
-use function Laravel\Prompts\select;
+use Illuminate\Support\Str;
 
 class ProductReceiptPlanController extends Controller
 {
@@ -16,7 +16,6 @@ class ProductReceiptPlanController extends Controller
     {
         $ProductReceiptPlans = DB::table('product_receipt_plan')
             ->join('work_shift', 'product_receipt_plan.shift_id', '=', 'work_shift.shift_id')
-            // ->join('product_receipt_plan_detail', 'product_receipt_plan.product_receipt_plan_id', '=', 'product_receipt_plan_detail.product_receipt_plan_id')
             ->get();
 
         $shifts = DB::table('work_shift')->select('shift_id', 'shift_name')->distinct()->get();
@@ -30,7 +29,7 @@ class ProductReceiptPlanController extends Controller
     {
         // ตรวจสอบว่าไฟล์ถูกอัปโหลดและมีประเภทที่ถูกต้อง
         $request->validate([
-            'product_receipt_plan_id' => 'required',
+            // 'product_receipt_plan_id' => 'required',
             'date' => 'required',
             'shift_id' => 'required',
             'note' => 'nullable',
@@ -72,59 +71,79 @@ class ProductReceiptPlanController extends Controller
 
     public function SaveAddProductReceiptPlan(Request $request)
     {
-        $shift_id = $request->input('shift_id');
-        $date = $request->input('date');
+        try {
+            $shift_id = $request->input('shift_id');
+            $date = $request->input('date');
 
-        $shift_data = DB::table('work_shift')->where('shift_id', $shift_id)->first();
+            $shift_data = DB::table('work_shift')->where('shift_id', $shift_id)->first();
 
-        $product_receipt_name = 'กะ ' . $shift_data->shift_name . ' : ' . (new DateTime($date))->format('d/m/Y');
+            $product_receipt_name = 'กะ ' . $shift_data->shift_name . ' : ' . (new DateTime($date))->format('d/m/Y');
+            $product_receipt_plan_id = $request->input('product_receipt_plan_id') ?? Str::uuid();
 
-        DB::table('product_receipt_plan')->insert([
-            'product_receipt_plan_id' => $request->input('product_receipt_plan_id'),
-            'product_receipt_plan_name' => $product_receipt_name,
-            'date' => $date,
-            'shift_id' => $shift_id,
-            'note' => $request->input('note'),
-            'status' => $request->input('status') ?? true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            DB::table('product_receipt_plan')->insert([
+                'product_receipt_plan_id' => $product_receipt_plan_id,
+                'product_receipt_plan_name' => $product_receipt_name,
+                'date' => $date,
+                'shift_id' => $shift_id,
+                'note' => $request->input('note'),
+                'status' => $request->input('status') ?? true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        // รับข้อมูลไฟล์ชั่วคราวจากฟอร์ม
-        $filePath = $request->input('filePath');
-        $fullFilePath = storage_path('app/' . $filePath);
+            // รับข้อมูลไฟล์ชั่วคราวจากฟอร์ม
+            $filePath = $request->input('filePath');
+            $fullFilePath = storage_path('app/' . $filePath);
 
-        // ตรวจสอบว่าไฟล์ยังอยู่ในเซิร์ฟเวอร์
-        if (Storage::exists($filePath)) {
-            // ดึงข้อมูลจากไฟล์ Excel อีกครั้งเพื่อบันทึกลงฐานข้อมูล
-            $spreadsheet = IOFactory::load($fullFilePath);
-            $sheet = $spreadsheet->getActiveSheet();
-            $data = $sheet->toArray();
+            if (Storage::exists($filePath)) {
+                $spreadsheet = IOFactory::load($fullFilePath);
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = $sheet->toArray();
 
-            $rows = array_slice($data, 2);
+                $rows = array_slice($data, 2);
 
-            // บันทึกข้อมูลลงฐานข้อมูล
-            foreach ($rows as $row) {
-                DB::table('product_receipt_plan_detail')->insert([
-                    'product_id' => $row[0],
-                    'weight' => $row[2] ?? 0,
-                    'increase_weight' => $row[3] ?? 0,
-                    'reduce_weight' => $row[4] ?? 0,
-                    'total_weight' => $row[5] ?? 0,
-                    'product_receipt_plan_id' => $request->input('product_receipt_plan_id'),
-                    'note' => $row[6],
-                    'status' => 1,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+                $insertData = [];
+
+                foreach ($rows as $row) {
+                    if (!isset($row[0]) || empty($row[0])) {
+                        continue; // ข้ามแถวที่ไม่มี product_id
+                    }
+
+                    $insertData[] = [
+                        'product_id' => $row[0],
+                        'weight' => $row[2] ?? 0,
+                        'increase_weight' => $row[3] ?? 0,
+                        'reduce_weight' => $row[4] ?? 0,
+                        'total_weight' => $row[5] ?? 0,
+                        'product_receipt_plan_id' => $product_receipt_plan_id,
+                        'note' => $row[6] ?? null,
+                        'status' => 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                if (!empty($insertData)) {
+                    $chunks = array_chunk($insertData, 100);
+
+                    foreach ($chunks as $chunk) {
+                        DB::table('product_receipt_plan_detail')->insert($chunk);
+                    }
+                }
+
+                Storage::delete($filePath);
             }
 
-            // ลบไฟล์ชั่วคราวออกจากระบบ
-            Storage::delete($filePath);
+            return redirect()->route('ProductReceiptPlan')->with('success', 'Data saved successfully.');
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "message" => "An unexpected error occurred. Please try again later.",
+                "error" => $e->getMessage(),
+            ], 500);
         }
-
-        return redirect()->route('ProductReceiptPlan');
     }
+
 
     public function EditProductReceiptPlan($product_receipt_plan_id)
     {
@@ -159,20 +178,29 @@ class ProductReceiptPlanController extends Controller
             $data = $request->all(); // รับข้อมูลทั้งหมดจากฟอร์ม
 
             DB::transaction(function () use ($data) {
+                $now = now(); // ลดจำนวนการเรียก now()
+                $insertData = []; // สร้างอาร์เรย์สำหรับเก็บข้อมูลที่ต้องบันทึก
+
                 foreach ($data['product_id'] as $key => $productId) {
-                    DB::table('product_receipt_plan_detail')->updateOrInsert(
-                        ['product_id' => $productId],
-                        [
-                            'product_receipt_plan_id' => $data['product_receipt_plan_id'],
-                            'weight' => $data['product_quantity'][$key] ?? 0,
-                            'increase_weight' => $data['increase_quantity'][$key] ?? 0,
-                            'reduce_weight' => $data['reduce_quantity'][$key] ?? 0,
-                            'total_weight' => $data['total_quantity'][$key] ?? 0,
-                            'note' => $data['note'][$key] ?? 'N/A',
-                            'updated_at' => now(),
-                        ]
-                    );
+                    $insertData[] = [
+                        'product_id' => $productId,
+                        'product_receipt_plan_id' => $data['product_receipt_plan_id'],
+                        'weight' => $data['product_quantity'][$key] ?? 0,
+                        'increase_weight' => $data['increase_quantity'][$key] ?? 0,
+                        'reduce_weight' => $data['reduce_quantity'][$key] ?? 0,
+                        'total_weight' => $data['total_quantity'][$key] ?? 0,
+                        'note' => $data['note'][$key] ?? 'N/A',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
                 }
+
+                // ทำการบันทึกข้อมูลทั้งหมดในครั้งเดียว
+                DB::table('product_receipt_plan_detail')->upsert(
+                    $insertData,
+                    ['product_id', 'product_receipt_plan_id'], // ระบุคอลัมน์ที่ใช้ในการตรวจสอบ
+                    ['weight', 'increase_weight', 'reduce_weight', 'total_weight', 'note', 'updated_at'] // คอลัมน์ที่ต้องการอัปเดตหากพบข้อมูลซ้ำ
+                );
             });
 
             return redirect()->route('EditProductReceiptPlan', $data['product_receipt_plan_id'])
@@ -196,35 +224,35 @@ class ProductReceiptPlanController extends Controller
             'note' => 'nullable|string|max:500',
         ]);
 
-        $shift_data = DB::table('work_shift')->where('shift_id', $request->input('shift_id'))->first();
+        try {
+            $shift_data = DB::table('work_shift')->where('shift_id', $request->input('shift_id'))->first();
 
-        $product_receipt_name = 'กะ ' . $shift_data->shift_name . ' : ' . (new DateTime($request->input('date')))->format('d/m/Y');
+            $product_receipt_name = 'กะ ' . $shift_data->shift_name . ' : ' . (new DateTime($request->input('date')))->format('d/m/Y');
 
-        DB::table('product_receipt_plan')->where('product_receipt_plan_id', $request->input('product_receipt_plan_id'))->update([
-            'product_receipt_plan_name' => $product_receipt_name,
-            'shift_id' => $request->input('shift_id'),
-            'date' => $request->input('date'),
-            'note' => $request->input('note'),
-            'updated_at' => now(),
-        ]);
-        return redirect()->route('EditProductReceiptPlan', $request->input('product_receipt_plan_id'))->with('success', 'updated successfully.');
+            DB::table('product_receipt_plan')
+                ->where('product_receipt_plan_id', $request->input('product_receipt_plan_id'))
+                ->update([
+                    'product_receipt_plan_name' => $product_receipt_name,
+                    'shift_id' => $request->input('shift_id'),
+                    'date' => $request->input('date'),
+                    'note' => $request->input('note'),
+                    'updated_at' => now(),
+                ]);
+
+            return redirect()->route('EditProductReceiptPlan', $request->input('product_receipt_plan_id'))
+                ->with('success', 'Updated successfully.');
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "message" => "An unexpected error occurred. Please try again later.",
+                "error" => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     public function SaveEditProduct(Request $request)
     {
-        $query = $request->product_edit;
-        // การตรวจสอบข้อมูลก่อนการดำเนินการ
-        // $query->validate([
-        //     'product_id' => 'required|string',
-        //     'old_product_id' => 'required|string',
-        //     'weight' => 'required|numeric',
-        //     'increase_weight' => 'required|numeric',
-        //     'reduce_weight' => 'required|numeric',
-        //     'total_weight' => 'required|numeric',
-        //     'note' => 'nullable|string',
-        //     'product_receipt_plan_id' => 'required|string',
-        // ]);
-
         try {
             if ($request->input('product_id') === $request->input('old_product_id')) {
                 // อัปเดตข้อมูลเมื่อ product_id เดิมยังคงไม่เปลี่ยนแปลง

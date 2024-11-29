@@ -15,13 +15,13 @@
                                 @csrf
                                 <article>
                                     <div class="row">
-                                        <div class="col">
+                                        {{-- <div class="col">
                                             <div class="form-group">
                                                 <label for="slip_id" class="form-label">กรอกหมายเลขสลิป</label>
                                                 <input type="number" class="form-control" id="slip_id" name="slip_id"
                                                     value="{{ $request->slip_id ?? '' }}" readonly>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="slip_number" class="form-label">สลิปใบที่</label>
@@ -50,6 +50,8 @@
                                                     value="{{ $request->time }}" readonly>
                                             </div>
                                         </div>
+                                        <input type="hidden" class="form-control" id="product_receipt_plan_id"
+                                            name="product_receipt_plan_id" value="{{ $product_receipt_plan_id }}">
                                     </div>
                                 </article>
                                 <hr>
@@ -72,13 +74,19 @@
                                                 <td>{{ $Product['product_id'] }}</td>
                                                 <td>{{ $Product['item_desc1'] }}</td>
                                                 <td>{{ $Product['total_weight'] }}</td>
-                                                <td>{{ $Product['total_sum'] }}</td>
                                                 <td>
-                                                    <input type="number" class="form-control"
+                                                    {{ $Product['total_sum'] }}
+                                                    <input type="hidden" class="form-control"
+                                                        id="total_sum_{{ $Product['product_id'] }}"
+                                                        name="total_sum[{{ $Product['product_id'] }}]"
+                                                        value="{{ $Product['total_sum'] }}">
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" class="form-control"
                                                         id="quantity_{{ $Product['product_id'] }}"
                                                         name="quantity[{{ $Product['product_id'] }}]" min="0"
                                                         max="{{ $Product['total_sum'] }}" value="0"
-                                                        {{ $Product['total_sum'] == 0 ? 'disabled' : '' }}>
+                                                        {{ $Product['total_sum'] == 0 ? 'readonly' : '' }}>
                                                 </td>
                                                 <td>
                                                     {{ $Product['item_um'] }}
@@ -91,7 +99,7 @@
                                                     <input type="text" class="form-control"
                                                         id="note_{{ $Product['product_id'] }}"
                                                         name="note[{{ $Product['product_id'] }}]"
-                                                        {{ $Product['total_sum'] == 0 ? 'disabled' : '' }}>
+                                                        {{ $Product['total_sum'] == 0 ? 'readonly' : '' }}>
                                                 </td>
                                                 <td>
                                                     @if ($Product['total_sum'] == 0)
@@ -133,13 +141,13 @@
                 lengthChange: true,
                 autoWidth: true,
                 // scrollX: true,
-                layout: {
-                    topStart: {
-                        buttons: [
-                            'copy', 'excel', 'pdf'
-                        ]
-                    }
-                }
+                // layout: {
+                //     topStart: {
+                //         buttons: [
+                //             'copy', 'excel', 'pdf'
+                //         ]
+                //     }
+                // }
             });
         });
     </script>
