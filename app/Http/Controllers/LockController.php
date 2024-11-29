@@ -31,7 +31,7 @@ class LockController extends Controller
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
             ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
-            ->where('customer_order.order_number', '=',$order_id)
+            ->where('customer_order.order_number', '=', $order_id)
             ->get();
         // dd($CustomerOrders);
         $LockTeams = DB::table('lock_team')
@@ -40,13 +40,14 @@ class LockController extends Controller
             ->get();
         $Pallets = DB::table('pallet')
             ->where('order_id', '=', $order_id)
-            ->selectRaw('pallet.id,MAX(pallet_type.pallet_type) as pallet_type ,MAX(pallet.pallet_id) as pallet_id ,MAX(pallet_no) as pallet_no, MAX(room) as room, pallet.status ,MAX(pallet.note) as note, MAX(lock_team.team_name) as team_name')
+            ->selectRaw('pallet.id,MAX(pallet_type.pallet_type) as pallet_type ,MAX(pallet.pallet_id) as pallet_id ,MAX(pallet_no) as pallet_no, MAX(room) as room, pallet.status ,pallet.recive_status ,MAX(pallet.note) as note, MAX(lock_team.team_name) as team_name')
             ->join('pallet_order', 'pallet.id', '=', 'pallet_order.pallet_id')
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
             ->join('lock_team', 'pallet.team_id', '=', 'lock_team.id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
-            ->groupBy('pallet.id', 'pallet.status')
+            ->groupBy('pallet.id', 'pallet.status' ,'pallet.recive_status')
             ->get();
+        // dd($Pallets);
         return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets', 'order_id'));
     }
 
@@ -59,7 +60,7 @@ class LockController extends Controller
         //     ->where('customer_order.order_number', '=', $order_number)
         //     ->get();
         $pallet_type = DB::table('pallet_type')->get();
-        return view('Admin.ManageLockStock.AddPallet', compact('order_number','pallet_type'));
+        return view('Admin.ManageLockStock.AddPallet', compact('order_number', 'pallet_type'));
     }
 
     public function SavePallet($order_number, Request $request)
@@ -117,13 +118,14 @@ class LockController extends Controller
                     'created_at' => now(),
                 ]);
                 foreach ($value['product_id'] as $key => $product) {
-                    DB::table('pallet_order')->insert([
+                    $pallet_order_id = DB::table('pallet_order')->insertGetId([
                         'pallet_id' => $id,
                         'product_id' => $product,
                         'created_at' => now(),
                     ]);
                     DB::table('confirmOrder')->insert([
                         'order_id' => $order_number,
+                        'pallet_order_id' => $pallet_order_id,
                         'product_id' => $product,
                         'quantity' => $value['quantity'][$key],
                         'quantity2' => $value['quantity2'][$key] ?? 0,
@@ -139,26 +141,19 @@ class LockController extends Controller
     public function DetailPallets($order_number, $pallet_id)
     {
         $Pallets = DB::table('pallet_order')
-            ->select(
-                'pallet_type.pallet_type',
-                'pallet_order.*',
-                'product.*',
-                'pallet.*',
-                'customer_order_detail.order_quantity',
-                'customer_order_detail.order_quantity2',
-                'confirmOrder.quantity',
-                'confirmOrder.quantity2'
-            )
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
             ->join('pallet', 'pallet_order.pallet_id', '=', 'pallet.id')
-            ->leftJoin('customer_order_detail', function ($join) use ($order_number) {
-                $join->on('pallet_order.product_id', '=', 'customer_order_detail.product_id')
-                    ->where('customer_order_detail.order_number', '=', $order_number);
-            })
-            ->join('confirmOrder', 'pallet_order.product_id', '=', 'confirmOrder.product_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
+            ->join('confirmOrder', 'pallet_order.id', '=', 'confirmOrder.pallet_order_id')
+            ->join('customer_order', 'confirmOrder.order_id', '=', 'customer_order.order_number')
+            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->leftJoin('customer_order_detail', function ($join) use ($order_number) {
+                    $join->on('pallet_order.product_id', '=', 'customer_order_detail.product_id')
+                        ->where('customer_order_detail.order_number', '=', $order_number);
+                })
             ->where('pallet_order.pallet_id', '=', $pallet_id)
             ->get();
+
         // dd($Pallets);
         return view('Admin.ManageLockStock.DetailPellets', compact('Pallets'));
     }

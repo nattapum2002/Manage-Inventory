@@ -131,7 +131,7 @@
                             <table id="pallte" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th colspan="8">
+                                        <th colspan="9">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ชื่อลูกค้า :
                                                     {{ $CustomerOrders[0]->customer_name ?? 'N/A' }}</div>
@@ -151,6 +151,7 @@
                                         <th>ประเภท</th>
                                         <th>หมายเหตุ</th>
                                         <th>สถานะ</th>
+                                        <th>การจัดส่ง</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -163,9 +164,8 @@
                                             <td>{{ $Pallet->team_name }}</td>
                                             <td>{{ $Pallet->pallet_type }}</td>
                                             <td>{{ $Pallet->note }}</td>
-                                            <td>{!! $Pallet->status == 1
-                                                ? '<p class="text-success">จัดพาเลทแล้ว</p>'
-                                                : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}</td>
+                                            <td>{!! $Pallet->status == 1 ? '<p class="text-success">จัดพาเลทแล้ว</p>' : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}</td>
+                                            <td>{!! $Pallet->recive_status == 1 ? '<p class="text-success">ส่งแล้ว</p>' : '<p class="text-danger">ยังไม่จัดส่ง</p>' !!}</td>
                                             <td>
                                                 <a href="{{ route('DetailPallets', ['order_number' => $order_id, 'pallet_id' => $Pallet->id]) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
@@ -182,10 +182,11 @@
                                         <th>ประเภท</th>
                                         <th>หมายเหตุ</th>
                                         <th>สถานะ</th>
+                                        <th>การจัดส่ง</th>
                                         <th></th>
                                     </tr>
                                     <tr>
-                                        <th colspan="8">
+                                        <th colspan="9">
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
                                                     หมายเหตุ : {{ $CustomerOrders[0]->note ?? 'N/A' }}

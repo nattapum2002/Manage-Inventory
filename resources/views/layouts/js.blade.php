@@ -588,6 +588,18 @@
             ordering: true,
             paging: true
         })
+        $('#Em-Pallet').DataTable({
+            info: false,
+            ordering: true,
+            paging: true,
+            scrollX: true
+        })
+        $('#Em-Pallet-detail').DataTable({
+            info: false,
+            ordering: true,
+            paging: true,
+            scrollX: true
+        })
     });
 </script>
 
