@@ -14,6 +14,7 @@ use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SlipController;
 use App\Http\Controllers\CustomerQueueController;
+use App\Http\Controllers\PayGoodsController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -136,6 +137,11 @@ Route::prefix('slip')->group(function () {
     Route::get('/TransferSlip', [SlipController::class, 'TransferSlip'])->name('TransferSlip');
     Route::post('/TransferSlip/Add', [SlipController::class, 'AddTransferSlip'])->name('AddTransferSlip');
     Route::post('/TransferSlip/Add/Save', [SlipController::class, 'SaveAddTransferSlip'])->name('SaveAddTransferSlip');
+});
+
+Route::prefix('PayGoods')->group(function () {
+    Route::get('/', [PayGoodsController::class, 'index'])->name('PayGoods');
+    Route::get('/SelectPayGoods/{order_number}', [PayGoodsController::class, 'SelectPayGoods'])->name('SelectPayGoods');
 });
 
 Route::get('AddItem', function () {

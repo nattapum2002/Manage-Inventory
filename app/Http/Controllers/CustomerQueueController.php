@@ -194,24 +194,3 @@ class CustomerQueueController extends Controller
         return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue'));
     }
 }
-
-
-//     +"id": "1113"
-//     +"order_number": "1141100526.0"
-//     +"queue_no": "7"
-//     +"queue_time": "12:00:00.0000000"
-//     +"queue_date": "2024-11-27"
-//     +"entry_time": null
-//     +"entry_date": null
-//     +"release_time": null
-//     +"release_date": null
-//     +"note": null
-//     +"status": "1"
-//     +"created_at": null
-//     +"updated_at": null
-//     +"order_id": "81"
-//     +"customer_id": "48999"
-//     +"team_id": null
-//     +"customer_number": "EXP-160010"
-//     +"customer_name": "OKAYA AND CO., LTD"
-//     +"customer_grade": null
