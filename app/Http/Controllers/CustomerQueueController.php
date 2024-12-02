@@ -191,6 +191,48 @@ class CustomerQueueController extends Controller
             ->where('customer_queue.order_number', '=', $order_number)
             ->first();
 
-        return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue'));
+        $pallet = DB::table('pallet')
+            ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
+            ->where('pallet.order_id', '=', $order_number)
+            ->get();
+        // dd($pallet);
+        return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue' , 'pallet'));
+    }
+
+    public function PalletDetail($pallet_id , $order_id){
+        $Pallets = DB::table('pallet_order')
+            ->select('customer.customer_name',
+            'pallet.id',
+            'pallet.pallet_no',
+            'pallet.room',
+            'pallet_type.pallet_type',
+            'pallet.status',
+            'pallet.recive_status',
+            'product.item_desc1',
+            'product.item_no',
+            'product.item_um',
+            'product.item_um2',
+            'confirmOrder.quantity',
+            'confirmOrder.quantity2',)
+            ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
+            ->join('pallet', 'pallet_order.pallet_id', '=', 'pallet.id')
+            ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
+            ->join('confirmOrder', 'pallet_order.id', '=', 'confirmOrder.pallet_order_id')
+            ->join('customer_order', 'confirmOrder.order_id', '=', 'customer_order.order_number')
+            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->leftJoin('customer_order_detail', function ($join) use ($order_id) {
+                $join->on('pallet_order.product_id', '=', 'customer_order_detail.product_id')
+                    ->where('customer_order_detail.order_number', '=', $order_id);
+            })
+            ->where('pallet_order.pallet_id', '=', $pallet_id)
+            ->get();
+
+        return view('Admin.ManageQueue.QueuePalletDetail',compact('Pallets', 'order_id', 'pallet_id'));
+    }
+
+    public function confirmReceive($order_id,$pallet_id){
+        DB::table('pallet')->where('id', $pallet_id)->update(['recive_status' => 1]);
+
+        return redirect()->route('DetailCustomerQueue',$order_id);
     }
 }

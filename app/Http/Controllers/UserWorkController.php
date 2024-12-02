@@ -26,8 +26,8 @@ class UserWorkController extends Controller
             ->join('lock_team', 'pallet.team_id', '=', 'lock_team.id')
             ->join('lock_team_user', 'lock_team.id', '=', 'lock_team_user.team_id')
             ->where('lock_team_user.user_id', '=', auth()->user()->user_id)
+            ->orderByRaw('CASE WHEN pallet.status = 1 THEN 1 ELSE 0 END ASC')
             ->get();
-        // dd($data);
         return view('Employee.Pallet.showpallet', compact('data'));
     }
     public function showPalletDetail($pallet_id, $order_id)
