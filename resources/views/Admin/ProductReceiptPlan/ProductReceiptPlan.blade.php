@@ -19,7 +19,7 @@
                             <form action="{{ route('AddProductReceiptPlan') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    {{-- <div class="col-lg-2 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="product_receipt_plan_id">รหัสแผนรับสินค้า</label>
                                             <input type="text" class="form-control" id="product_receipt_plan_id"
@@ -28,8 +28,8 @@
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    </div> --}}
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="shift_id">กะพนักงาน</label>
                                             <select class="form-control" id="shift_id" name="shift_id">
@@ -44,7 +44,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="date">วันที่</label>
                                             <input type="date" class="form-control" id="date" name="date"

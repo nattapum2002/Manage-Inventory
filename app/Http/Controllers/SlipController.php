@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SlipController extends Controller
 {
@@ -22,9 +23,11 @@ class SlipController extends Controller
             ->where('product_receipt_plan.date', $date)
             ->where('product_receipt_plan.status', false)
             ->where('product_receipt_plan_detail.status', false)
-            ->select('product_receipt_plan_detail.product_id', 'product_receipt_plan_detail.total_weight', 'product.item_desc1', 'product.item_um', 'product.item_um2')
+            ->select('product_receipt_plan.product_receipt_plan_id', 'product_receipt_plan_detail.product_id', 'product_receipt_plan_detail.total_weight', 'product.item_desc1', 'product.item_um', 'product.item_um2')
             ->distinct()
             ->get();
+
+        $product_receipt_plan_id = $product_receipt_plans->first()->product_receipt_plan_id;
 
         $product_stores = DB::table('product_store')
             ->join('product_store_detail', 'product_store.product_slip_id', '=', 'product_store_detail.product_slip_id')
@@ -80,6 +83,7 @@ class SlipController extends Controller
 
         return view('Admin.Slip.AddTransferSlip', compact(
             'request',
+            'product_receipt_plan_id',
             'mergedData',
         ));
     }
@@ -88,12 +92,12 @@ class SlipController extends Controller
     {
         $shift = ShiftController::AutoSelectShift($request->input('date'), $request->input('time'));
 
-        $quantities = $request->input('quantity', []);
-        $notes = $request->input('note', []);
+        DB::beginTransaction();
 
-        DB::table('product_store')->Insert(
-            [
-                'product_slip_id' => $request->input('slip_id'),
+        try {
+            // Insert into product_store
+            DB::table('product_store')->insert([
+                'product_slip_id' => $request->input('slip_id') ?? Str::uuid(),
                 'product_slip_number' => $request->input('slip_number'),
                 'department' => $request->input('department'),
                 'store_date' => $request->input('date'),
@@ -102,27 +106,65 @@ class SlipController extends Controller
                 'shift_id' => $shift['shift_id'],
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
-        );
+            ]);
 
-        foreach ($quantities as $productId => $quantity) {
-            if ((float) $quantity > 0) {
-                DB::table('product_store_detail')->Insert(
-                    [
+            // Prepare data for bulk insert into product_store_detail
+            $quantities = $request->input('quantity', []);
+            $notes = $request->input('note', []);
+            $productStoreDetails = [];
+
+            foreach ($quantities as $productId => $quantity) {
+                if ((float) $quantity > 0) {
+                    $productStoreDetails[] = [
                         'product_id' => $productId,
-                        'product_slip_id' => $request->input('slip_id'),
+                        'product_slip_id' => $request->input('slip_id') ?? Str::uuid(),
                         'quantity' => $quantity,
-                        'quantity2' => null, // ปรับ logic หาก quantity2 มีค่าที่ต้องคำนวณ
+                        'quantity2' => null,
                         'note' => $notes[$productId] ?? null,
                         'created_at' => now(),
                         'updated_at' => now(),
-                    ]
-                );
+                    ];
+                }
             }
-        }
 
-        return view('Admin.Slip.TransferSlip')->with('success', 'Transfer Slip has been saved successfully.');
+            // Bulk insert product_store_detail
+            if (!empty($productStoreDetails)) {
+                DB::table('product_store_detail')->insert($productStoreDetails);
+            }
+
+            // Collect product IDs for update
+            $total_sum = $request->input('total_sum', []);
+            $updateProductIds = [];
+
+            foreach ($total_sum as $productId => $sum) {
+                if ((float) $sum - $quantities[$productId] == 0) {
+                    $updateProductIds[] = $productId;
+                }
+            }
+
+            // Update product_receipt_plan_detail
+            if (!empty($updateProductIds)) {
+                DB::table('product_receipt_plan_detail')
+                    ->join('product_receipt_plan', 'product_receipt_plan.product_receipt_plan_id', '=', 'product_receipt_plan_detail.product_receipt_plan_id')
+                    ->where('product_receipt_plan.product_receipt_plan_id', $request->input('product_receipt_plan_id'))
+                    ->whereIn('product_receipt_plan_detail.product_id', $updateProductIds)
+                    ->update(['product_receipt_plan_detail.status' => true]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('TransferSlip')->with('success', 'Transfer slip has been saved successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving the transfer slip.',
+                'error' => $e->getMessage(),
+            ], 500); // ใช้ HTTP Status Code 500 สำหรับข้อผิดพลาดฝั่งเซิร์ฟเวอร์
+        }
     }
+
 
     public function AutoCompleteSlip(Request $request)
     {

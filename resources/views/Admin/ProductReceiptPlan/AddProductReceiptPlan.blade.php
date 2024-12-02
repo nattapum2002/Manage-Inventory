@@ -14,15 +14,15 @@
                             <form action="{{ route('SaveAddProductReceiptPlan') }}" method="POST">
                                 @csrf
                                 <article class="row">
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    {{-- <div class="col-lg-2 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="product_receipt_plan_id">รหัสแผนรับสินค้า</label>
                                             <input type="text" class="form-control" id="product_receipt_plan_id"
                                                 name="product_receipt_plan_id" placeholder="รหัสแผนรับสินค้า"
                                                 value="{{ $filteredRequest['product_receipt_plan_id'] }}" readonly>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    </div> --}}
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="shift_id">กะพนักงาน</label>
                                             <select class="form-control" id="shift_id" name="shift_id">
@@ -33,7 +33,7 @@
                                                 placeholder="รหัสแผนรับสินค้า" value="{{ $shift->shift_id }}" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="date">วันที่</label>
                                             <input type="date" class="form-control" id="date" name="date"
