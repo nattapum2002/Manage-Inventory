@@ -37,18 +37,30 @@
                 <!-- Queue List -->
                 <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
                     <div class="queue-list">
-                        @foreach ($customer_queues as $queue)
-                            <a href="{{ route('SelectPayGoods', ['order_number' => $queue->order_number]) }}"
-                                class="text-decoration-none">
-                                <div class="card mb-2">
-                                    <div class="card-body text-center">
-                                        <div class="text-primary font-weight-bold">
-                                            {{ (new DateTime($queue->queue_time))->format('H:i') }}</div>
-                                        <div>{{ $queue->customer_name }}</div>
+                        @if ($customer_queues->isNotEmpty())
+                            @foreach ($customer_queues as $queue)
+                                <a href="{{ route('SelectPayGoods', ['order_number' => $queue->order_number]) }}"
+                                    class="text-decoration-none">
+                                    <div class="card mb-2">
+                                        <div class="card-body text-center">
+                                            <div class="text-primary font-weight-bold">
+                                                {{ (new DateTime($queue->queue_time))->format('H:i') }}
+                                            </div>
+                                            <div>{{ $queue->customer_name }}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        @else
+                            <div class="card mb-2">
+                                <div class="card-body text-center">
+                                    <div class="text-primary font-weight-bold">
+                                        <div>ไม่มีคิว</div>
                                     </div>
                                 </div>
-                            </a>
-                        @endforeach
+                            </div>
+                        @endif
+
                     </div>
                 </div>
 

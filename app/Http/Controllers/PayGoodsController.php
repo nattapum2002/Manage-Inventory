@@ -26,7 +26,7 @@ class PayGoodsController extends Controller
             ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
             ->join('confirmOrder', 'pallet_order.pallet_id', '=', 'confirmOrder.id')
-            ->where('pallet.order_id', $auto_select_queue->order_number)
+            ->where('pallet.order_id', $auto_select_queue->order_number ?? null)
             ->select(
                 'pallet.pallet_id',
                 'pallet.pallet_no',
