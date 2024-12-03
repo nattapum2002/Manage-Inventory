@@ -84,6 +84,9 @@ Route::prefix('ManageQueue')->group(function () {
     Route::post('/Add', [CustomerQueueController::class, 'AddCustomerQueue'])->name('AddCustomerQueue');
     Route::post('/Add/Save', [CustomerQueueController::class, 'SaveAddCustomerQueue'])->name('SaveAddCustomerQueue');
     Route::get('/Detail/{order_number}', [CustomerQueueController::class, 'DetailCustomerQueue'])->name('DetailCustomerQueue');
+
+    Route::get('/QueuePallet/Detail/{pallet_id}/{order_id}', [CustomerQueueController::class, 'PalletDetail'])->name('QueuePalletDetail');
+    Route::get('/ConfirmReceive/{order_id}/{pallet_id}', [CustomerQueueController::class, 'confirmReceive'])->name('ConfirmReceive');
 });
 
 Route::prefix('ManageShift')->group(function () {

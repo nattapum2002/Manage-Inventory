@@ -574,6 +574,11 @@
             ordering: true,
             paging: true
         })
+        $('#customer-queue-pallet-detail').DataTable({
+            info: false,
+            ordering: true,
+            paging: true
+        })
         $('#stat-table').DataTable({
             info: false,
             ordering: true,
@@ -590,9 +595,10 @@
         })
         $('#Em-Pallet').DataTable({
             info: false,
-            ordering: true,
+            ordering: false,
             paging: true,
-            scrollX: true
+            scrollX: true,
+            order: [[0, 'asc'], [2, 'desc']]
         })
         $('#Em-Pallet-detail').DataTable({
             info: false,
