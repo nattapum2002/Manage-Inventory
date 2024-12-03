@@ -71,7 +71,7 @@
                                 </article>
                             </form>
                             <hr>
-                            <table id="ProductReceiptPlanTable" class="table table-bordered table-striped">
+                            <table id="EditProductReceiptPlanTable" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>รหัสสินค้า</th>
@@ -215,6 +215,22 @@
 @endsection
 
 @section('script')
+    <script>
+        $("#EditProductReceiptPlanTable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
+        });
+    </script>
+
     <script>
         var product_count = 1;
 
