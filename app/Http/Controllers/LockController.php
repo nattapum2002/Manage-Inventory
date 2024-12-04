@@ -101,9 +101,9 @@ class LockController extends Controller
     {
         $data = session()->get('pallet');
         // dd(vars: $data);
-        // DB::table('pallet')->truncate();
-        // DB::table('pallet_order')->truncate();
-        // DB::table('confirmOrder')->truncate();
+        DB::table('pallet')->truncate();
+        DB::table('pallet_order')->truncate();
+        DB::table('confirmOrder')->truncate();
         DB::transaction(function () use ($data, $order_number) {
             foreach ($data as $key => $value) {
                 $id = DB::table('pallet')->insertGetId([

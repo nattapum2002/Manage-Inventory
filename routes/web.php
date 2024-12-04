@@ -34,10 +34,11 @@ Route::resource('Users', App\Http\Controllers\UserController::class);
 
 Route::resource('ManageStock', App\Http\Controllers\ManageImportProduct::class);
 //Admin Routes
-Route::prefix('ManageQueue')->group(function () {
+Route::prefix('ManageIncentive')->group(function () {
     Route::get('/Incentive', function () { return view('Admin.ManageIncentive.IncentiveDashbord');})->name('IncentiveDashbord');
     Route::get('/Incentive/Arrange', [App\Http\Controllers\IncentiveController::class, 'incentiveArrange'])->name('IncentiveArrange');
     Route::get('/Incentive/Arrange/{date}/Worker', [App\Http\Controllers\IncentiveController::class, 'incentiveArrangeWorker'])->name('IncentiveArrangeWorker');
+    Route::get('/Incentive/Arrange/{date}/{user_id}/Detail', [App\Http\Controllers\IncentiveController::class, 'incentiveArrangeWorkerDetail'])->name('IncentiveArrangeWorkerDetail');
 });
 Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');

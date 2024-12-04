@@ -616,6 +616,12 @@
             ordering: true,
             paging: true
         })
+        $('#incentive-arrange-Em-detail-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true,
+            autoWidth: true,
+        })
     });
 </script>
 
