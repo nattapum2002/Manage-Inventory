@@ -164,8 +164,12 @@
                                             <td>{{ $Pallet->team_name }}</td>
                                             <td>{{ $Pallet->pallet_type }}</td>
                                             <td>{{ $Pallet->note }}</td>
-                                            <td>{!! $Pallet->status == 1 ? '<p class="text-success">จัดพาเลทแล้ว</p>' : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}</td>
-                                            <td>{!! $Pallet->recive_status == 1 ? '<p class="text-success">ส่งแล้ว</p>' : '<p class="text-danger">ยังไม่จัดส่ง</p>' !!}</td>
+                                            <td>{!! $Pallet->status == 1
+                                                ? '<p class="text-success">จัดพาเลทแล้ว</p>'
+                                                : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}</td>
+                                            <td>{!! $Pallet->recive_status == 1
+                                                ? '<p class="text-success">ส่งแล้ว</p>'
+                                                : '<p class="text-danger">ยังไม่จัดส่ง</p>' !!}</td>
                                             <td>
                                                 <a href="{{ route('DetailPallets', ['order_number' => $order_id, 'pallet_id' => $Pallet->id]) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>

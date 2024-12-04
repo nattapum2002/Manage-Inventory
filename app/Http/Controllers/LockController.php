@@ -31,7 +31,7 @@ class LockController extends Controller
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
             ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
-            ->where('customer_order.order_number', '=', $order_id)
+            ->where('customer_order_detail.order_number', '=', $order_id)
             ->get();
         // dd($CustomerOrders);
         $LockTeams = DB::table('lock_team')
@@ -45,7 +45,7 @@ class LockController extends Controller
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
             ->join('lock_team', 'pallet.team_id', '=', 'lock_team.id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
-            ->groupBy('pallet.id', 'pallet.status' ,'pallet.recive_status')
+            ->groupBy('pallet.id', 'pallet.status', 'pallet.recive_status')
             ->get();
         // dd($Pallets);
         return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets', 'order_id'));
@@ -148,9 +148,9 @@ class LockController extends Controller
             ->join('customer_order', 'confirmOrder.order_id', '=', 'customer_order.order_number')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->leftJoin('customer_order_detail', function ($join) use ($order_number) {
-                    $join->on('pallet_order.product_id', '=', 'customer_order_detail.product_id')
-                        ->where('customer_order_detail.order_number', '=', $order_number);
-                })
+                $join->on('pallet_order.product_id', '=', 'customer_order_detail.product_id')
+                    ->where('customer_order_detail.order_number', '=', $order_number);
+            })
             ->where('pallet_order.pallet_id', '=', $pallet_id)
             ->get();
 
