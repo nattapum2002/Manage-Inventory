@@ -16,7 +16,7 @@
             </a>
         </article>
         <article class="col-lg-6 col-md-12">
-            <a href="#" class="card p-4 text-decoration-none hover-effect">
+            <a href="{{route('IncentiveDrag')}}" class="card p-4 text-decoration-none hover-effect">
                 <div class="card-body text-center ">
                     <h5 class="text-center">Incentive ลากจ่าย</h5>
                     <i class="bi bi-send"></i>

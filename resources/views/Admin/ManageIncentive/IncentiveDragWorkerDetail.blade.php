@@ -1,13 +1,12 @@
 @extends('layouts.master')
 @section('title')
-    Incentive : จัดสินค้า - พนักงาน - รายละเอียด / {{$arrangeincentive[0]->name ." ". $arrangeincentive[0]->surname}} : {{$date}}
+    Incentive : ลากจ่ายสินค้า - พนักงาน - รายละเอียด <br>/ {{$Dragincentive[0]->name ." ". $Dragincentive[0]->surname}} : {{$Dragincentive[0]->month_name}}
 @endsection
-
 @section('content')
     <main>
         <section class="card">
             <article class="card-body">
-                <table id="incentive-arrange-Em-detail-table" class="table table-bordered table-striped text-center">
+                <table id="incentive-Em-detail-table" class="table table-bordered table-striped text-center">
                     <thead class="bg-light">
                         <tr>
                             <th>เลขออเดอร์</th>
@@ -20,7 +19,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($arrangeincentive as $item)
+                        @foreach ($Dragincentive as $item)
                             <tr>
                                 <td>{{ intval($item->order_id) }}</td>
                                 <td>{{ $item->item_no }}</td>

@@ -39,6 +39,10 @@ Route::prefix('ManageIncentive')->group(function () {
     Route::get('/Incentive/Arrange', [App\Http\Controllers\IncentiveController::class, 'incentiveArrange'])->name('IncentiveArrange');
     Route::get('/Incentive/Arrange/{date}/Worker', [App\Http\Controllers\IncentiveController::class, 'incentiveArrangeWorker'])->name('IncentiveArrangeWorker');
     Route::get('/Incentive/Arrange/{date}/{user_id}/Detail', [App\Http\Controllers\IncentiveController::class, 'incentiveArrangeWorkerDetail'])->name('IncentiveArrangeWorkerDetail');
+
+    Route::get('/Incentive/Drag', [App\Http\Controllers\IncentiveController::class, 'incentiveDrag'])->name('IncentiveDrag');
+    Route::get('/Incentive/Drag/{month}/Worker', [App\Http\Controllers\IncentiveController::class, 'incentiveDragWorker'])->name('incentiveDragWorker');
+    Route::get('/Incentive/Drag/{date}/{user_id}/Detail', [App\Http\Controllers\IncentiveController::class, 'incentiveDragWorkerDetail'])->name('IncentiveDragWorkerDetail');
 });
 Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');
