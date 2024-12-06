@@ -136,6 +136,44 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    <div class="row">
+                                        @foreach ($teams as $member)
+                                            <div class="col">
+
+                                                @if ($pallet['towing_staff_id'])
+                                                    <button class="btn btn-success btn-block" disabled>
+                                                        {{ $member->where('user_id', $pallet['towing_staff_id'])->first()->name }}
+                                                    </button>
+                                                @else
+                                                    @if ($member->incentive_id && !$member->end_time)
+                                                        <!-- ปุ่มสิ้นสุดงาน (เมื่อเริ่มงานแล้ว) -->
+                                                        <form action="{{ route('EndWork') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="products"
+                                                                value="{{ $pallet['products'] }}">
+                                                            <input type="hidden" name="incentive_id"
+                                                                value="{{ session('incentive_id') }}">
+                                                            <input type="hidden" name="order_number"
+                                                                value="{{ $select_queue->order_number ?? $auto_select_queue->order_number }}">
+                                                            <button
+                                                                class="btn btn-warning btn-block">{{ $member->name }}</button>
+                                                        </form>
+                                                    @elseif (!$member->incentive_id)
+                                                        <!-- ปุ่มเริ่มงาน (เมื่อยังไม่เริ่มงาน) -->
+                                                        <form action="{{ route('StartWork') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="user_id"
+                                                                value="{{ $member->user_id }}">
+                                                            <input type="hidden" name="order_number"
+                                                                value="{{ $select_queue->order_number ?? $auto_select_queue->order_number }}">
+                                                            <button
+                                                                class="btn btn-primary btn-block">{{ $member->name }}</button>
+                                                        </form>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endforeach
                         </div>

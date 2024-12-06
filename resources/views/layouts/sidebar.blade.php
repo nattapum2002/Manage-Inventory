@@ -82,6 +82,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('ManageShiftTeam') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Shift And Team
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('ManageShift') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
@@ -138,7 +146,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{route('IncentiveDashbord')}}" class="nav-link">
+                        <a href="{{ route('IncentiveDashbord') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 Incentive

@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ManageQueueController;
 use App\Http\Controllers\ManageStock;
 use App\Http\Controllers\ProductReceiptPlanController;
+use App\Http\Controllers\ShiftAndTeamController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ShowStat;
@@ -35,7 +36,9 @@ Route::resource('Users', App\Http\Controllers\UserController::class);
 Route::resource('ManageStock', App\Http\Controllers\ManageImportProduct::class);
 //Admin Routes
 Route::prefix('ManageQueue')->group(function () {
-    Route::get('/Incentive', function () { return view('Admin.ManageIncentive.IncentiveDashbord');})->name('IncentiveDashbord');
+    Route::get('/Incentive', function () {
+        return view('Admin.ManageIncentive.IncentiveDashbord');
+    })->name('IncentiveDashbord');
     Route::get('/Incentive/Arrange', [App\Http\Controllers\IncentiveController::class, 'incentiveArrange'])->name('IncentiveArrange');
     Route::get('/Incentive/Arrange/{date}/Worker', [App\Http\Controllers\IncentiveController::class, 'incentiveArrangeWorker'])->name('IncentiveArrangeWorker');
 });
@@ -97,10 +100,10 @@ Route::prefix('ManageShift')->group(function () {
     Route::get('/', [ShiftController::class, 'index'])->name('ManageShift');
     Route::get('/Toggle/{shift_id}/{status}', [ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
     Route::get('/EditShift/{shift_id}', [ShiftController::class, 'EditShift'])->name('EditShift');
-    Route::post('/EditShift/Save', [ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
+    // Route::post('/EditShift/Save', [ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
     Route::get('/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
     Route::get('/AddShift/AutoCompleteAddShift', [ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
-    Route::post('/AddShift', [ShiftController::class, 'SaveAddShift'])->name('SaveAddShift');
+    // Route::post('/AddShift', [ShiftController::class, 'SaveAddShift'])->name('SaveAddShift');
     Route::get('/DeleteShift/{shift_id}/{user_id}', [ShiftController::class, 'DeleteShift'])->name('DeleteShift');
 });
 
@@ -108,10 +111,10 @@ Route::prefix('ManageTeam')->group(function () {
     Route::get('/', [TeamController::class, 'index'])->name('ManageTeam');
     Route::get('/Toggle/{team_id}/{status}', [TeamController::class, 'Toggle'])->name('ManageTeam.Toggle');
     Route::get('/EditTeam/{team_id}', [TeamController::class, 'EditTeam'])->name('EditTeam');
-    Route::post('/EditTeam/Save', [TeamController::class, 'SaveEditTeam'])->name('SaveEditTeam');
+    // Route::post('/EditTeam/Save', [TeamController::class, 'SaveEditTeam'])->name('SaveEditTeam');
     Route::get('/AddTeam', [TeamController::class, 'AddTeam'])->name('AddTeam');
     Route::get('/AddTeam/AutoCompleteAddTeam', [TeamController::class, 'AutoCompleteAddTeam'])->name('AutoCompleteAddTeam');
-    Route::post('/AddTeam', [TeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
+    // Route::post('/AddTeam', [TeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
     Route::get('/DeleteTeam/{team_id}/{user_id}', [TeamController::class, 'DeleteTeam'])->name('DeleteTeam');
     Route::get('/AutocompleteSearchTeam', [TeamController::class, 'AutocompleteSearchTeam'])->name('AutocompleteSearchTeam');
 });
@@ -147,9 +150,18 @@ Route::prefix('slip')->group(function () {
     Route::post('/TransferSlip/Add/Save', [SlipController::class, 'SaveAddTransferSlip'])->name('SaveAddTransferSlip');
 });
 
+Route::prefix('ManageShiftAndTeam')->group(function () {
+    Route::get('/', [ShiftAndTeamController::class, 'index'])->name('ManageShiftTeam');
+    Route::post('/FilterDate', [ShiftAndTeamController::class, 'ShiftFilterDate'])->name('ShiftFilterDate');
+    Route::post('/SaveAddShift', [ShiftAndTeamController::class, 'SaveAddShift'])->name('SaveAddShift');
+    Route::get('/EditShiftTeam/{Shift_id}', [ShiftAndTeamController::class, 'EditShiftTeam'])->name('EditShiftTeam');
+});
+
 Route::prefix('PayGoods')->group(function () {
     Route::get('/', [PayGoodsController::class, 'index'])->name('PayGoods');
     Route::get('/SelectPayGoods/{order_number}', [PayGoodsController::class, 'SelectPayGoods'])->name('SelectPayGoods');
+    Route::post('/Incentive/StartWork', [PayGoodsController::class, 'StartWork'])->name('StartWork');
+    Route::post('/Incentive/EndWork', [PayGoodsController::class, 'EndWork'])->name('EndWork');
 });
 
 Route::get('AddItem', function () {

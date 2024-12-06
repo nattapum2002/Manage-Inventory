@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -157,7 +158,8 @@ class TeamController extends Controller
         return response()->json($results);
     }
 
-    public function AutocompleteSearchTeam(Request $request){
+    public function AutocompleteSearchTeam(Request $request)
+    {
         $query = $request->get('query');
 
         $data = DB::table('lock_team')
