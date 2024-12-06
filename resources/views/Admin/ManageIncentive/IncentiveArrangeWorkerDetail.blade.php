@@ -7,7 +7,7 @@
     <main>
         <section class="card">
             <article class="card-body">
-                <table id="incentive-arrange-Em-detail-table" class="table table-bordered table-striped text-center">
+                <table id="incentive-Em-detail-table" class="table table-bordered table-striped text-center">
                     <thead class="bg-light">
                         <tr>
                             <th>เลขออเดอร์</th>

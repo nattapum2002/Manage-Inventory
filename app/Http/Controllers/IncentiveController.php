@@ -109,16 +109,32 @@ class IncentiveController extends Controller
     public function incentiveDragWorker($month , $year)
     {
         $worker = DB::table('lock_team_user')
-            ->select('users.name', 'users.surname', 'users.user_id', 'lock_team.team_name', DB::raw('MONTH(pallet.created_at) as month') , DB::raw('DATENAME(MONTH, pallet.created_at) as month_name') ,DB::raw('YEAR(pallet.created_at) as year_number'))
-            ->join('users', 'users.user_id', '=', 'lock_team_user.user_id')
-            ->join('lock_team', 'lock_team.id', '=', 'lock_team_user.team_id')
-            ->join('pallet', 'pallet.team_id', '=', 'lock_team.id')
-            ->groupBy('users.name', 'users.surname', 'users.user_id', 'lock_team.team_name','pallet.created_at',DB::raw('MONTH(pallet.created_at)'),DB::raw('YEAR(pallet.created_at)'))
-            ->whereMonth('pallet.created_at', '=', $month)
-            ->whereYear('pallet.created_at', '=', $year)
-            ->where('lock_team_user.dmc_position', '=', 'Drag')
-            ->where('pallet.status', 1)
-            ->get();
+        ->select(
+            'users.name',
+            'users.surname',
+            'users.user_id',
+            'lock_team.team_name',
+            DB::raw('MONTH(pallet.created_at) as month'),
+            DB::raw('DATENAME(MONTH, pallet.created_at) as month_name'),
+            DB::raw('YEAR(pallet.created_at) as year_number')
+        )
+        ->join('users', 'users.user_id', '=', 'lock_team_user.user_id')
+        ->join('lock_team', 'lock_team.id', '=', 'lock_team_user.team_id')
+        ->join('pallet', 'pallet.team_id', '=', 'lock_team.id')
+        ->whereMonth('pallet.created_at', '=', $month)
+        ->whereYear('pallet.created_at', '=', $year)
+        ->where('lock_team_user.dmc_position', '=', 'Drag')
+        ->where('pallet.status', 1)
+        ->groupBy(
+            'users.name',
+            'users.surname',
+            'users.user_id',
+            'lock_team.team_name',
+            DB::raw('MONTH(pallet.created_at)'),
+            DB::raw('DATENAME(MONTH, pallet.created_at)'),
+            DB::raw('YEAR(pallet.created_at)')
+        )
+        ->get();
         // dd($worker);
         return view('Admin.ManageIncentive.IncentiveDragWorker',compact('worker', 'month', 'year'));
     }

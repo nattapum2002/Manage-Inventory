@@ -23,7 +23,7 @@ class ShowStat extends Controller
         $data = DB::table('product_store')
             ->where('store_date', $date)
             ->where('product_store.status', 1)
-            ->join('product_store_detail', 'product_store.product_slip_id', '=', 'product_store_detail.product_slip_id')
+            ->join('product_store_detail', 'product_store.id', '=', 'product_store_detail.product_slip_id')
             ->join('stock', 'product_store_detail.product_id', '=', 'stock.product_id')
             ->join('product', 'stock.product_id', '=', 'product.item_id')
             ->selectRaw('
