@@ -18,9 +18,9 @@
                     <tbody>
                         @foreach ($palletMonth as $month )
                             <tr>
-                                <td>{{ $month->month_number }}</td>
+                                <td>{{ $month->month_number }} / {{ $month->year_number }}</td>
                                 <td>{{ $month->month_name }}</td>
-                                <td><a href="{{route('incentiveDragWorker',[$month->month_number])}}" class="btn btn-primary">ดู</a></td>
+                                <td><a href="{{route('incentiveDragWorker',[$month->month_number,$month->year_number])}}" class="btn btn-primary">ดู</a></td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -97,30 +97,32 @@ class IncentiveController extends Controller
         $palletMonth = DB::table('pallet') ->select(
             DB::raw('DATENAME(MONTH, created_at) as month_name'),
             DB::raw('MONTH(created_at) as month_number'),
+            DB::raw('YEAR(created_at) as year_number'),
             DB::raw('COUNT(*) as count')
         )
-        ->groupBy(DB::raw('DATENAME(MONTH, created_at)'), DB::raw('MONTH(created_at)'))
+        ->groupBy(DB::raw('DATENAME(MONTH, created_at)'), DB::raw('MONTH(created_at)'),DB::raw('YEAR(created_at)'))
         ->orderBy(DB::raw('MONTH(created_at)'))
         ->get();
         // dd($palletMonth);
         return view('Admin.ManageIncentive.IncentiveDrag',compact('palletMonth'));
     }
-    public function incentiveDragWorker($month)
+    public function incentiveDragWorker($month , $year)
     {
         $worker = DB::table('lock_team_user')
-            ->select('users.name', 'users.surname', 'users.user_id', 'lock_team.team_name', DB::raw('MONTH(pallet.created_at) as month') , DB::raw('DATENAME(MONTH, pallet.created_at) as month_name'))
+            ->select('users.name', 'users.surname', 'users.user_id', 'lock_team.team_name', DB::raw('MONTH(pallet.created_at) as month') , DB::raw('DATENAME(MONTH, pallet.created_at) as month_name') ,DB::raw('YEAR(pallet.created_at) as year_number'))
             ->join('users', 'users.user_id', '=', 'lock_team_user.user_id')
             ->join('lock_team', 'lock_team.id', '=', 'lock_team_user.team_id')
             ->join('pallet', 'pallet.team_id', '=', 'lock_team.id')
-            ->groupBy('users.name', 'users.surname', 'users.user_id', 'lock_team.team_name','pallet.created_at',DB::raw('MONTH(pallet.created_at)'))
+            ->groupBy('users.name', 'users.surname', 'users.user_id', 'lock_team.team_name','pallet.created_at',DB::raw('MONTH(pallet.created_at)'),DB::raw('YEAR(pallet.created_at)'))
             ->whereMonth('pallet.created_at', '=', $month)
+            ->whereYear('pallet.created_at', '=', $year)
             ->where('lock_team_user.dmc_position', '=', 'Drag')
             ->where('pallet.status', 1)
             ->get();
         // dd($worker);
-        return view('Admin.ManageIncentive.IncentiveDragWorker',compact('worker', 'month'));
+        return view('Admin.ManageIncentive.IncentiveDragWorker',compact('worker', 'month', 'year'));
     }
-    public function incentiveDragWorkerDetail($month, $user_id)
+    public function incentiveDragWorkerDetail($month, $year, $user_id)
     {
         $Dragincentive = DB::table('lock_team_user')
             ->select(
@@ -144,6 +146,7 @@ class IncentiveController extends Controller
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
             ->join('confirmOrder', 'pallet_order.id', '=', 'confirmOrder.pallet_order_id')
             ->whereMonth('pallet.created_at', '=', $month)
+            ->whereYear('pallet.created_at', '=', $year)
             ->where('users.user_id', '=', $user_id)
             ->where('pallet.recive_status', 1)
             ->get();
@@ -178,6 +181,6 @@ class IncentiveController extends Controller
             // }
         }
         // dd($Dragincentive);
-        return view('Admin.ManageIncentive.IncentiveDragWorkerDetail',compact('Dragincentive','total_incentive_Kg'));
+        return view('Admin.ManageIncentive.IncentiveDragWorkerDetail',compact('Dragincentive','total_incentive_Kg','year'));
     }
 }

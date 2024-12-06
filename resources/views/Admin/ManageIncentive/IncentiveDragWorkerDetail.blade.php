@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Incentive : ลากจ่ายสินค้า - พนักงาน - รายละเอียด <br>/ {{$Dragincentive[0]->name ." ". $Dragincentive[0]->surname}} : {{$Dragincentive[0]->month_name}}
+    Incentive : ลากจ่ายสินค้า - พนักงาน - รายละเอียด <br>/ {{$Dragincentive[0]->name ." ". $Dragincentive[0]->surname}} : {{$Dragincentive[0]->month_name}} / {{$year}}
 @endsection
 @section('content')
     <main>

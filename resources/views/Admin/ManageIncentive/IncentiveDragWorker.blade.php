@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Incentive : ลากจ่ายสินค้า - พนักงาน | {{$worker[0]->month_name}}
+    Incentive : ลากจ่ายสินค้า - พนักงาน | {{$worker[0]->month_name}} / {{$year}}
 @endsection
 
 @section('content')
@@ -23,7 +23,7 @@
                         <td>{{$employee->name}} {{$employee->surname}}</td>
                         <td>{{$employee->team_name}}</td>
                         <td>
-                            <a type="button" href="{{route('IncentiveDragWorkerDetail',[$month,$employee->user_id])}}" class="btn btn-primary">ดู</a>
+                            <a type="button" href="{{route('IncentiveDragWorkerDetail',[$month,$year,$employee->user_id])}}" class="btn btn-primary">ดู</a>
                         </td>
                     </tr>                      
                 @endforeach
