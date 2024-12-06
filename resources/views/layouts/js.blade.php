@@ -606,15 +606,21 @@
             paging: true,
             scrollX: true
         })
-        $('#incentive-arrange-date-table').DataTable({
+        $('#incentive-date-table').DataTable({
             info: false,
             ordering: true,
             paging: true
         })
-        $('#incentive-arrange-Em-table').DataTable({
+        $('#incentive-Em-table').DataTable({
             info: false,
             ordering: true,
             paging: true
+        })
+        $('#incentive-Em-detail-table').DataTable({
+            info: false,
+            ordering: true,
+            paging: true,
+            autoWidth: true,
         })
     });
 </script>

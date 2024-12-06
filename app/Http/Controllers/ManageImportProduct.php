@@ -21,8 +21,8 @@ class ManageImportProduct extends Controller
     public function show_slip($date)
     {
         $show_slip = DB::table('product_store')
-            ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker, status')
-            ->groupBy('product_slip_id','status')
+            ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker, status ,id')
+            ->groupBy('id','product_slip_id','status')
             ->where('store_date', $date)
             ->get();
         // dd($show_slip);
@@ -30,7 +30,7 @@ class ManageImportProduct extends Controller
     }
     public function check_slip($id){
         DB::table('product_store')
-        ->where('product_slip_id', $id)
+        ->where('id', $id)
         ->update(['status' => 1 , 'domestic_checker' => auth()->user()->user_id]);
         $this->sum($id);
         return redirect()->back()->with('success', 'Data check successfully');
@@ -48,14 +48,14 @@ class ManageImportProduct extends Controller
     {
         $show_detail = DB::table('product_store_detail')
         ->join('product', 'product_store_detail.product_id', '=', 'product.item_id')
-        ->join('product_store', 'product_store.product_slip_id', '=', 'product_store_detail.product_slip_id')
-        ->where('product_store.product_slip_id', $slip_id)  // ระบุชื่อตารางที่ชัดเจน
+        ->join('product_store', 'product_store.id', '=', 'product_store_detail.product_slip_id')
+        ->where('product_store.id', $slip_id)  // ระบุชื่อตารางที่ชัดเจน
         ->select('product_store.*', 'product_store_detail.*', 'product.item_desc1', 'product.*')
         ->get();
         $show_slip = DB::table('product_store')
-        ->where('product_slip_id', $slip_id)
+        ->where('id', $slip_id)
         ->first();
-
+        // dd($show_slip);
         return view('Admin.ManageStock.manageslipdetail', compact('show_detail', 'slip_id','show_slip'));
     }
 
@@ -118,7 +118,7 @@ class ManageImportProduct extends Controller
         $data = $request->all();
         // dd($data);
         DB::transaction(function () use ($data) {
-                DB::table('product_store')->insert([
+            $id = DB::table('product_store')->insertGetId([
                     'product_slip_id' => $data['slip_id'],
                     'product_slip_number' => $data['slip_number'],
                     'department' => $data['department'],
@@ -131,7 +131,7 @@ class ManageImportProduct extends Controller
                 ]);
             foreach ($data['item_id'] as $key => $value) {
                 DB::table('product_store_detail')->insert([
-                    'product_slip_id' => $data['slip_id'],
+                    'product_slip_id' => $id,
                     'product_id' => $data['save_item_id'][$key],
                     'quantity' => $data['item_quantity'][$key],
                     'quantity2' => $data['item_quantity2'][$key],

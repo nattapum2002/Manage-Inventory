@@ -23,7 +23,7 @@
                             <td>{{$employee->name}} {{$employee->surname}}</td>
                             <td>{{$employee->team_name}}</td>
                             <td>
-                                <a type="button" href="" class="btn btn-primary">ดู</a>
+                                <a type="button" href="{{route('IncentiveArrangeWorkerDetail',[$date,$employee->user_id])}}" class="btn btn-primary">ดู</a>
                             </td>
                         </tr>                      
                     @endforeach
