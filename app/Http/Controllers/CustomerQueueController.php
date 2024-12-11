@@ -192,10 +192,18 @@ class CustomerQueueController extends Controller
             ->first();
 
         $pallet = DB::table('pallet')
+            ->select(
+                'pallet.id as pallet_id',
+                'pallet.room',
+                'pallet.pallet_no',
+                'pallet_type.pallet_type',
+                'pallet.status',
+                'pallet.recive_status',
+                'pallet.order_id',)
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->where('pallet.order_id', '=', $order_number)
             ->get();
-        // dd($pallet);
+        
         return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue' , 'pallet'));
     }
 
@@ -226,7 +234,7 @@ class CustomerQueueController extends Controller
             })
             ->where('pallet_order.pallet_id', '=', $pallet_id)
             ->get();
-
+            // dd($Pallets);
         return view('Admin.ManageQueue.QueuePalletDetail',compact('Pallets', 'order_id', 'pallet_id'));
     }
 
