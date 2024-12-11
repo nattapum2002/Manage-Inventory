@@ -56,98 +56,9 @@
                             <div class="row">
                                 <div class="col-12">
                                     <button type="button" class="btn btn-success" data-toggle="modal"
-                                        data-target="#modal-xl">
+                                        data-target="#AddTeamShift">
                                         เพิ่มทีม
                                     </button>
-                                    <div class="modal fade" id="modal-xl">
-                                        <div class="modal-dialog modal-xl">
-                                            <div class="modal-content">
-                                                <form action="" method="POST">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">เพิ่มทีม</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="row">
-                                                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                                                <div class="form-group">
-                                                                    <label for="team_name">ทีม</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="team_name" name="team_name">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                                                <div class="form-group">
-                                                                    <label for="work">ลักษณะงาน</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="work" name="work">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6 col-md-12 col-sm-12">
-                                                                <div class="form-group">
-                                                                    <label for="note">หมายเหตุ</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="note" name="note">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <hr>
-                                                        <article>
-                                                            <div class="row">
-                                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="user_id[0]"
-                                                                            class="form-label">รหัสพนักงาน</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="user_id0" name="user_id[0]" readonly>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="name[0]"
-                                                                            class="form-label">ชื่อ</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="name0" name="name[0]">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="surname[0]"
-                                                                            class="form-label">นามสกุล</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="surname0" name="surname[0]" disabled>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="position[0]"
-                                                                            class="form-label">ตำแหน่ง</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="position0" name="position[0]" disabled>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </article>
-                                                        <article id="add-user-team">
-
-                                                        </article>
-                                                        <div class="d-flex justify-content-center mt-3">
-                                                            <button type="button" class="btn btn-primary mr-3"
-                                                                id="add-user">เพิ่มพนักงาน</button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer justify-content-between">
-                                                        <button type="button" class="btn btn-danger"
-                                                            data-dismiss="modal">ยกเลิก</button>
-                                                        <button type="submit" class="btn btn-success">บันทึก</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             @foreach ($ShiftTeams['teams'] as $team)
@@ -155,7 +66,6 @@
                                     <div class="col-12">
                                         @if ($team['team_id'] != null)
                                             <hr>
-
                                             <table id="" class="table table-bordered table-striped">
                                                 <thead>
                                                     <tr>
@@ -178,7 +88,7 @@
                                                                             value="{{ $team['work'] ?? 'N/A' }}" readonly>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                <div class="col-lg-2 col-md-3 col-sm-12">
                                                                     <div class="form-group">
                                                                         <label for="foreman">โฟร์แมน</label>
                                                                         <input type="text" class="form-control"
@@ -187,12 +97,30 @@
                                                                             readonly>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-5 col-md-3 col-sm-12">
+                                                                <div class="col-lg-4 col-md-3 col-sm-12">
                                                                     <div class="form-group">
                                                                         <label for="note">หมายเหตุ</label>
                                                                         <input type="text" class="form-control"
                                                                             id="note" name="note"
                                                                             value="{{ $team['note'] }}" readonly>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-2 col-md-12 col-sm-12">
+                                                                    <div class="form-group">
+                                                                        <label>#</label>
+                                                                        <br>
+                                                                        <div class="d-flex ">
+                                                                            <button type="button" class="btn btn-primary"
+                                                                                data-toggle="modal"
+                                                                                data-target="#EditTeamShift"
+                                                                                data-team='@json($team)'
+                                                                                data-users='@json($team['users'])'>
+                                                                                <i class="fa fa-edit"></i>
+                                                                            </button>
+                                                                            <a href="{{ route('DeleteTeam', ['Shift_id' => $ShiftTeams['shift_id'], 'team_id' => $team['team_id']]) }}"
+                                                                                class="btn btn-danger"><i
+                                                                                    class="fas fa-trash"></i></a>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -203,7 +131,6 @@
                                                         <th>ชื่อพนักงาน</th>
                                                         <th>ตําแหน่งใน DMC</th>
                                                         <th>หมายเหตุ</th>
-                                                        <th>จัดการ</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -213,11 +140,6 @@
                                                             <td>{{ $user['name'] ?? 'N/A' }}</td>
                                                             <td>{{ $user['dmc_position'] ?? 'N/A' }}</td>
                                                             <td>{{ $user['note'] ?? 'N/A' }}</td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-danger">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            </td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
@@ -232,6 +154,158 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="AddTeamShift">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <form action="{{ route('SaveAddTeam') }}" method="POST">
+                            @csrf
+                            <div class="modal-header">
+                                <h4 class="modal-title">เพิ่มทีม</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <label>ทีม</label>
+                                            <input type="text" class="form-control" name="team_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <label>ลักษณะงาน</label>
+                                            <input type="text" class="form-control" name="work">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label>หมายเหตุ</label>
+                                            <input type="text" class="form-control" name="note">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div>
+                                    <div class="row mb-3">
+                                        <div class="col-lg-2">
+                                            <label for="user_id">รหัสพนักงาน</label>
+                                            <input type="text" class="form-control" id="user_id0" name="user_id[0]"
+                                                readonly>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="name">ชื่อ</label>
+                                            <input type="text" class="form-control" id="name0" name="name[0]">
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="surname">นามสกุล</label>
+                                            <input type="text" class="form-control" id="surname0" name="surname[0]"
+                                                disabled>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="position">ตําแหน่ง</label>
+                                            <input type="text" class="form-control" id="position0" name="position[0]"
+                                                disabled>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="dmc_position">ตําแหน่ง DMC</label>
+                                            <input type="text" class="form-control" name="dmc_position[0]">
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="#">#</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="add-user-team"></div>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-primary" id="add-user">เพิ่มพนักงาน</button>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="hidden" name="shift_id" value="{{ $ShiftTeams['shift_id'] }}">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">ยกเลิก</button>
+                                <button type="submit" class="btn btn-success">บันทึก</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="EditTeamShift">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <form action="{{ route('SaveEditTeam') }}" method="POST">
+                            @csrf
+                            <div class="modal-header">
+                                <h4 class="modal-title">แก้ไขทีม</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <label>ชื่อทีม</label>
+                                            <input type="text" class="form-control" id="edit_team_name"
+                                                name="team_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <label>ลักษณะงาน</label>
+                                            <input type="text" class="form-control" id="edit_work" name="work">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label>หมายเหตุ</label>
+                                            <input type="text" class="form-control" id="edit_note" name="note">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-lg-2">
+                                            <label for="user_id">รหัสพนักงาน</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="name">ชื่อ</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="surname">นามสกุล</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="position">ตําแหน่ง</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="dmc_position">ตําแหน่ง DMC</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="#">#</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="edit-user-team"></div>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-primary"
+                                        id="edit-add-user">เพิ่มพนักงาน</button>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="hidden" id="team_id" name="team_id">
+                                <input type="hidden" name="shift_id" value="{{ $ShiftTeams['shift_id'] }}">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">ยกเลิก</button>
+                                <button type="submit" class="btn btn-success">บันทึก</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </section>
 @endsection
 
@@ -260,6 +334,11 @@
             display: block;
             background-color: white;
             overflow: hidden;
+        }
+
+        .ui-autocomplete {
+            z-index: 1060;
+            position: absolute;
         }
     </style>
 @endsection
@@ -303,88 +382,106 @@
     </script>
 
     <script>
-        var user_count = 1;
+        let userCount = 0;
 
-        $('#add-user').click(function() {
-            user_count++;
-            $('#add-user-team').append(`
-        <div class="row" id="user-${user_count}">
-            <div class="col-11">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="form-group">
-                            <label for="user_id[${user_count}]" class="form-label">รหัสพนักงาน</label>
-                            <input type="text" class="form-control" id="user_id${user_count}" name="user_id[${user_count}]" readonly>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="form-group">
-                            <label for="name[${user_count}]" class="form-label">ชื่อ</label>
-                            <input type="text" class="form-control" id="name${user_count}" name="name[${user_count}]">
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="form-group">
-                            <label for="surname[${user_count}]" class="form-label">นามสกุล</label>
-                            <input type="text" class="form-control" id="surname${user_count}" name="surname[${user_count}]" disabled>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="form-group">
-                            <label for="position[${user_count}]" class="form-label">ตำแหน่ง</label>
-                            <input type="text" class="form-control" id="position${user_count}" name="position[${user_count}]" disabled>
-                        </div>
-                    </div>
+        // 1️⃣ ฟังก์ชันช่วยเหลือต่างๆ
+        function createUserRow(index, user = {}) {
+            return `
+            <div class="row mb-3" id="user-${index}">
+                <div class="col-lg-2">
+                    <input type="text" class="form-control" id="user_id${index}" name="user_id[${index}]" value="${user.user_id || ''}" readonly>
                 </div>
-            </div>
-
-            <div class="col-1">
-                    <label for="remove-user" class="form-label">#</label>
-                <div class="form-group">
-                    <button type="button" class="btn btn-danger remove-user">ลบ</button>
+                <div class="col-lg-2">
+                    <input type="text" class="form-control" id="name${index}" name="name[${index}]" value="${user.name || ''}">
                 </div>
-            </div>
-        </div>
-    `);
-            // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
-            initializeTeamAutocomplete(`#name${user_count}`, `#user_id${user_count}`, `#surname${user_count}`,
-                `#position${user_count}`);
-        });
+                <div class="col-lg-2">
+                    <input type="text" class="form-control" id="surname${index}" name="surname[${index}]" value="${user.surname || ''}" disabled>
+                </div>
+                <div class="col-lg-2">
+                    <input type="text" class="form-control" id="position${index}" name="position[${index}]" value="${user.position || ''}" disabled>
+                </div>
+                <div class="col-lg-2">
+                    <input type="text" class="form-control" name="dmc_position[${index}]" value="${user.dmc_position || ''}">
+                </div>
+                <div class="col-lg-2">
+                    <button type="button" class="btn btn-danger remove-user"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+        }
 
-        // ฟังก์ชันสำหรับลบแถว
-        $(document).on('click', '.remove-user', function() {
-            $(this).closest('[id^="user-"]').remove();
-        });
+        function initializeModal(modalId, teamData, users) {
+            $(`#${modalId} #team_id`).val(teamData.team_id);
+            $(`#${modalId} #edit_team_name`).val(teamData.team_name);
+            $(`#${modalId} #edit_work`).val(teamData.work);
+            $(`#${modalId} #edit_note`).val(teamData.note);
+            $(`#${modalId} #edit-user-team`).html('');
 
-        // ฟังก์ชันสำหรับ autocomplete
+            users.forEach((user, index) => {
+                $(`#${modalId} #edit-user-team`).append(createUserRow(index, user));
+                initializeTeamAutocomplete(`#name${index}`, `#user_id${index}`, `#surname${index}`,
+                    `#position${index}`);
+            });
+        }
+
         function initializeTeamAutocomplete(nameSelector, idSelector, surnameSelector, positionSelector) {
             $(nameSelector).autocomplete({
                 source: function(request, response) {
                     $.ajax({
-                        url: "{{ route('AutoCompleteAddTeam') }}",
+                        url: "{{ route('AutoCompleteTeam') }}",
                         data: {
                             query: request.term
                         },
                         success: function(data) {
-                            console.log(data);
-                            response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                            response(data);
                         }
                     });
                 },
-                minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
+                minLength: 0,
                 select: function(event, ui) {
-                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
-                    $(idSelector).val(ui.item.user_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
-                    $(nameSelector).val(ui.item.name); // เติมชื่อสินค้าในช่องชื่อสินค้า
+                    $(idSelector).val(ui.item.user_id);
+                    $(nameSelector).val(ui.item.name);
                     $(surnameSelector).val(ui.item.surname);
                     $(positionSelector).val(ui.item.position);
                 }
             });
 
             $(nameSelector).focus(function() {
-                $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
+                $(this).autocomplete('search', '');
             });
         }
-        initializeTeamAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
+
+        // 2️⃣ ฟังก์ชันเพิ่มแถวผู้ใช้
+        function addUserRow(containerSelector) {
+            userCount++;
+            const userRow = createUserRow(userCount);
+            $(containerSelector).append(userRow);
+            initializeTeamAutocomplete(`#name${userCount}`, `#user_id${userCount}`, `#surname${userCount}`,
+                `#position${userCount}`);
+        }
+
+        // 3️⃣ การทำงานต่างๆ ที่เกี่ยวข้องกับปุ่มและโมดอล
+        $(document).on('click', '#add-user', function() {
+            addUserRow('#add-user-team');
+        });
+
+        $(document).on('click', '#edit-add-user', function() {
+            addUserRow('#edit-user-team');
+        });
+
+        $(document).on('click', '.remove-user', function() {
+            $(this).closest('[id^="user-"]').remove();
+        });
+
+        $('#EditTeamShift').on('show.bs.modal', function(event) {
+            let button = $(event.relatedTarget);
+            let teamData = button.data('team');
+            let users = button.data('users');
+            initializeModal('EditTeamShift', teamData, users);
+        });
+
+        // ตรวจสอบว่ามีช่อง name0 หรือไม่ ถ้ามีให้เรียก initializeTeamAutocomplete
+        if ($('#name0').length) {
+            initializeTeamAutocomplete('#name0', '#user_id0', '#surname0', '#position0');
+        }
     </script>
 @endsection

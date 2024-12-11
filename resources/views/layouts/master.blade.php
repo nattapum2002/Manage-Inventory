@@ -63,7 +63,7 @@
                             $message = session('success') ?? (session('error') ?? session('info'));
                         @endphp
 
-                        <div class="alert {{ $alertType }} alert-dismissible fade show auto-dismiss-alert"
+                        <div class="alert {{ $alertType }} alert-dismissible fade show auto-dismiss-alert mt-3"
                             role="alert">
                             {{ $message }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert"

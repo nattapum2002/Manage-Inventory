@@ -103,9 +103,19 @@
                                             <td>{{ (new DateTime($shift->end_shift))->format('H:i') }}</td>
                                             <td>{{ $shift->note }}</td>
                                             <td>
-                                                <a href="{{ Route('EditShiftTeam', $shift->shift_id) }}"
-                                                    class="btn btn-primary"><i class="fas fa-edit"></i>
-                                                </a>
+                                                <div class="d-flex">
+                                                    <a href="{{ Route('EditShiftTeam', $shift->shift_id) }}"
+                                                        class="btn btn-primary"><i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form action="{{ route('DeleteShiftTeam', $shift->shift_id) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('คุณแน่ใจว่าต้องการลบกะนี้หรือไม่?');">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -125,6 +135,90 @@
                     </div>
                 </div>
             </div>
+
+            @if (session('duplicate_shift'))
+                <div class="modal fade" id="duplicateShiftModal" tabindex="-1" role="dialog"
+                    style="display: block; background-color: rgba(0,0,0,0.5);">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">คุณต้องการนำเข้ากะที่คุณเคยกรอกไหม</h5>
+                            </div>
+                            <div class="modal-body">
+                                <h5>รายละเอียดของกะที่ซ้ำกัน</h5>
+                                <div class="mb-3">
+                                    <strong>ชื่อกะ:</strong> {{ session('ShiftTeams')['shift_name'] ?? 'N/A' }} <br>
+                                    <strong>เวลาเริ่ม:</strong>
+                                    {{ !empty(session('ShiftTeams')['start_shift']) ? (new DateTime(session('ShiftTeams')['start_shift']))->format('H:i') : 'N/A' }}
+                                    <br>
+                                    <strong>เวลาเลิก:</strong>
+                                    {{ !empty(session('ShiftTeams')['end_shift']) ? (new DateTime(session('ShiftTeams')['end_shift']))->format('H:i') : 'N/A' }}
+                                    <br>
+                                    <strong>วันที่:</strong>
+                                    {{ !empty(session('ShiftTeams')['date']) ? (new DateTime(session('ShiftTeams')['date']))->format('d/m/Y') : 'N/A' }}
+                                    <br>
+                                    <strong>หมายเหตุ:</strong> {{ session('ShiftTeams')['note'] ?? 'ไม่มีหมายเหตุ' }}
+                                </div>
+
+                                @if (!empty(session('ShiftTeams')['teams']))
+                                    <h5>ทีมที่เกี่ยวข้องในกะนี้</h5>
+                                    @foreach (session('ShiftTeams')['teams'] as $team)
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <strong>ชื่อทีม:</strong> {{ $team['team_name'] ?? 'N/A' }}
+                                            </div>
+                                            <div class="card-body">
+                                                <p><strong>ลักษณะงาน:</strong> {{ $team['work'] ?? 'N/A' }}</p>
+                                                <p><strong>หมายเหตุทีม:</strong> {{ $team['note'] ?? 'ไม่มีหมายเหตุ' }}</p>
+
+                                                @if (!empty($team['users']))
+                                                    <h6>สมาชิกในทีม</h6>
+                                                    <table class="table table-bordered table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>รหัสพนักงาน</th>
+                                                                <th>ชื่อพนักงาน</th>
+                                                                <th>ตำแหน่งใน DMC</th>
+                                                                <th>หมายเหตุ</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($team['users'] as $user)
+                                                                <tr>
+                                                                    <td>{{ $user['user_id'] ?? 'N/A' }}</td>
+                                                                    <td>{{ $user['name'] ?? 'N/A' }}</td>
+                                                                    <td>{{ $user['dmc_position'] ?? 'N/A' }}</td>
+                                                                    <td>{{ $user['note'] ?? 'ไม่มีหมายเหตุ' }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                @else
+                                                    <p>ไม่มีสมาชิกในทีม</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <p>ไม่มีทีมในกะนี้</p>
+                                @endif
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <form action="{{ route('CopyShiftAndTeam') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="shift_id"
+                                        value="{{ session('duplicate_shift')->shift_id }}">
+                                    <button type="submit" class="btn btn-primary">คัดลอกข้อมูล</button>
+                                </form>
+                                <a href="{{ route('ManageShiftTeam') }}" class="btn btn-secondary">กรอกข้อมูลใหม่</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
         </div>
     </section>
 @endsection
@@ -144,5 +238,11 @@
             //     }
             // }
         });
+    </script>
+
+    <script>
+        window.onload = function() {
+            $('#duplicateShiftModal').modal('show');
+        }
     </script>
 @endsection
