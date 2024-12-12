@@ -51,8 +51,12 @@ class ShiftAndTeamController extends Controller
         $filtered_shifts = $this->getFilteredShifts($request->input('date') ?? now()->format('Y-m-d'));
         $ShiftFilterDate = $this->GetShifts($request->input('date') ?? now()->format('Y-m-d'));
 
-        return view('Admin.ManageShiftTeam.ManageShiftTeam', compact('filtered_shifts', 'ShiftFilterDate'));
+        // ส่งคืน JSON
+        return response()->json([
+            'ShiftFilterDate' => $ShiftFilterDate
+        ]);
     }
+
 
     public function SaveAddShift(Request $request)
     {
