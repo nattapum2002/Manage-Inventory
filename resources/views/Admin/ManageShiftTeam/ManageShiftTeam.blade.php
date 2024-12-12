@@ -9,19 +9,29 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <form action="{{ route('SaveAddShift') }}" method="POST">
-                        @csrf
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>เพิ่มกะ</h5>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between">
+                                <h5>กะ</h5>
+                                <div>
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" name="date" id="date"
+                                            value="{{ $ShiftFilterDate->first()->date ?? now()->format('Y-m-d') }}">
+                                        <button type="button" class="btn btn-primary" id="btn-search-shift">ค้นหา</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <article class="row">
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('SaveAddShift') }}" method="POST">
+                                @csrf
+                                <div class="row">
                                     <div class="col-lg-2 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="date" class="form-label">วันที่</label>
-                                            <input type="date" class="form-control" id="date" name="date"
-                                                value="{{ now()->format('Y-m-d') }}">
+                                            <input type="date" class="form-control" id="date-readonly" name="date"
+                                                value="{{ $ShiftFilterDate->first()->date ?? now()->format('Y-m-d') }}"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
@@ -59,30 +69,12 @@
                                                 placeholder="หมายเหตุ">
                                         </div>
                                     </div>
-                                </article>
+                                </div>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-success">เพิ่มกะ</button>
                                 </div>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <h5>กะ</h5>
-                                <div>
-                                    <form action="{{ route('ShiftFilterDate') }}" method="post">
-                                        @csrf
-                                        <div class="input-group">
-                                            <input type="date" class="form-control" name="date" id="date"
-                                                value="{{ $ShiftFilterDate->first()->date ?? now()->format('Y-m-d') }}">
-                                            <button type="submit" class="btn btn-primary">ค้นหา</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
+                            </form>
+                            <hr>
                             <table id="ShiftTable" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
@@ -94,7 +86,7 @@
                                         <th>จัดการ</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="shift-table-body">
                                     @foreach ($ShiftFilterDate as $shift)
                                         <tr>
                                             <td>{{ (new DateTime($shift->date))->format('d/m/Y') }}</td>
@@ -104,32 +96,20 @@
                                             <td>{{ $shift->note }}</td>
                                             <td>
                                                 <div class="d-flex">
-                                                    <a href="{{ Route('EditShiftTeam', $shift->shift_id) }}"
-                                                        class="btn btn-primary"><i class="fas fa-edit"></i>
-                                                    </a>
+                                                    <a href="{{ route('EditShiftTeam', $shift->shift_id) }}"
+                                                        class="btn btn-primary"><i class="fas fa-edit"></i></a>
                                                     <form action="{{ route('DeleteShiftTeam', $shift->shift_id) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('คุณแน่ใจว่าต้องการลบกะนี้หรือไม่?');">
                                                         @csrf
-                                                        <button type="submit" class="btn btn-danger">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
+                                                        <button type="submit" class="btn btn-danger"><i
+                                                                class="fas fa-trash"></i></button>
                                                     </form>
                                                 </div>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>วันที่</th>
-                                        <th>ชื่อกะ</th>
-                                        <th>เวลาเริ่มกะ</th>
-                                        <th>เวลาเลิกกะ</th>
-                                        <th>หมายเหตุ</th>
-                                        <th>จัดการ</th>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -244,5 +224,83 @@
         window.onload = function() {
             $('#duplicateShiftModal').modal('show');
         }
+    </script>
+
+    <script>
+        // Get references to the input fields
+        const dateInput = document.getElementById('date');
+        const dateReadonlyInput = document.getElementById('date-readonly');
+
+        // Listen for changes in the top date input
+        dateInput.addEventListener('change', function() {
+            // Update the readonly date input with the same value
+            dateReadonlyInput.value = dateInput.value;
+        });
+    </script>
+
+    <script>
+        document.getElementById('btn-search-shift').addEventListener('click', function() {
+            const date = document.getElementById('date').value;
+            fetch(`{{ route('ShiftFilterDate') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        date: date
+                    })
+                })
+                .then(response => {
+                    console.log('Response object:', response); // ตรวจสอบ response
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data received:', data); // ตรวจสอบข้อมูลทั้งหมดที่ได้รับกลับมา
+                    if (!data || !data.ShiftFilterDate) {
+                        console.error('Data structure is incorrect or ShiftFilterDate is missing');
+                        return;
+                    }
+
+                    const shiftTableBody = document.getElementById('shift-table-body');
+                    shiftTableBody.innerHTML = ''; // ล้างข้อมูลเก่าทั้งหมด
+                    data.ShiftFilterDate.forEach(shift => {
+                        console.log('Shift object:', shift); // ตรวจสอบข้อมูลแต่ละกะ
+                        const row = `
+                                        <tr>
+                                            <td>${formatDate(shift.date)}</td>
+                                            <td>${shift.shift_name}</td>
+                                            <td>${formatTime(shift.start_shift)}</td>
+                                            <td>${formatTime(shift.end_shift)}</td>
+                                            <td>${shift.note}</td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a href="/EditShiftTeam/${shift.shift_id}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                                                    <form action="/DeleteShiftTeam/${shift.shift_id}" method="POST" onsubmit="return confirm('คุณแน่ใจว่าต้องการลบกะนี้หรือไม่?');">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `;
+                        shiftTableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+
+            function formatDate(date) {
+                const d = new Date(date);
+                return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+            }
+
+            function formatTime(time) {
+                const d = new Date('1970-01-01T' + time);
+                return d.toTimeString().slice(0, 5);
+            }
+        });
     </script>
 @endsection
