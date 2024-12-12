@@ -33,7 +33,7 @@
                             <td>{{$pallet->customer_name}}</td>
                             <td>{{$pallet->pallet_type}}</td>
                             <td>
-                                <a href="{{route('Em.Work.palletDetail',[$pallet->pallet_id , $pallet->order_id])}}" class="btn btn-info">รายละเอียด</a>
+                                <a href="{{route('Em.Work.palletDetail',[$pallet->id , $pallet->order_id])}}" class="btn btn-info">รายละเอียด</a>
                             </td>
                         </tr>
                         @endforeach

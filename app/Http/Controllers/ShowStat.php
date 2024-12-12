@@ -92,7 +92,7 @@ class ShowStat extends Controller
             'product.item_um2'
         )
         ->get();
-        // dd($data);
+        dd($data);
         return view('Stat.ShowDispenseStat', compact(['data', 'date']));
     }
 }

@@ -13,6 +13,7 @@ class UserWorkController extends Controller
             ->select(
                 'pallet.status as pallet_status',
                 'pallet.pallet_id as pallet_id',
+                'pallet.id',
                 'pallet.pallet_no',
                 'pallet.order_id',
                 'pallet.room',
@@ -24,7 +25,7 @@ class UserWorkController extends Controller
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->join('lock_team', 'pallet.team_id', '=', 'lock_team.id')
-            ->join('lock_team_user', 'lock_team.id', '=', 'lock_team_user.team_id')
+            ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
             ->where('lock_team_user.user_id', '=', auth()->user()->user_id)
             ->where('dmc_position','=','Arrange')
             ->orderByRaw('CASE WHEN pallet.status = 1 THEN 1 ELSE 0 END ASC')
@@ -60,14 +61,16 @@ class UserWorkController extends Controller
             })
             ->where('pallet_order.pallet_id', '=', $pallet_id)
             ->get();
-        $team = DB::table('lock_team')
-            ->select('lock_team.team_name', 'users.name', 'surname')
-            ->join('lock_team_user', 'lock_team.id', '=', 'lock_team_user.team_id')
-            ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
-            ->join('pallet', 'lock_team.id', '=', 'pallet.team_id')
-            ->where('pallet.id', '=', $pallet_id)
-            ->get();
 
+        $team = DB::table('lock_team')
+            ->select('lock_team.team_name', 'users.name', 'users.surname') // เพิ่ม 'users.surname'
+            ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
+            ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
+            ->join('pallet', 'lock_team.team_id', '=', 'pallet.team_id')
+            ->where('pallet.id', '=', $pallet_id) // แก้เงื่อนไข where
+            ->get();
+        
+        // dd($team);
         $groupedTeams = [];
         foreach ($team as $teams) {
             $groupedTeams[$teams->team_name][] = [

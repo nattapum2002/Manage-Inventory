@@ -35,6 +35,7 @@
         </article>
         <article class="card-footer">
             <div class="d-flex justify-content-between">
+                {{-- @dd($Pallets) --}}
                 <a href="{{route('DetailCustomerQueue',$order_id)}}" class="btn btn-secondary">ย้อนกลับ</a>
                 <a href="{{route('ConfirmReceive',[$order_id,$Pallets[0]->id])}}" onclick="return confirm('คุณแน่ใจที่จะยืนยันการส่งสินค้า');" class="btn btn-success {{$Pallets[0]->recive_status == 1 ? 'disabled' : ''}}">{{$Pallets[0]->recive_status == 1 ? 'ส่งแล้ว' : 'ยืนยันการส่ง'}}</a>
             </div>
