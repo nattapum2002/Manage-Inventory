@@ -520,4 +520,27 @@ class ShiftAndTeamController extends Controller
 
         return response()->json($results);
     }
+
+    public function AutocompleteSearchTeam(Request $request)
+    {
+        $query = $request->get('query');
+
+        $data = DB::table('lock_team')
+            ->where('team_name', 'like', '%' . $query . '%')
+            ->where('work', 'like', '%' . 'จัดสินค้า' . '%')
+            ->whereDate('date', now()->format('Y-m-d'))
+            ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
+            ->get();
+
+        $results = [];
+        foreach ($data as $item) {
+            $results[] = [
+                'label' => $item->team_name,  // ใช้ 'label' สำหรับการแสดงผลในรายการ autocomplete
+                'value' => $item->team_name,  // ใช้ 'value' สำหรับการเติมในช่อง input
+                'team_id' => $item->team_id,     // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
+            ];
+        }
+
+        return response()->json($results);
+    }
 }
