@@ -15,41 +15,66 @@ class ShowStock extends Controller
     }
     public function stock_coldA()
     {
-        $data = DB::table('stock')->where('storage_room', 'Cold-A')->get();
+        $data = DB::table('stock')
+            ->Join('product', 'product.item_id', '=', 'stock.product_id')
+            ->where('warehouse', 'Cold-A')
+            ->get();
         return view('stockcold_A', compact('data'));
     }
     public function stock_coldC()
     {
-        $data = DB::table('stock')->where('storage_room', 'Cold-C')->get();
+        $data = DB::table('stock')
+            ->Join('product', 'product.item_id', '=', 'stock.product_id')
+            ->where('warehouse', 'Cold-C')
+            ->get();
         return view('stockcold_C', compact('data'));
     }
     public function Admin_index()
     {
         $data = DB::table('stock')
-            ->join('product', 'product.item_id', '=', 'stock.product_id')
+            ->Join('product', 'product.item_id', '=', 'stock.product_id')
             ->get();
         return view('Admin.Stock.showstock', compact('data'));
     }
 
     public function Detail($item_id)
     {
-        
         $data = DB::table('product')
-            ->join('stock', 'product.item_id', '=', 'stock.product_id')
+            ->Join('stock', 'product.item_id', '=', 'stock.product_id')
             ->where('product.item_no', $item_id)->get();
-           
-        return view('Admin.Stock.edititem', compact('data'));
+
+        $Warehouse = DB::table('warehouse')->get();
+
+        return view(
+            'Admin.Stock.edititem',
+            compact(
+                'data',
+                'Warehouse'
+            )
+        );
     }
 
     public function edit_name(Request $request)
     {
-
-        $data = $request->all();
-        DB::table('stock')->where('product_id', $data['product_id'])->update([
-            'product_name' => $data['product_name'],
-            'storage_room' => $data['room']
+        $validated = $request->validate([
+            'product_id' => 'required',
+            'product_name' => 'required|string|max:255',
+            'room' => 'required|string|max:255',
         ]);
 
-        return redirect()->route("Edit name", $data['product_id'])->with('success', 'updated successfully.');
+        $data = $request->all();
+
+        try {
+            DB::table('product')
+                ->where('item_no', $data['product_id'])
+                ->update([
+                    // 'item_desc1' => $data['product_name'],
+                    'warehouse' => $data['room']
+                ]);
+
+            return redirect()->route("Edit name", $data['product_id'])->with('success', 'Updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route("Edit name", $data['product_id'])->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 }

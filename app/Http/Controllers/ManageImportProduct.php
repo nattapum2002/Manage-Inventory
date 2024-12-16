@@ -22,23 +22,25 @@ class ManageImportProduct extends Controller
     {
         $show_slip = DB::table('product_store')
             ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker, status ,id')
-            ->groupBy('id','product_slip_id','status')
+            ->groupBy('id', 'product_slip_id', 'status')
             ->where('store_date', $date)
             ->get();
         // dd($show_slip);
         return view('Admin.ManageStock.manageslipstock', compact('show_slip', 'date'));
     }
-    public function check_slip($id){
+    public function check_slip($id)
+    {
         DB::table('product_store')
-        ->where('id', $id)
-        ->update(['status' => 1 , 'domestic_checker' => auth()->user()->user_id]);
+            ->where('id', $id)
+            ->update(['status' => 1, 'domestic_checker' => auth()->user()->user_id]);
         $this->sum($id);
         return redirect()->back()->with('success', 'Data check successfully');
     }
-    function sum($id){
+    function sum($id)
+    {
         $sum = DB::table('product_store_detail')
-        ->where('product_slip_id', $id)
-        ->get();
+            ->where('product_slip_id', $id)
+            ->get();
         foreach ($sum as $item) {
             DB::table('stock')->where('product_id', $item->product_id)->increment('quantity', $item->quantity);
             DB::table('stock')->where('product_id', $item->product_id)->increment('quantity2', $item->quantity2);
@@ -47,16 +49,16 @@ class ManageImportProduct extends Controller
     public function show_slip_detail($slip_id)
     {
         $show_detail = DB::table('product_store_detail')
-        ->join('product', 'product_store_detail.product_id', '=', 'product.item_id')
-        ->join('product_store', 'product_store.id', '=', 'product_store_detail.product_slip_id')
-        ->where('product_store.id', $slip_id)  // ระบุชื่อตารางที่ชัดเจน
-        ->select('product_store.*', 'product_store_detail.*', 'product.item_desc1', 'product.*')
-        ->get();
+            ->join('product', 'product_store_detail.product_id', '=', 'product.item_id')
+            ->join('product_store', 'product_store.id', '=', 'product_store_detail.product_slip_id')
+            ->where('product_store.id', $slip_id)  // ระบุชื่อตารางที่ชัดเจน
+            ->select('product_store.*', 'product_store_detail.*', 'product.item_desc1', 'product.*')
+            ->get();
         $show_slip = DB::table('product_store')
-        ->where('id', $slip_id)
-        ->first();
+            ->where('id', $slip_id)
+            ->first();
         // dd($show_slip);
-        return view('Admin.ManageStock.manageslipdetail', compact('show_detail', 'slip_id','show_slip'));
+        return view('Admin.ManageStock.manageslipdetail', compact('show_detail', 'slip_id', 'show_slip'));
     }
 
     public function autocomplete(Request $request)
@@ -65,8 +67,7 @@ class ManageImportProduct extends Controller
         // $room = $request->get('room');
         // ดึงข้อมูลเฉพาะฟิลด์ที่ต้องการ เช่น product_name และ product_id
         $data = DB::table('product')
-            ->select('item_desc1', 'item_no','item_um','item_um2','item_id') // เลือกเฉพาะฟิลด์ product_name และ product_id
-            // ->where('storage_room', 'like', '%' . $room . '%')
+            ->select('item_desc1', 'item_no', 'item_um', 'item_um2', 'item_id') // เลือกเฉพาะฟิลด์ product_name และ product_id
             ->where('item_desc1', 'like', '%' . $query . '%')
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
             ->get();
@@ -75,7 +76,6 @@ class ManageImportProduct extends Controller
         $results = [];
         foreach ($data as $item) {
             $results[] = [
-                // 'room' => $item->storage_room,
                 'label' => $item->item_desc1,  // ใช้ 'label' สำหรับการแสดงผลในรายการ autocomplete
                 'value' => $item->item_desc1,  // ใช้ 'value' สำหรับการเติมในช่อง input
                 'item_um' => $item->item_um,
@@ -85,7 +85,7 @@ class ManageImportProduct extends Controller
             ];
         }
 
-        return response()->json( $results);
+        return response()->json($results);
     }
 
     public function create(Request $request)
@@ -119,16 +119,16 @@ class ManageImportProduct extends Controller
         // dd($data);
         DB::transaction(function () use ($data) {
             $id = DB::table('product_store')->insertGetId([
-                    'product_slip_id' => $data['slip_id'],
-                    'product_slip_number' => $data['slip_number'],
-                    'department' => $data['department'],
-                    'store_date' => $data['date'],
-                    'store_time' => $data['time'],
-                    'product_checker' => $data['product_checker'],
-                    'domestic_checker' => 'N/A',
-                    'shift_id'   => 1,
-                    'status' => 0,
-                ]);
+                'product_slip_id' => $data['slip_id'],
+                'product_slip_number' => $data['slip_number'],
+                'department' => $data['department'],
+                'store_date' => $data['date'],
+                'store_time' => $data['time'],
+                'product_checker' => $data['product_checker'],
+                'domestic_checker' => 'N/A',
+                'shift_id'   => 1,
+                'status' => 0,
+            ]);
             foreach ($data['item_id'] as $key => $value) {
                 DB::table('product_store_detail')->insert([
                     'product_slip_id' => $id,
@@ -170,13 +170,13 @@ class ManageImportProduct extends Controller
     {
         $getData = DB::table('stock')->where('product_id', $id)->first();
 
-        $newquantity = 0 ;
-        $newquantity2 = 0 ;
+        $newquantity = 0;
+        $newquantity2 = 0;
 
         if ($getData->quantity > $quantity) {
             $newquantity = $getData->quantity - $quantity;
-        }else if($getData->quantity < $quantity){
-            $newquantity = $quantity - $getData->quantity ;
+        } else if ($getData->quantity < $quantity) {
+            $newquantity = $quantity - $getData->quantity;
             $newquantity = $getData->quantity + $newquantity;
         } else {
             $newquantity = $quantity;
@@ -184,8 +184,8 @@ class ManageImportProduct extends Controller
 
         if ($getData->quantity2 > $quantity2) {
             $newquantity2 = $getData->quantity2 - $quantity2;
-        }else if($getData->quantity2 < $quantity2){
-            $newquantity2 = $quantity2 - $getData->quantity2 ;
+        } else if ($getData->quantity2 < $quantity2) {
+            $newquantity2 = $quantity2 - $getData->quantity2;
             $newquantity2 = $getData->weight + $newquantity2;
         } else {
             $newquantity2 = $quantity2;

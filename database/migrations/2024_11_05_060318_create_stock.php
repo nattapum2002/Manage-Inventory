@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('product_id');
             $table->float('ordered_quantity')->nullable();
             $table->float('ordered_quantity2')->nullable();
-            $table->string('storage_room');
             $table->string('note')->nullable();
             $table->boolean('status');
             $table->timestamps();

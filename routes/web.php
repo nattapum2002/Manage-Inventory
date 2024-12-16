@@ -80,12 +80,16 @@ Route::get('NewItem', function () {
 Route::get('ShowStat/Dispense/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat_dispense'])->name('Show_dispense_stat');
 Route::get('ShowStat/Imported/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat_imported'])->name('Show_imported_stat');
 Route::get('ShowStatDate', [App\Http\Controllers\ShowStat::class, 'show_date'])->name('ShowStatDate');
-// Route::get('/ShowStock', [App\Http\Controllers\ShowStock::class, 'index'])->name('ShowStock');
-Route::get('/ShowStock/Cold-A', [App\Http\Controllers\ShowStock::class, 'stock_coldA'])->name('ShowStockA');
-Route::get('/ShowStock/Cold-C', [App\Http\Controllers\ShowStock::class, 'stock_coldC'])->name('ShowStockC');
-Route::get('/Admin/ShowStock', [App\Http\Controllers\ShowStock::class, 'Admin_index'])->name('AdminShowStock');
-Route::get('/Edit-name/{product_id}', [App\Http\Controllers\ShowStock::class, 'Detail'])->name('Edit name');
-Route::post('Updatename', [App\Http\Controllers\ShowStock::class, 'edit_name'])->name('Updatename');
+
+Route::prefix('ShowStock')->group(function () {
+    // Route::get('/ShowStock', [ShowStock::class, 'index'])->name('ShowStock');
+    Route::get('/Cold-A', [ShowStock::class, 'stock_coldA'])->name('ShowStockA');
+    Route::get('/Cold-C', [ShowStock::class, 'stock_coldC'])->name('ShowStockC');
+    Route::get('/Admin/ShowStock', [ShowStock::class, 'Admin_index'])->name('AdminShowStock');
+    Route::get('/Edit-name/{product_id}', [ShowStock::class, 'Detail'])->name('Edit name');
+    Route::post('Updatename', [ShowStock::class, 'edit_name'])->name('Updatename');
+});
+
 Route::get('/Admin/Dashboard', function () {
     return view('Admin.Dashboard.index');
 })->name('Dashboard.Admin');
@@ -234,4 +238,4 @@ Route::get('/Pallet/Work/pallet/detail/{pallet_id}/{order_id}', [UserWorkControl
 Route::get('/submit/{pallet_id}', [UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
 //employee Routes
 
-Route::get('/test/auto',[LockController::class,'autoArrange'])->name('auto');
+Route::get('/test/auto', [LockController::class, 'autoArrange'])->name('auto');
