@@ -31,16 +31,19 @@ class ShowStock extends Controller
         return view('Admin.Stock.showstock', compact('data'));
     }
 
-    public function Detail($item_no)
+    public function Detail($item_id)
     {
+        
         $data = DB::table('product')
-            ->join('stock', 'product.id', '=', 'stock.product_id')
-            ->where('item_no', $item_no)->get();
+            ->join('stock', 'product.item_id', '=', 'stock.product_id')
+            ->where('product.item_no', $item_id)->get();
+           
         return view('Admin.Stock.edititem', compact('data'));
     }
 
     public function edit_name(Request $request)
     {
+
         $data = $request->all();
         DB::table('stock')->where('product_id', $data['product_id'])->update([
             'product_name' => $data['product_name'],
