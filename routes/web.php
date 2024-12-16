@@ -121,7 +121,7 @@ Route::prefix('ManageTeam')->group(function () {
     // Route::get('/AddTeam/AutoCompleteAddTeam', [TeamController::class, 'AutoCompleteAddTeam'])->name('AutoCompleteAddTeam');
     // Route::post('/AddTeam', [TeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
     Route::get('/DeleteTeam/{team_id}/{user_id}', [TeamController::class, 'DeleteTeam'])->name('DeleteTeam');
-    // Route::get('/AutocompleteSearchTeam', [TeamController::class, 'AutocompleteSearchTeam'])->name('AutocompleteSearchTeam');
+    Route::get('/AutocompleteSearchTeam', [TeamController::class, 'AutocompleteSearchTeam'])->name('AutocompleteSearchTeam');
 });
 
 Route::prefix('ManageLockStock')->group(function () {
@@ -232,3 +232,5 @@ Route::get('/Pallet/Work/pallet', [UserWorkController::class, 'index'])->name('E
 Route::get('/Pallet/Work/pallet/detail/{pallet_id}/{order_id}', [UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
 Route::get('/submit/{pallet_id}', [UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
 //employee Routes
+
+Route::get('/test/auto',[LockController::class,'autoArrange'])->name('auto');

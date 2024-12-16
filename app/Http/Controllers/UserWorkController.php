@@ -24,7 +24,7 @@ class UserWorkController extends Controller
             ->join('customer_order', 'pallet.order_id', '=', 'customer_order.order_number')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
-            ->join('lock_team', 'pallet.team_id', '=', 'lock_team.id')
+            ->join('lock_team', 'pallet.team_id', '=', 'lock_team.team_id')
             ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
             ->where('lock_team_user.user_id', '=', auth()->user()->user_id)
             ->where('dmc_position','=','Arrange')

@@ -43,7 +43,7 @@ class LockController extends Controller
             ->selectRaw('pallet.id,MAX(pallet_type.pallet_type) as pallet_type ,MAX(pallet.pallet_id) as pallet_id ,MAX(pallet_no) as pallet_no, MAX(room) as room, pallet.status ,pallet.recive_status ,MAX(pallet.note) as note, MAX(lock_team.team_name) as team_name')
             ->join('pallet_order', 'pallet.id', '=', 'pallet_order.pallet_id')
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
-            ->join('lock_team', 'pallet.team_id', '=', 'lock_team.id')
+            ->join('lock_team', 'pallet.team_id', '=', 'lock_team.team_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->groupBy('pallet.id', 'pallet.status', 'pallet.recive_status')
             ->get();
@@ -101,9 +101,9 @@ class LockController extends Controller
     {
         $data = session()->get('pallet');
         // dd(vars: $data);
-        // DB::table('pallet')->truncate();
-        // DB::table('pallet_order')->truncate();
-        // DB::table('confirmOrder')->truncate();
+        DB::table('pallet')->truncate();
+        DB::table('pallet_order')->truncate();
+        DB::table('confirmOrder')->truncate();
         DB::transaction(function () use ($data, $order_number) {
             foreach ($data as $key => $value) {
                 $id = DB::table('pallet')->insertGetId([
@@ -217,5 +217,102 @@ class LockController extends Controller
         });
 
         return response()->json($results);
+    }
+
+    function autoArrange()
+    {
+        $CustomerOrders = DB::table('customer_order_detail')
+            ->join('customer_order', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
+            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
+            ->where('customer_order_detail.order_number', '=', 1141248322.0)
+            ->get();
+
+        // dd($CustomerOrders);
+        $this->splitOrder($CustomerOrders);
+        return view('auto-arrange-lock', compact('CustomerOrders'));
+    }
+
+    public function splitOrder($Order)
+    {
+        $lock_items = []; // สำหรับจัดกลุ่มสินค้า (ล็อก)
+        $split_items = []; // สำหรับสินค้าที่ถูกกระจายออก
+        $current_group = []; // กลุ่มสินค้าที่กำลังสร้าง
+        $current_weight = 0; // น้ำหนักสะสมของกลุ่ม
+
+        foreach ($Order as $item) {
+            if ($item->order_quantity_UM === 'Kg') {
+                $this->processItem($item, $item->order_quantity, $lock_items, $split_items, $current_group, $current_weight);
+            } elseif ($item->order_quantity_UM2 === 'Kg') {
+                $this->processItem($item, $item->order_quantity2, $lock_items, $split_items, $current_group, $current_weight);
+            }
+        }
+
+        // บันทึกกลุ่มสุดท้ายถ้ามีสินค้าเหลือ
+        if (!empty($current_group)) {
+            $lock_items[] = $current_group;
+        }
+
+        // แสดงผล
+        dd($lock_items, $split_items);
+    }
+
+    /**
+     * ประมวลผลสินค้าเพื่อจัดกลุ่มหรือกระจาย
+     */
+    private function processItem($item, $quantity, &$lock_items, &$split_items, &$current_group, &$current_weight)
+    {
+        if ($quantity <= 850) {
+            $this->SmallItem($item, $quantity, $lock_items, $current_group, $current_weight);
+        } else {
+            $this->LargeItem($item, $quantity, $lock_items[]);
+        }
+    }
+
+    /**
+     * เพิ่มสินค้าในกลุ่มล็อก
+     */
+    private function SmallItem($item, $quantity, &$lock_items, &$current_group, &$current_weight)
+    {
+        // ตรวจสอบว่าสินค้าเพิ่มแล้วน้ำหนักเกินหรือไม่
+        if ($current_weight + $quantity > 850) {
+            $lock_items[] = $current_group; // บันทึกกลุ่มก่อนหน้า
+            $current_group = [];           // เริ่มกลุ่มใหม่
+            $current_weight = 0;           // รีเซ็ตน้ำหนักสะสม
+        }
+
+        // เพิ่มสินค้าในกลุ่ม
+        $current_group[] = [
+            'item_no' => $item->item_no,
+            'item_desc1' => $item->item_desc1,
+            'order_quantity' => $quantity,
+        ];
+        $current_weight += $quantity;
+    }
+
+    /**
+     * กระจายสินค้าที่น้ำหนัก > 850
+     */
+    private function LargeItem($item, $quantity, &$lock_items)
+    {
+        $remaining_quantity = $quantity;
+
+        while ($remaining_quantity > 850) {
+            $lock_items[] = [
+                'item_no' => $item->item_no,
+                'item_desc1' => $item->item_desc1,
+                'order_quantity' => 850,
+            ];
+            $remaining_quantity -= 850; // ลดน้ำหนักที่เหลือ
+        }
+
+        // เพิ่มส่วนที่เหลือ (ถ้ามี)
+        if ($remaining_quantity > 0) {
+            $lock_items[] = [
+                'item_no' => $item->item_no,
+                'item_desc1' => $item->item_desc1,
+                'order_quantity' => $remaining_quantity,
+            ];
+        }
     }
 }

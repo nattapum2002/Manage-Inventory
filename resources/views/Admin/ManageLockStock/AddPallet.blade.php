@@ -69,7 +69,7 @@
                                                     name="product_id[0]" readonly>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-sm-6">
+                                        <div class="col-lg-3 col-md-6 col-sm-7">
                                             <div class="form-group">
                                                 <label for="product_name[0]" class="form-label">รายการ</label>
                                                 <input type="text" class="form-control" id="product_name0"
@@ -231,7 +231,7 @@
                                 name="product_id[${product_count}]" readonly>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-4 col-sm-6">
+                    <div class="col-lg-3 col-md-6 col-sm-7">
                         <div class="form-group">
                             <label for="product_name[${product_count}]" class="form-label">รายการ</label>
                             <input type="text" class="form-control" id="product_name${product_count}"
