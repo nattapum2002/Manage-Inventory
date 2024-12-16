@@ -101,16 +101,16 @@ Route::prefix('ManageQueue')->group(function () {
     Route::get('/ConfirmReceive/{order_id}/{pallet_id}', [CustomerQueueController::class, 'confirmReceive'])->name('ConfirmReceive');
 });
 
-Route::prefix('ManageShift')->group(function () {
-    Route::get('/', [ShiftController::class, 'index'])->name('ManageShift');
-    Route::get('/Toggle/{shift_id}/{status}', [ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
-    Route::get('/EditShift/{shift_id}', [ShiftController::class, 'EditShift'])->name('EditShift');
-    // Route::post('/EditShift/Save', [ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
-    Route::get('/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
-    Route::get('/AddShift/AutoCompleteAddShift', [ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
-    // Route::post('/AddShift', [ShiftController::class, 'SaveAddShift'])->name('SaveAddShift');
-    Route::get('/DeleteShift/{shift_id}/{user_id}', [ShiftController::class, 'DeleteShift'])->name('DeleteShift');
-});
+// Route::prefix('ManageShift')->group(function () {
+//     Route::get('/', [ShiftController::class, 'index'])->name('ManageShift');
+//     Route::get('/Toggle/{shift_id}/{status}', [ShiftController::class, 'Toggle'])->name('ManageShift.Toggle');
+//     Route::get('/EditShift/{shift_id}', [ShiftController::class, 'EditShift'])->name('EditShift');
+//     Route::post('/EditShift/Save', [ShiftController::class, 'SaveEditShift'])->name('SaveEditShift');
+//     Route::get('/AddShift', [ShiftController::class, 'AddShift'])->name('AddShift');
+//     Route::get('/AddShift/AutoCompleteAddShift', [ShiftController::class, 'AutoCompleteAddShift'])->name('AutoCompleteAddShift');
+//     Route::post('/AddShift', [ShiftController::class, 'SaveAddShift'])->name('SaveAddShift');
+//     Route::get('/DeleteShift/{shift_id}/{user_id}', [ShiftController::class, 'DeleteShift'])->name('DeleteShift');
+// });
 
 Route::prefix('ManageTeam')->group(function () {
     Route::get('/', [TeamController::class, 'index'])->name('ManageTeam');
@@ -166,6 +166,7 @@ Route::prefix('ManageShiftAndTeam')->group(function () {
     Route::post('/EditShiftTeam/AddTeam/Save', [ShiftAndTeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
     Route::post('/EditShiftTeam/EditTeam/Save', [ShiftAndTeamController::class, 'SaveEditTeam'])->name('SaveEditTeam');
     Route::get('/EditShiftTeam/{Shift_id}/Delete/{team_id}', [ShiftAndTeamController::class, 'DeleteTeam'])->name('DeleteTeam');
+    Route::get('/AutocompleteSearchTeam', [TeamController::class, 'AutocompleteSearchTeam'])->name('AutocompleteSearchTeam');
 });
 
 Route::prefix('PayGoods')->group(function () {

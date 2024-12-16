@@ -281,7 +281,7 @@
     });
 </script>
 {{-- สคริปต์ SlipDetail --}}
-<script>
+{{-- <script>
     var user_count = 1;
 
     $('#add-user').click(function() {
@@ -365,7 +365,7 @@
         });
     }
     initializeShiftAutocomplete(`#name0`, `#user_id0`, `#surname0`, `#position0`);
-</script>
+</script> --}}
 
 
 <script>
@@ -598,7 +598,10 @@
             ordering: false,
             paging: true,
             scrollX: true,
-            order: [[0, 'asc'], [2, 'desc']]
+            order: [
+                [0, 'asc'],
+                [2, 'desc']
+            ]
         })
         $('#Em-Pallet-detail').DataTable({
             info: false,
