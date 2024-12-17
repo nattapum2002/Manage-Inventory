@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('pallet_id');
             $table->string('pallet_number');
             $table->string('pallet_name');
-            $table->string('storage_room')->nullable();
             $table->string('order_number');
             $table->string('note')->nullable();
             $table->boolean('status')->default(true);

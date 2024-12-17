@@ -4,38 +4,48 @@
     แก้ไขชื่อสินค้า
 @endsection
 @section('content')
-    <main>
-        @if (session()->has('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session()->get('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    @foreach ($data as $item)
+                        <form action="{{ route('Updatename') }}" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for="product_id">รหัสสินค้า</label>
+                                <input type="text" class="form-control" id="product_id" name="product_id"
+                                    value="{{ $item->item_no }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="room_id">ห้องเก็บ</label>
+                                <select name="room" class="form-control" id="">
+                                    @foreach ($Warehouse as $item2)
+                                        <option value="{{ $item2->whs_name }}"
+                                            {{ $item->warehouse == $item2->whs_name ? 'selected' : '' }}>
+                                            {{ $item2->whs_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_name">ชื่อสินค้า</label>
+                                <input type="text" class="form-control" id="product_name" name="product_name"
+                                    value="{{ $item->item_desc1 }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="product_name">หน่วย1 (item_um)</label>
+                                <input type="text" class="form-control" id="item_um" name="item_um"
+                                    value="{{ $item->item_um }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_name">หน่วย2 (item_um2)</label>
+                                <input type="text" class="form-control" id="item_um2" name="item_um2"
+                                    value="{{ $item->item_um2 }}" readonly>
+                            </div>
+                            <button class="btn btn-primary" type="submit">บันทึก</button>
+                        </form>
+                    @endforeach
+                </div>
             </div>
-        @endif
-        <section class="card">
-            <article class="card-body">
-            @foreach ($data as $item )
-                <form action="{{route('Updatename')}}" method="post">
-                    @csrf
-                    <div class="form-group">
-                        <label for="product_id">รหัสสินค้า</label>
-                        <input type="text" class="form-control" id="product_id" name="product_id" value="{{ $item->item_no }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="room_id">ห้องเก็บ</label>
-                        <select name="room" class="form-control" id="">
-                            <option value="Cold-A" {{ $item->storage_room == 'Cold-A' ? 'selected' : '' }}>Cold-A</option>
-                            <option value="Cold-C" {{ $item->storage_room == 'Cold-C' ? 'selected' : '' }}>Cold-C</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="product_name">ชื่อสินค้า</label>
-                        <input type="text" class="form-control" id="product_name" name="product_name" value="{{ $item->item_desc1 }}">
-                    </div>
-
-                    <button class="btn btn-primary" type="submit">บันทึก</button>
-                </form>         
-            @endforeach
-            </article>
-        </section>
-    </main>
+        </div>
+    </section>
 @endsection

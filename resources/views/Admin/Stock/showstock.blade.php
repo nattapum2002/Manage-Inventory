@@ -31,9 +31,9 @@
                                     <td>{{ $item->quantity_UM }}</td>
                                     <td>{{ $item->quantity2 }}</td>
                                     <td>{{ $item->quantity_UM2 }}</td>
-                                    <td>{{ $item->storage_room }}</td>
+                                    <td>{{ $item->warehouse ?? 'N/A' }}</td>
                                     <td>
-                                        <a class="btn btn-primary" href="{{ route('Edit name', $item->item_id) }}">แก้ไข</a>
+                                        <a class="btn btn-primary" href="{{ route('Edit name', $item->item_no) }}">แก้ไข</a>
                                     </td>
                                 </tr>
                             @endforeach
