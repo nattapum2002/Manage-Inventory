@@ -14,36 +14,32 @@
                             <table id="locktable" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>รหัสคำสั่งซื้อ</th>
+                                        <th>วันที่สั่ง</th>
                                         <th>ลูกค้า</th>
-                                        <th>ทีม</th>
-                                        <th>หมายเหตุ</th>
-                                        <th>สถานะ</th>
-                                        <th></th>
+                                        <th>เกรดลูกค้า</th>
+                                        <th>รายละเอียด</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($CustomerOrders as $CustomerOrder)
                                         <tr>
-                                            <td>{{ intval($CustomerOrder->order_number) }}</td>
+                                            <td>{{ $CustomerOrder->ORDERED_DATE }}</td>
                                             <td>{{ $CustomerOrder->customer_name }}</td>
-                                            <td>{{ $CustomerOrder->team_name ?? 'N/A' }}</td>
-                                            <td>{{ $CustomerOrder->note ?? 'N/A' }}</td>
-                                            <td>{{ $CustomerOrder->status }}</td>
+                                            <td>{{ $CustomerOrder->customer_grade ?? 'ไม่มี' }}</td>
                                             <td>
-                                                <a href="{{ route('DetailLockStock', $CustomerOrder->order_number) }}"
+                                                <a href="{{ route('DetailLockStock',[$CustomerOrder->CUSTOMER_ID,$CustomerOrder->ORDERED_DATE] ) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot>
-                                    <th>รหัสคำสั่งซื้อ</th>
-                                    <th>ลูกค้า</th>
-                                    <th>ทีม</th>
-                                    <th>หมายเหตุ</th>
-                                    <th>สถานะ</th>
-                                    <th></th>
+                                    <tr>
+                                        <th>วันที่สั่ง</th>
+                                        <th>ลูกค้า</th>
+                                        <th>เกรดลูกค้า</th>
+                                        <th>รายละเอียด</th>
+                                    </tr>
                                 </tfoot>
                             </table>
                         </div>

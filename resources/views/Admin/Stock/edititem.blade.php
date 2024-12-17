@@ -20,7 +20,7 @@
                                 <label for="room_id">ห้องเก็บ</label>
                                 <select name="room" class="form-control" id="">
                                     @foreach ($Warehouse as $item2)
-                                        <option value="{{ $item2->whs_name }}"
+                                        <option value="{{ $item2->id }}"
                                             {{ $item->warehouse == $item2->whs_name ? 'selected' : '' }}>
                                             {{ $item2->whs_name }}</option>
                                     @endforeach

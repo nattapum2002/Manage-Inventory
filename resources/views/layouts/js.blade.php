@@ -494,7 +494,7 @@
             responsive: true,
             lengthChange: true,
             autoWidth: true,
-            // scrollX: true,
+            scrollX: true,
             layout: {
                 topStart: {
                     buttons: [
@@ -504,6 +504,19 @@
             }
         });
         $("#pallte").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });
+        $("#arrange-lock-table").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,

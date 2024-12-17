@@ -10,7 +10,9 @@ class ShowStock extends Controller
     //
     public function index()
     {
-        $data = DB::table('stock')->get();
+        $data = DB::table('stock')
+        ->join('warehouse','warehouse.id','=','product.warehouse')
+        ->get();
         return view('showstock', compact('data'));
     }
     public function stock_coldA()
@@ -33,6 +35,7 @@ class ShowStock extends Controller
     {
         $data = DB::table('stock')
             ->Join('product', 'product.item_id', '=', 'stock.product_id')
+            ->join('warehouse','warehouse.id','=','product.warehouse')
             ->get();
         return view('Admin.Stock.showstock', compact('data'));
     }

@@ -31,7 +31,7 @@
                                     <td>{{ $item->quantity_UM }}</td>
                                     <td>{{ $item->quantity2 }}</td>
                                     <td>{{ $item->quantity_UM2 }}</td>
-                                    <td>{{ $item->warehouse ?? 'N/A' }}</td>
+                                    <td>{{ $item->whs_name ?? 'N/A' }}</td>
                                     <td>
                                         <a class="btn btn-primary" href="{{ route('Edit name', $item->item_no) }}">แก้ไข</a>
                                     </td>

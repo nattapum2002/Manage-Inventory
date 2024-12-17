@@ -69,7 +69,7 @@
                         <a href="{{ route('ManageLockStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Manage Lock Stock
+                                ใบล็อค
                             </p>
                         </a>
                     </li>
