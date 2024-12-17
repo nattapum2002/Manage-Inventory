@@ -113,16 +113,17 @@
                                 <tbody>
                                     {{-- @dd($pallet) --}}
                                     @foreach ($pallet as $item)
-                                    <tr>
-                                        <td>{{$item->pallet_no}}</td>
-                                        <td>{{$item->room}}</td>
-                                        <td>{{$item->pallet_type}}</td>
-                                        <td>{!!$item->status == 0 ? '<p class="text-danger">ยังไม่จัด</p>' : '<p class="text-success">จัดแล้ว</p>'!!}</td>
-                                        <td>{!!$item->recive_status == 0 ? '<p class="text-danger">ยังไม่ส่ง</p>' : '<p class="text-success">ส่งแล้ว</p>'!!}</td>
-                                        <td>
-                                            <a href="{{route('QueuePalletDetail',[$item->pallet_id , $item->order_id])}}" class="btn btn-primary">ดู</a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ $item->pallet_no }}</td>
+                                            <td>{{ $item->room }}</td>
+                                            <td>{{ $item->pallet_type }}</td>
+                                            <td>{!! $item->status == 0 ? '<p class="text-danger">ยังไม่จัด</p>' : '<p class="text-success">จัดแล้ว</p>' !!}</td>
+                                            <td>{!! $item->recive_status == 0 ? '<p class="text-danger">ยังไม่ส่ง</p>' : '<p class="text-success">ส่งแล้ว</p>' !!}</td>
+                                            <td>
+                                                <a href="{{ route('QueuePalletDetail', [$item->pallet_id, $item->order_id]) }}"
+                                                    class="btn btn-primary">ดู</a>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -141,13 +142,13 @@
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#customer-queue-pallet").DataTable({
             responsive: true,

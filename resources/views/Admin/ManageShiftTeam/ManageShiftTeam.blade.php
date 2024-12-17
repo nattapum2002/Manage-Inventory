@@ -23,7 +23,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('SaveAddShift') }}" method="POST">
+                            <form action="{{ route('AddShift') }}" method="POST">
                                 @csrf
                                 <div class="row">
                                     <div class="col-lg-2 col-md-4 col-sm-12">
@@ -39,7 +39,7 @@
                                             <label for="shift_name">ชื่อกะพนักงาน</label>
                                             <select class="form-control" id="shift_name" name="shift_name">
                                                 <option selected value="">เลือกชื่อกะพนักงาน</option>
-                                                @foreach ($filtered_shifts as $shift)
+                                                @foreach ($select_shifts as $shift)
                                                     <option value="{{ $shift['select_name'] }}">{{ $shift['select_name'] }}
                                                     </option>
                                                 @endforeach
@@ -192,7 +192,18 @@
                                         value="{{ session('duplicate_shift')->shift_id }}">
                                     <button type="submit" class="btn btn-primary">คัดลอกข้อมูล</button>
                                 </form>
-                                <a href="{{ route('ManageShiftTeam') }}" class="btn btn-secondary">กรอกข้อมูลใหม่</a>
+                                <form action="{{ route('SaveAddShift') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="shift_id"
+                                        value="{{ session('duplicate_shift')->shift_id }}">
+                                    <input type="hidden" name="shift_name" value="{{ session('Data')['shift_name'] }}">
+                                    <input type="hidden" name="start_shift"
+                                        value="{{ session('Data')['start_shift'] }}">
+                                    <input type="hidden" name="end_shift" value="{{ session('Data')['end_shift'] }}">
+                                    <input type="hidden" name="date" value="{{ session('Data')['date'] }}">
+                                    <input type="hidden" name="note" value="{{ session('Data')['note'] }}">
+                                    <button type="submit" class="btn btn-secondary">กรอกข้อมูลใหม่</button>
+                                </form>
                             </div>
                         </div>
                     </div>

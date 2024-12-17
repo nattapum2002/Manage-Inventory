@@ -54,105 +54,99 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-12 d-flex justify-content-center">
                                     <button type="button" class="btn btn-success" data-toggle="modal"
                                         data-target="#AddTeamShift">
                                         เพิ่มทีม
                                     </button>
                                 </div>
                             </div>
-                            @foreach ($ShiftTeams['teams'] as $team)
-                                <div class="row">
-                                    <div class="col-12">
-                                        @if ($team['team_id'] != null)
-                                            <hr>
-                                            <table id="" class="table table-bordered table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="5">
-                                                            <div class="row">
-                                                                <div class="col-lg-2 col-md-3 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="team_name">ทีม</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="team_name" name="team_name"
-                                                                            value="{{ $team['team_name'] ?? 'N/A' }}"
-                                                                            readonly>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-2 col-md-3 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="work">ลักษณะงาน</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="work" name="work"
-                                                                            value="{{ $team['work'] ?? 'N/A' }}" readonly>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-2 col-md-3 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="foreman">โฟร์แมน</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="foreman" name="foreman"
-                                                                            value="{{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['name'] ?? 'N/A' }}"
-                                                                            readonly>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-4 col-md-3 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label for="note">หมายเหตุ</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="note" name="note"
-                                                                            value="{{ $team['note'] }}" readonly>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-2 col-md-12 col-sm-12">
-                                                                    <div class="form-group">
-                                                                        <label>#</label>
-                                                                        <br>
-                                                                        <div class="d-flex ">
-                                                                            <button type="button" class="btn btn-primary"
-                                                                                data-toggle="modal"
-                                                                                data-target="#EditTeamShift"
-                                                                                data-team='@json($team)'
-                                                                                data-users='@json($team['users'])'>
-                                                                                <i class="fa fa-edit"></i>
-                                                                            </button>
-                                                                            <a href="{{ route('DeleteTeam', ['Shift_id' => $ShiftTeams['shift_id'], 'team_id' => $team['team_id']]) }}"
-                                                                                class="btn btn-danger"><i
-                                                                                    class="fas fa-trash"></i></a>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>รหัสพนักงาน</th>
-                                                        <th>ชื่อพนักงาน</th>
-                                                        <th>ตําแหน่งใน DMC</th>
-                                                        <th>หมายเหตุ</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($team['users'] as $user)
-                                                        <tr>
-                                                            <td>{{ $user['user_id'] ?? 'N/A' }}</td>
-                                                            <td>{{ $user['name'] ?? 'N/A' }}</td>
-                                                            <td>{{ $user['dmc_position'] ?? 'N/A' }}</td>
-                                                            <td>{{ $user['note'] ?? 'N/A' }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        @else
-                                            {{-- <p class="d-flex justify-content-center">กรุณาเพิ่มทีมพนักงาน</p> --}}
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
+
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                @foreach ($ShiftTeams['teams'] as $team)
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="team_name">ทีม</label>
+                                            <input type="text" class="form-control" id="team_name" name="team_name"
+                                                value="{{ $team['team_name'] ?? 'N/A' }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="work">ลักษณะงาน</label>
+                                            <input type="text" class="form-control" id="work" name="work"
+                                                value="{{ $team['work'] ?? 'N/A' }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="foreman">โฟร์แมน</label>
+                                            <input type="text" class="form-control" id="foreman" name="foreman"
+                                                value="{{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['name'] . ' ' . $team['users']->where('dmc_position', 'โฟร์แมน')[0]['surname'] ?? 'N/A' }}"
+                                                readonly>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="note">หมายเหตุ</label>
+                                            <input type="text" class="form-control" id="note"
+                                                name="note" value="{{ $team['note'] }}" readonly>
+                                        </div>
+                                    </div> --}}
+                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="form-group">
+                                            <label>#</label>
+                                            <br>
+                                            <div class="d-flex ">
+                                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                    data-target="#EditTeamShift" data-team='@json($team)'
+                                                    data-users='@json($team['users'])'>
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <a href="{{ route('DeleteTeam', ['Shift_id' => $ShiftTeams['shift_id'], 'team_id' => $team['team_id']]) }}"
+                                                    class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if ($team['team_id'] != null)
+                                    <table id="" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>รหัสพนักงาน</th>
+                                                <th>ชื่อพนักงาน</th>
+                                                <th>ตําแหน่งในทีม</th>
+                                                {{-- <th>หมายเหตุ</th> --}}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($team['users'] as $user)
+                                                <tr>
+                                                    <td>{{ $user['user_id'] ?? 'N/A' }}</td>
+                                                    <td>{{ $user['name'] . ' ' . $user['surname'] ?? 'N/A' }}</td>
+                                                    <td>{{ $user['dmc_position'] ?? 'N/A' }}</td>
+                                                    {{-- <td>{{ $user['note'] ?? 'N/A' }}</td> --}}
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    {{-- <p class="d-flex justify-content-center">กรุณาเพิ่มทีมพนักงาน</p> --}}
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
             <div class="modal fade" id="AddTeamShift">
                 <div class="modal-dialog modal-xl">
@@ -167,19 +161,19 @@
                             </div>
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label>ทีม</label>
                                             <input type="text" class="form-control" name="team_name">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label>ลักษณะงาน</label>
                                             <input type="text" class="form-control" name="work">
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-6 col-md-12 col-sm-12">
                                         <div class="form-group">
                                             <label>หมายเหตุ</label>
                                             <input type="text" class="form-control" name="note">
@@ -189,33 +183,34 @@
                                 <hr>
                                 <div>
                                     <div class="row mb-3">
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="user_id">รหัสพนักงาน</label>
                                             <input type="text" class="form-control" id="user_id0" name="user_id[0]"
                                                 readonly>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="name">ชื่อ</label>
                                             <input type="text" class="form-control" id="name0" name="name[0]">
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="surname">นามสกุล</label>
                                             <input type="text" class="form-control" id="surname0" name="surname[0]"
                                                 disabled>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="position">ตําแหน่ง</label>
                                             <input type="text" class="form-control" id="position0" name="position[0]"
                                                 disabled>
                                         </div>
-                                        <div class="col-lg-2">
-                                            <label for="dmc_position">ตําแหน่ง DMC</label>
+                                        <div class="col-lg-2 col-md-4 col-sm-12">
+                                            <label for="dmc_position">ตําแหน่งในทีม</label>
                                             <input type="text" class="form-control" name="dmc_position[0]">
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="#">#</label>
                                         </div>
                                     </div>
+                                    <hr>
                                 </div>
                                 <div id="add-user-team"></div>
                                 <div class="d-flex justify-content-center mt-3">
@@ -245,20 +240,20 @@
                             </div>
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label>ชื่อทีม</label>
                                             <input type="text" class="form-control" id="edit_team_name"
                                                 name="team_name">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label>ลักษณะงาน</label>
                                             <input type="text" class="form-control" id="edit_work" name="work">
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-3 col-md-12 col-sm-12">
                                         <div class="form-group">
                                             <label>หมายเหตุ</label>
                                             <input type="text" class="form-control" id="edit_note" name="note">
@@ -266,28 +261,6 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <div>
-                                    <div class="row">
-                                        <div class="col-lg-2">
-                                            <label for="user_id">รหัสพนักงาน</label>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            <label for="name">ชื่อ</label>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            <label for="surname">นามสกุล</label>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            <label for="position">ตําแหน่ง</label>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            <label for="dmc_position">ตําแหน่ง DMC</label>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            <label for="#">#</label>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div id="edit-user-team"></div>
                                 <div class="d-flex justify-content-center mt-3">
                                     <button type="button" class="btn btn-primary"
@@ -388,25 +361,31 @@
         function createUserRow(index, user = {}) {
             return `
             <div class="row mb-3" id="user-${index}">
-                <div class="col-lg-2">
+                <div class="col-lg-2 col-md-4 col-sm-12">
+                    <label for="user_id">รหัสพนักงาน</label>
                     <input type="text" class="form-control" id="user_id${index}" name="user_id[${index}]" value="${user.user_id || ''}" readonly>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-2 col-md-4 col-sm-12">
+                    <label for="name">ชื่อ</label>
                     <input type="text" class="form-control" id="name${index}" name="name[${index}]" value="${user.name || ''}">
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-2 col-md-4 col-sm-12">
+                    <label for="surname">นามสกุล</label>
                     <input type="text" class="form-control" id="surname${index}" name="surname[${index}]" value="${user.surname || ''}" disabled>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-2 col-md-4 col-sm-12">
+                    <label for="position">ตําแหน่ง</label>
                     <input type="text" class="form-control" id="position${index}" name="position[${index}]" value="${user.position || ''}" disabled>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-2 col-md-4 col-sm-12">
+                    <label for="dmc_position">ตําแหน่งในทีม</label>
                     <input type="text" class="form-control" name="dmc_position[${index}]" value="${user.dmc_position || ''}">
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-2 col-md-4 col-sm-12">
+                    <label for="#">#</label><br>
                     <button type="button" class="btn btn-danger remove-user"><i class="fas fa-trash"></i></button>
                 </div>
-            </div>`;
+            </div><hr>`;
         }
 
         function initializeModal(modalId, teamData, users) {

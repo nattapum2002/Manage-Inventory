@@ -105,13 +105,13 @@
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
     </script>
 @endsection

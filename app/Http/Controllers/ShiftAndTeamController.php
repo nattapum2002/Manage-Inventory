@@ -38,12 +38,13 @@ class ShiftAndTeamController extends Controller
         });
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $filtered_shifts = $this->getFilteredShifts(now()->format('Y-m-d'));
-        $ShiftFilterDate = $this->GetShifts(now()->format('Y-m-d'));
+        $filtered_shifts = $this->getFilteredShifts($request->input('date') ?? now()->format('Y-m-d'));
+        $ShiftFilterDate = $this->GetShifts($request->input('date') ?? now()->format('Y-m-d'));
+        $select_shifts = $this->select_shifts;
 
-        return view('Admin.ManageShiftTeam.ManageShiftTeam', compact('filtered_shifts', 'ShiftFilterDate'));
+        return view('Admin.ManageShiftTeam.ManageShiftTeam', compact('filtered_shifts', 'ShiftFilterDate', 'select_shifts'));
     }
 
     public function ShiftFilterDate(Request $request)
@@ -58,7 +59,7 @@ class ShiftAndTeamController extends Controller
     }
 
 
-    public function SaveAddShift(Request $request)
+    public function AddShift(Request $request)
     {
         // 1️⃣ ตรวจสอบความถูกต้องของข้อมูล
         $request->validate([
@@ -68,6 +69,8 @@ class ShiftAndTeamController extends Controller
             'date' => 'required|date',
             'note' => 'nullable|string',
         ]);
+
+        $data = $request->all();
 
         // 2️⃣ ตรวจสอบว่ามีกะที่ชื่อเหมือนกันแล้วหรือไม่
         $existingShift = DB::table('work_shift')
@@ -138,11 +141,40 @@ class ShiftAndTeamController extends Controller
             return redirect()->route('ManageShiftTeam')
                 ->with('duplicate_shift', $existingShift) // ส่งข้อมูลกะล่าสุดไปเพื่อแสดงใน modal
                 ->with('ShiftTeams', $ShiftTeams)
+                ->with('Data', $data)
                 ->with('info', 'มีกะที่มีชื่อซ้ำกัน คุณต้องการคัดลอกข้อมูลหรือเพิ่มข้อมูลใหม่');
         }
 
+        try {
+            DB::table('work_shift')->insert([
+                'shift_id' => Str::uuid(),
+                'shift_name' => $request->input('shift_name'),
+                'start_shift' => $request->input('start_shift'),
+                'end_shift' => $request->input('end_shift'),
+                'date' => $request->input('date'),
+                'note' => $request->input('note'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        // 3️⃣ ถ้าไม่มีกะซ้ำ ให้เพิ่มข้อมูลใหม่
+            return redirect()->route('ManageShiftTeam')
+                ->with('success', 'ข้อมูลกะได้ถูกเพิ่มเรียบร้อยแล้ว');
+        } catch (\Exception $e) {
+            return redirect()->route('ManageShiftTeam')
+                ->with('error', 'มีข้อผิดพลาดในการเพิ่มข้อมูลกะ');
+        }
+    }
+
+    public function SaveAddShift(Request $request)
+    {
+        $request->validate([
+            'shift_name' => 'required|string|max:255',
+            'start_shift' => 'required|date_format:H:i',
+            'end_shift' => 'required|date_format:H:i',
+            'date' => 'required|date',
+            'note' => 'nullable|string',
+        ]);
+
         try {
             DB::table('work_shift')->insert([
                 'shift_id' => Str::uuid(),

@@ -378,13 +378,13 @@
             autoWidth: true,
             paging: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#product_storetable").DataTable({
             responsive: true,
@@ -404,13 +404,13 @@
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#customer_ordertable").DataTable({
             responsive: true,
@@ -430,13 +430,13 @@
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#pallettable").DataTable({
             responsive: true,
@@ -456,91 +456,91 @@
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#CustomerQueuetable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#Shifttable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#locktable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#pallte").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#ProductReceiptPlanTable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#producttable").DataTable({
             responsive: true,
             lengthChange: true,
             autoWidth: true,
             // scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $('#stock-all-table').DataTable({
             info: false,
@@ -561,13 +561,13 @@
             info: false,
             ordering: false,
             paging: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            },
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // },
         });
         $('#queue-all-table').DataTable({
             info: false,

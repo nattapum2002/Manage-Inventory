@@ -163,7 +163,8 @@ Route::prefix('ManageShiftAndTeam')->group(function () {
     Route::get('/', [ShiftAndTeamController::class, 'index'])->name('ManageShiftTeam');
     Route::get('/AutoCompleteTeam', [ShiftAndTeamController::class, 'AutoCompleteTeam'])->name('AutoCompleteTeam');
     Route::post('/FilterDate', [ShiftAndTeamController::class, 'ShiftFilterDate'])->name('ShiftFilterDate');
-    Route::post('/SaveAddShift', [ShiftAndTeamController::class, 'SaveAddShift'])->name('SaveAddShift');
+    Route::post('/AddShift', [ShiftAndTeamController::class, 'AddShift'])->name('AddShift');
+    Route::post('/AddShift/Save', [ShiftAndTeamController::class, 'SaveAddShift'])->name('SaveAddShift');
     Route::post('/CopyShiftAndTeam', [ShiftAndTeamController::class, 'CopyShiftAndTeam'])->name('CopyShiftAndTeam');
     Route::post('/DeleteShiftTeam/{Shift_id}', [ShiftAndTeamController::class, 'DeleteShiftTeam'])->name('DeleteShiftTeam');
     Route::get('/EditShiftTeam/{Shift_id}', [ShiftAndTeamController::class, 'EditShiftTeam'])->name('EditShiftTeam');
