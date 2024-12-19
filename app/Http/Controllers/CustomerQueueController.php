@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -12,12 +13,22 @@ class CustomerQueueController extends Controller
 {
     public function index(Request $request)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $CustomerQueues = $this->GetCustomerQueues($request->input('date') ?? now()->format('Y-m-d'));
         return view('Admin.ManageQueue.ManageQueue', compact('CustomerQueues'));
     }
 
     public function ManageQueueFilterDate(Request $request)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $CustomerQueues = $this->GetCustomerQueues($request->input('date') ?? now()->format('Y-m-d'));
         return view('Admin.ManageQueue.ManageQueue', compact('CustomerQueues'));
     }
@@ -185,6 +196,11 @@ class CustomerQueueController extends Controller
 
     public function DetailCustomerQueue($order_number)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $customer_queue = DB::table('customer_queue')
             ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
@@ -199,29 +215,38 @@ class CustomerQueueController extends Controller
                 'pallet_type.pallet_type',
                 'pallet.status',
                 'pallet.recive_status',
-                'pallet.order_id',)
+                'pallet.order_id',
+            )
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->where('pallet.order_id', '=', $order_number)
             ->get();
-        
-        return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue' , 'pallet'));
+
+        return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue', 'pallet'));
     }
 
-    public function PalletDetail($pallet_id , $order_id){
+    public function PalletDetail($pallet_id, $order_id)
+    {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $Pallets = DB::table('pallet_order')
-            ->select('customer.customer_name',
-            'pallet.id',
-            'pallet.pallet_no',
-            'pallet.room',
-            'pallet_type.pallet_type',
-            'pallet.status',
-            'pallet.recive_status',
-            'product.item_desc1',
-            'product.item_no',
-            'product.item_um',
-            'product.item_um2',
-            'confirmOrder.quantity',
-            'confirmOrder.quantity2',)
+            ->select(
+                'customer.customer_name',
+                'pallet.id',
+                'pallet.pallet_no',
+                'pallet.room',
+                'pallet_type.pallet_type',
+                'pallet.status',
+                'pallet.recive_status',
+                'product.item_desc1',
+                'product.item_no',
+                'product.item_um',
+                'product.item_um2',
+                'confirmOrder.quantity',
+                'confirmOrder.quantity2',
+            )
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
             ->join('pallet', 'pallet_order.pallet_id', '=', 'pallet.id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
@@ -234,13 +259,19 @@ class CustomerQueueController extends Controller
             })
             ->where('pallet_order.pallet_id', '=', $pallet_id)
             ->get();
-            // dd($Pallets);
-        return view('Admin.ManageQueue.QueuePalletDetail',compact('Pallets', 'order_id', 'pallet_id'));
+        // dd($Pallets);
+        return view('Admin.ManageQueue.QueuePalletDetail', compact('Pallets', 'order_id', 'pallet_id'));
     }
 
-    public function confirmReceive($order_id,$pallet_id){
+    public function confirmReceive($order_id, $pallet_id)
+    {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         DB::table('pallet')->where('id', $pallet_id)->update(['recive_status' => 1]);
 
-        return redirect()->route('DetailCustomerQueue',$order_id);
+        return redirect()->route('DetailCustomerQueue', $order_id);
     }
 }

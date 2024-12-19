@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -40,6 +41,11 @@ class ShiftAndTeamController extends Controller
 
     public function index(Request $request)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $filtered_shifts = $this->getFilteredShifts($request->input('date') ?? now()->format('Y-m-d'));
         $ShiftFilterDate = $this->GetShifts($request->input('date') ?? now()->format('Y-m-d'));
         $select_shifts = $this->select_shifts;
@@ -294,6 +300,11 @@ class ShiftAndTeamController extends Controller
 
     public function EditShiftTeam($Shift_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $ShiftTeams = DB::table('work_shift')
             ->leftJoin('lock_team', 'work_shift.shift_id', '=', 'lock_team.shift_id')
             ->leftJoin('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')

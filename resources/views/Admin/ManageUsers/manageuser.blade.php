@@ -12,9 +12,99 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
-                                <h3 class="card-title"></h3>
-                                <a href="{{ route('Createuser') }}" class="btn btn-success"><i
-                                        class="fas fa-user-plus"></i></a>
+                                <h5>เพิ่มผู้ใช้</h5>
+                            </div>
+                        </div>
+                        <form action="{{ route('ManageUsers.Createuser') }}" method="post">
+                            @csrf
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="user_id" name="user_id"
+                                                placeholder="รหัสพนักงาน" required>
+                                            <label for="user_id">รหัสพนักงาน</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                placeholder="ชื่อ" required>
+                                            <label for="name">ชื่อ</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="surname" name="surname"
+                                                placeholder="นามสกุล" required>
+                                            <label for="surname">นามสกุล</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="position" name="position"
+                                                placeholder="ตำแหน่ง" required>
+                                            <label for="position">ตำแหน่ง</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="date" class="form-control" id="start_date" name="start_date"
+                                                placeholder="วันเริ่มงาน" required>
+                                            <label for="start_date">วันเริ่มงาน</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <select name="user_type" class="form-control" id="user_type" required>
+                                                <option selected>ประเภทผู้ใช้</option>
+                                                <option value="Admin">Admin</option>
+                                                <option value="User">User</option>
+                                                <option value="Manager">Manager</option>
+                                            </select>
+                                            <label for="user_type">ประเภทผู้ใช้</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="password" class="form-control" id="password" name="password"
+                                                placeholder="รหัสผ่าน" required>
+                                            <label for="password">รหัสผ่าน</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="password" class="form-control" id="password-confirm"
+                                                name="password_confirmation" placeholder="ยืนยันรหัสผ่าน" required>
+                                            <label for="password-confirm">ยืนยันรหัสผ่าน</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9 col-md-8 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <textarea type="text" class="form-control" id="note" name="note" placeholder="หมายเหตุ"></textarea>
+                                            <label for="note">หมายเหตุ</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-floating">
+                                            <select name="status" class="form-control" id="status" required>
+                                                <option value="0">ระงับ</option>
+                                                <option selected value="1">ใช้งาน</option>
+                                            </select>
+                                            <label for="status">สถานะ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success float-right">เพิ่มผู้ใช้</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between">
+                                <h5>จัดการผู้ใช้</h5>
                             </div>
                         </div>
                         <div class="card-body">

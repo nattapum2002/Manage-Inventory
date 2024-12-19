@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -10,6 +11,11 @@ class PayGoodsController extends Controller
 {
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $customer_queues = DB::table('customer_queue')
             ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
@@ -96,6 +102,11 @@ class PayGoodsController extends Controller
 
     public function SelectPayGoods($order_number)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $customer_queues = DB::table('customer_queue')
             ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')

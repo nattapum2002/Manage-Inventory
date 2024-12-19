@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ShowStock extends Controller
@@ -10,11 +11,21 @@ class ShowStock extends Controller
     //
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $data = DB::table('stock')->get();
         return view('showstock', compact('data'));
     }
     public function stock_coldA()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $data = DB::table('stock')
             ->Join('product', 'product.item_id', '=', 'stock.product_id')
             ->where('warehouse', 'Cold-A')
@@ -23,6 +34,11 @@ class ShowStock extends Controller
     }
     public function stock_coldC()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $data = DB::table('stock')
             ->Join('product', 'product.item_id', '=', 'stock.product_id')
             ->where('warehouse', 'Cold-C')
@@ -31,6 +47,11 @@ class ShowStock extends Controller
     }
     public function Admin_index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $data = DB::table('stock')
             ->Join('product', 'product.item_id', '=', 'stock.product_id')
             ->get();
@@ -39,6 +60,11 @@ class ShowStock extends Controller
 
     public function Detail($item_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $data = DB::table('product')
             ->Join('stock', 'product.item_id', '=', 'stock.product_id')
             ->where('product.item_no', $item_id)->get();

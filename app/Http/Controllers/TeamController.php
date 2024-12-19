@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TeamController extends Controller
@@ -18,6 +19,11 @@ class TeamController extends Controller
     ];
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $teams = DB::table('lock_team')->get();
         $usersCounts = DB::table('lock_team_user')->get();
         return view('Admin.ManageTeam.manageTeam', compact('teams', 'usersCounts'));
@@ -25,6 +31,11 @@ class TeamController extends Controller
 
     public function EditTeam($team_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $teams = DB::table('lock_team')
             ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
             ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
@@ -95,6 +106,11 @@ class TeamController extends Controller
 
     public function AddTeam()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $team_names = DB::table('lock_team')->select('team_name')->distinct()->pluck('team_name')->toArray();
 
         $filtered_teams = array_filter($this->select_teams, function ($team) use ($team_names) {

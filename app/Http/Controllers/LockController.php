@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class LockController extends Controller
@@ -17,6 +18,11 @@ class LockController extends Controller
     ];
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
@@ -27,6 +33,11 @@ class LockController extends Controller
 
     public function DetailLockStock($order_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
@@ -53,6 +64,11 @@ class LockController extends Controller
 
     public function AddPallet($order_number)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         // $Pallets = DB::table('customer_order')
         //     ->join('pallet', 'customer_order.order_number', '=', 'customer_order.order_number')
         //     ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
@@ -140,6 +156,11 @@ class LockController extends Controller
 
     public function DetailPallets($order_number, $pallet_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $Pallets = DB::table('pallet_order')
             ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
             ->join('pallet', 'pallet_order.pallet_id', '=', 'pallet.id')
@@ -160,6 +181,11 @@ class LockController extends Controller
 
     public function EditPalletOrder($order_id, $product_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $data = DB::table('confirmOrder')
             ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
             ->where('confirmOrder.product_id', '=', $product_id)
@@ -232,5 +258,4 @@ class LockController extends Controller
         // dd($CustomerOrders);
         return view('auto-arrange-lock', compact('CustomerOrders'));
     }
-
 }
