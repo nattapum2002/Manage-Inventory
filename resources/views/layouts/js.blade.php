@@ -494,14 +494,14 @@
             responsive: true,
             lengthChange: true,
             autoWidth: true,
-            // scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
+            scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
         });
         $("#pallte").DataTable({
             responsive: true,
@@ -515,6 +515,19 @@
             //         ]
             //     }
             // }
+        });
+        $("#arrange-lock-table").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: true,
+            // scrollX: true,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
         });
         $("#ProductReceiptPlanTable").DataTable({
             responsive: true,

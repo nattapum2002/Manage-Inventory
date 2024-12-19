@@ -53,9 +53,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="d-flex justify-content-center">
-                                <button class="btn btn-success" type="submit">บันทึก</button>
+                            <div class="form-group">
+                                <label for="room_id">ห้องเก็บ</label>
+                                <select name="room" class="form-control" id="">
+                                    @foreach ($Warehouse as $item2)
+                                        <option value="{{ $item2->id }}"
+                                            {{ $item->warehouse == $item2->whs_name ? 'selected' : '' }}>
+                                            {{ $item2->whs_name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </form>
                     @endforeach

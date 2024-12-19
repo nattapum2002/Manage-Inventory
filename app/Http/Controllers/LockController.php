@@ -23,32 +23,39 @@ class LockController extends Controller
             return redirect()->route('Login.index');
         }
 
-        $CustomerOrders = DB::table('customer_order')
-            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
+        // $CustomerOrders = DB::table('customer_order')
+        //     ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+        // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
+        $CustomerOrders = DB::table('master_order_details')
+            ->select('master_order_details.CUSTOMER_ID', 'master_order_details.ORDERED_DATE', 'customer.customer_name', 'customer.customer_grade')
+            ->join('customer', 'customer.customer_id', '=', 'master_order_details.CUSTOMER_ID')
+            ->orderBy('master_order_details.ORDERED_DATE')
+            ->distinct()
             ->get();
         // dd($CustomerOrders);
         return view('Admin.ManageLockStock.managelockstock', compact('CustomerOrders'));
     }
 
-    public function DetailLockStock($order_id)
+    public function DetailLockStock($CUS_ID, $ORDER_DATE)
     {
         // Ensure the user is authenticated
         if (!Auth::user()) {
             return redirect()->route('Login.index');
         }
 
-        $CustomerOrders = DB::table('customer_order')
+        $CustomerOrders = DB::table('master_order_details')
+            ->join('product', 'product.item_no', '=', 'master_order_details.ORDERED_ITEM')
+            ->join('customer', 'customer.customer_id', '=', 'master_order_details.CUSTOMER_ID')
+            ->whereDate('master_order_details.ORDERED_DATE', $ORDER_DATE)
+            ->where('master_order_details.CUSTOMER_ID', $CUS_ID)
+            ->get();
+        /* $CustomerOrders = DB::table('customer_order')
             ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
             ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
             ->where('customer_order_detail.order_number', '=', $order_id)
             ->get();
         // dd($CustomerOrders);
-        $LockTeams = DB::table('lock_team')
-            ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
-            ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
-            ->get();
         $Pallets = DB::table('pallet')
             ->where('order_id', '=', $order_id)
             ->selectRaw('pallet.id,MAX(pallet_type.pallet_type) as pallet_type ,MAX(pallet.pallet_id) as pallet_id ,MAX(pallet_no) as pallet_no, MAX(room) as room, pallet.status ,pallet.recive_status ,MAX(pallet.note) as note, MAX(lock_team.team_name) as team_name')
@@ -57,9 +64,9 @@ class LockController extends Controller
             ->join('lock_team', 'pallet.team_id', '=', 'lock_team.team_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->groupBy('pallet.id', 'pallet.status', 'pallet.recive_status')
-            ->get();
-        // dd($Pallets);
-        return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'LockTeams', 'Pallets', 'order_id'));
+            ->get();*/
+        // dd($CustomerOrders);
+        return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders'));
     }
 
     public function AddPallet($order_number)
@@ -76,7 +83,7 @@ class LockController extends Controller
         //     ->where('customer_order.order_number', '=', $order_number)
         //     ->get();
         $pallet_type = DB::table('pallet_type')->get();
-        return view('Admin.ManageLockStock.AddPallet', compact('order_number', 'pallet_type'));
+        return view('Admin.ManageLockStock.AddPallet', compact('pallet_type'));
     }
 
     public function SavePallet($order_number, Request $request)
@@ -245,17 +252,77 @@ class LockController extends Controller
         return response()->json($results);
     }
 
-    function autoArrange()
+    function ShowPrelock($CUS_ID, $ORDER_DATE)
     {
-        $CustomerOrders = DB::table('customer_order_detail')
-            ->join('customer_order', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
-            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
-            ->where('customer_order_detail.order_number', '=', 1141248542.0)
-            ->orderBy('customer_order_detail.order_quantity')
+        return view('Admin.ManageLockStock.AutoLock', compact('CUS_ID', 'ORDER_DATE'));
+    }
+
+    function AutoLock($CUS_ID, $ORDER_DATE)
+    {
+        $CustomerOrders = DB::table('master_order_details')
+            ->join('product', 'product.item_no', '=', 'master_order_details.ORDERED_ITEM')
+            ->join('customer', 'customer.customer_id', '=', 'master_order_details.CUSTOMER_ID')
+            ->whereDate('master_order_details.ORDERED_DATE', $ORDER_DATE)
+            ->where('master_order_details.CUSTOMER_ID', $CUS_ID)
+            ->orderBy('master_order_details.ORDER_BY_CUS')
             ->get();
 
-        // dd($CustomerOrders);
-        return view('auto-arrange-lock', compact('CustomerOrders'));
+        $this->splitItem($CustomerOrders);
+    }
+    function splitItem($CustomerOrders)
+    {
+        $lock_items = []; // สำหรับจัดกลุ่มสินค้า (ล็อก)
+        $current_group = []; // กลุ่มสินค้าที่กำลังสร้าง
+        $current_weight = 0; // น้ำหนักสะสมของกลุ่ม
+
+        foreach ($CustomerOrders as $itemOrder) {
+            if ($itemOrder->ORDER_BY_CUS <= 850) {
+                $this->smallOrder($itemOrder, $itemOrder->ORDER_BY_CUS, $current_group, $current_weight, $lock_items);
+            } else {
+                $this->largeOrder($itemOrder, $itemOrder->ORDER_BY_CUS, $current_group, $current_weight, $lock_items);
+            }
+        }
+
+        if (!empty($current_group)) {
+            $lock_items[] = $current_group;
+        }
+
+        dd($lock_items);
+    }
+
+    function smallOrder($itemOrder, $order_by_cus, &$current_group, &$current_weight, &$lock_items)
+    {
+        if ($current_weight + $order_by_cus >= 850) {
+            $lock_items[] = $current_group;
+            $current_group = [];
+            $current_weight = 0;
+        }
+
+        $current_group[] = [
+            'item_no' => $itemOrder->item_no,
+            'item_desc1' => $itemOrder->item_desc1,
+            'quantity' => $order_by_cus,
+        ];
+
+        $current_weight += $order_by_cus;
+    }
+
+    function largeOrder($itemOrder, $order_by_cus, &$current_group, &$current_weight, &$lock_items)
+    {
+        $remaining_quantity = $order_by_cus;
+        while ($remaining_quantity > 850) {
+            $lock_items[][] = [
+                'item_no' => $itemOrder->item_no,
+                'item_desc1' => $itemOrder->item_desc1,
+                'quantity' => 850,
+            ];
+            $remaining_quantity -= 850; // ลดน้ำหนักที่เหลือ
+        }
+        // เพิ่มส่วนที่เหลือ (ถ้ามี)
+        $current_group[] = [
+            'item_no' => $itemOrder->item_no,
+            'item_desc1' => $itemOrder->item_desc1,
+            'quantity' => $remaining_quantity,
+        ];
     }
 }

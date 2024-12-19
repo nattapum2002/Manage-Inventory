@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    เพิ่มพาเลท : {{ $order_number }}
+    เพิ่มพาเลท : {{ $order_number ?? 'ไม่มี' }}
 @endsection
 
 @section('content')
