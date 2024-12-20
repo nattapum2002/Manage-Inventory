@@ -146,6 +146,7 @@ Route::prefix('ManageLockStock')->group(function () {
 
 Route::prefix('ProductReceiptPlan')->group(function () {
     Route::get('/', [ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
+    Route::get('/GetShifts', [ProductReceiptPlanController::class, 'GetShifts'])->name('GetShifts');
     Route::post('/Add', [ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
     Route::post('/Add/Save', [ProductReceiptPlanController::class, 'SaveAddProductReceiptPlan'])->name('SaveAddProductReceiptPlan');
     Route::get('/Edit/{product_receipt_plan_id}', [ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');

@@ -31,6 +31,27 @@ class ProductReceiptPlanController extends Controller
         return view('Admin.ProductReceiptPlan.ProductReceiptPlan', compact('ProductReceiptPlans', 'shifts', 'ProductDetail'));
     }
 
+    public function GetShifts(Request $request)
+    {
+        $date = $request->input('date');
+
+        if (!$date) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'วันที่ไม่ถูกต้อง',
+                'shifts' => []
+            ]);
+        }
+
+        // ดึงรายการกะที่ตรงกับวันที่ที่เลือก
+        $shifts = DB::table('work_shift')->whereDate('date', $date)->get(['shift_id', 'shift_name']);
+
+        return response()->json([
+            'status' => 'success',
+            'shifts' => $shifts
+        ]);
+    }
+
     public function AddProductReceiptPlan(Request $request)
     {
         // Ensure the user is authenticated

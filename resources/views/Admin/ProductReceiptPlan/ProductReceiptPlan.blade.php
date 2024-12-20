@@ -19,39 +19,21 @@
                             <form action="{{ route('AddProductReceiptPlan') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
-                                    {{-- <div class="col-lg-2 col-md-4 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="product_receipt_plan_id">รหัสแผนรับสินค้า</label>
-                                            <input type="text" class="form-control" id="product_receipt_plan_id"
-                                                name="product_receipt_plan_id" placeholder="รหัสแผนรับสินค้า">
-                                            @error('product_receipt_plan_id')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div> --}}
-                                    <div class="col-lg-3 col-md-4 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="shift_id">กะพนักงาน</label>
-                                            <select class="form-control" id="shift_id" name="shift_id">
-                                                <option selected value="">เลือกกะพนักงาน</option>
-                                                @foreach ($shifts as $shift)
-                                                    <option value="{{ $shift->shift_id }}">{{ $shift->shift_name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('shift_id')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
                                     <div class="col-lg-3 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="date">วันที่</label>
                                             <input type="date" class="form-control" id="date" name="date"
                                                 placeholder="วันที่">
-                                            @error('date')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                            <span class="text-danger" id="date-error"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="shift_id">กะพนักงาน</label>
+                                            <select class="form-control" id="shift_id" name="shift_id">
+                                                <option value="">เลือกกะพนักงาน</option>
+                                            </select>
+                                            <span class="text-danger" id="shift_id-error"></span>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-10 col-sm-12">
@@ -144,4 +126,44 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function() {
+            $('#date').change(function() {
+                const selectedDate = $(this).val();
+
+                if (!selectedDate) {
+                    $('#shift_id').html('<option value="">เลือกกะพนักงาน</option>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '{{ route('GetShifts') }}', // เรียกใช้งาน route() เพื่อสร้าง URL
+                    type: 'GET',
+                    data: {
+                        date: selectedDate
+                    },
+                    success: function(response) {
+                        let shiftOptions = '<option value="">เลือกกะพนักงาน</option>';
+                        if (response.shifts.length > 0) {
+                            response.shifts.forEach(function(shift) {
+                                shiftOptions +=
+                                    `<option value="${shift.shift_id}">${shift.shift_name}</option>`;
+                            });
+                        } else {
+                            shiftOptions += '<option value="">ไม่มีข้อมูล</option>';
+                        }
+                        $('#shift_id').html(shiftOptions);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Response Text:', xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
