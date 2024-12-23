@@ -16,8 +16,12 @@ class StatisticsController extends Controller
         }
 
         $Users = DB::table('users')->get();
-        $product_stores = DB::table('product_store')->get();
-        $stocks = DB::table('stock')->get();
+        $product_stores = DB::table('product_store')
+            ->join('product_store_detail', 'product_store.product_slip_id', '=', 'product_store_detail.product_slip_id')
+            ->get();
+        $stocks = DB::table('stock')
+            ->join('product', 'stock.product_id', '=', 'product.item_id')
+            ->get();
         $customer_orders = DB::table('customer_order')->get();
         $pallets = DB::table('pallet')->get();
         $customer_queues = DB::table('customer_queue')->get();

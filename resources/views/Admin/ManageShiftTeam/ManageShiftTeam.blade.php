@@ -26,7 +26,7 @@
                             <form action="{{ route('AddShift') }}" method="POST">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label for="date" class="form-label">วันที่</label>
                                             <input type="date" class="form-control" id="date-readonly" name="date"
@@ -46,7 +46,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-6 col-sm-12">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label for="start_shift">เวลาเริ่มกะ</label>
                                             <input type="time" class="form-control" id="start_shift" name="start_shift"
@@ -54,7 +54,7 @@
                                                 value="{{ now()->format('H:i') > '12:00' ? '19:00' : '07:00' }}">
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-6 col-sm-12">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label for="end_shift">เวลาเลิกกะ</label>
                                             <input type="time" class="form-control" id="end_shift" name="end_shift"
@@ -62,11 +62,10 @@
                                                 value="{{ now()->format('H:i') > '12:00' ? '07:00' : '19:00' }}">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
                                         <div class="form-group">
                                             <label for="note">หมายเหตุ</label>
-                                            <input type="text" class="form-control" id="note" name="note"
-                                                placeholder="หมายเหตุ">
+                                            <textarea type="text" class="form-control" id="note" name="note" placeholder="หมายเหตุ"></textarea>
                                         </div>
                                     </div>
                                 </div>

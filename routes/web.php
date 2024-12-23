@@ -172,6 +172,7 @@ Route::prefix('ManageShiftAndTeam')->group(function () {
     Route::post('/CopyShiftAndTeam', [ShiftAndTeamController::class, 'CopyShiftAndTeam'])->name('CopyShiftAndTeam');
     Route::post('/DeleteShiftTeam/{Shift_id}', [ShiftAndTeamController::class, 'DeleteShiftTeam'])->name('DeleteShiftTeam');
     Route::get('/EditShiftTeam/{Shift_id}', [ShiftAndTeamController::class, 'EditShiftTeam'])->name('EditShiftTeam');
+    Route::post('/EditShiftTeam/{Shift_id}/Save', [ShiftAndTeamController::class, 'SaveEditShift'])->name('SaveEditShift');
     Route::post('/EditShiftTeam/AddTeam/Save', [ShiftAndTeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
     Route::post('/EditShiftTeam/EditTeam/Save', [ShiftAndTeamController::class, 'SaveEditTeam'])->name('SaveEditTeam');
     Route::get('/EditShiftTeam/{Shift_id}/Delete/{team_id}', [ShiftAndTeamController::class, 'DeleteTeam'])->name('DeleteTeam');
@@ -205,6 +206,7 @@ Route::prefix('ManageUsers')->group(function () {
     Route::get('/Edituser/{user_id}', [UserController::class, 'edit'])->name('Edituser');
     Route::post('/Edituser/{user_id}', [UserController::class, 'update'])->name('Edituser.update');
 });
+
 //Manager Routes
 
 Route::get('/Manager/Dashboard', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
