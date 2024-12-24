@@ -15,8 +15,8 @@
                                 <h5>กะ</h5>
                                 <div>
                                     <div class="input-group">
-                                        <input type="date" class="form-control" name="date" id="date"
-                                            value="{{ $ShiftFilterDate->first()->date ?? now()->format('Y-m-d') }}">
+                                        <input type="month" class="form-control" name="month" id="month"
+                                            value="{{ (new DateTime($ShiftFilterMonth->first()->date))->format('Y-m') ?? now()->format('Y-m') }}">
                                         <button type="button" class="btn btn-primary" id="btn-search-shift">ค้นหา</button>
                                     </div>
                                 </div>
@@ -25,13 +25,17 @@
                         <div class="card-body">
                             <form action="{{ route('AddShift') }}" method="POST">
                                 @csrf
+                                <input type="hidden" name="month" id="hidden-month">
                                 <div class="row">
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label for="date" class="form-label">วันที่</label>
-                                            <input type="date" class="form-control" id="date-readonly" name="date"
-                                                value="{{ $ShiftFilterDate->first()->date ?? now()->format('Y-m-d') }}"
-                                                readonly>
+                                            <label for="day" class="form-label">วันที่</label>
+                                            <select class="form-control" id="day-select" name="day">
+                                                <!-- Options will be dynamically added here -->
+                                            </select>
+                                            @error('day')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
@@ -39,11 +43,10 @@
                                             <label for="shift_name">ชื่อกะพนักงาน</label>
                                             <select class="form-control" id="shift_name" name="shift_name">
                                                 <option selected value="">เลือกชื่อกะพนักงาน</option>
-                                                @foreach ($select_shifts as $shift)
-                                                    <option value="{{ $shift['select_name'] }}">{{ $shift['select_name'] }}
-                                                    </option>
-                                                @endforeach
                                             </select>
+                                            @error('shift_name')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
@@ -52,6 +55,9 @@
                                             <input type="time" class="form-control" id="start_shift" name="start_shift"
                                                 placeholder="เวลาเริ่มกะ"
                                                 value="{{ now()->format('H:i') > '12:00' ? '19:00' : '07:00' }}">
+                                            @error('start_shift')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
@@ -60,6 +66,9 @@
                                             <input type="time" class="form-control" id="end_shift" name="end_shift"
                                                 placeholder="เวลาเลิกกะ"
                                                 value="{{ now()->format('H:i') > '12:00' ? '07:00' : '19:00' }}">
+                                            @error('end_shift')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12">
@@ -67,6 +76,9 @@
                                             <label for="note">หมายเหตุ</label>
                                             <textarea type="text" class="form-control" id="note" name="note" placeholder="หมายเหตุ"></textarea>
                                         </div>
+                                        @error('note')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-center">
@@ -86,7 +98,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="shift-table-body">
-                                    @foreach ($ShiftFilterDate as $shift)
+                                    @foreach ($ShiftFilterMonth as $shift)
                                         <tr>
                                             <td>{{ (new DateTime($shift->date))->format('d/m/Y') }}</td>
                                             <td>{{ $shift->shift_name }}</td>
@@ -128,13 +140,19 @@
                                 <div class="mb-3">
                                     <strong>ชื่อกะ:</strong> {{ session('ShiftTeams')['shift_name'] ?? 'N/A' }} <br>
                                     <strong>เวลาเริ่ม:</strong>
-                                    {{ !empty(session('ShiftTeams')['start_shift']) ? (new DateTime(session('ShiftTeams')['start_shift']))->format('H:i') : 'N/A' }}
+                                    {{ !empty(session('ShiftTeams')['start_shift'])
+                                        ? (new DateTime(session('ShiftTeams')['start_shift']))->format('H:i')
+                                        : 'N/A' }}
                                     <br>
                                     <strong>เวลาเลิก:</strong>
-                                    {{ !empty(session('ShiftTeams')['end_shift']) ? (new DateTime(session('ShiftTeams')['end_shift']))->format('H:i') : 'N/A' }}
+                                    {{ !empty(session('ShiftTeams')['end_shift'])
+                                        ? (new DateTime(session('ShiftTeams')['end_shift']))->format('H:i')
+                                        : 'N/A' }}
                                     <br>
                                     <strong>วันที่:</strong>
-                                    {{ !empty(session('ShiftTeams')['date']) ? (new DateTime(session('ShiftTeams')['date']))->format('d/m/Y') : 'N/A' }}
+                                    {{ !empty(session('ShiftTeams')['date'])
+                                        ? (new DateTime(session('ShiftTeams')['date']))->format('d/m/Y')
+                                        : 'N/A' }}
                                     <br>
                                     <strong>หมายเหตุ:</strong> {{ session('ShiftTeams')['note'] ?? 'ไม่มีหมายเหตุ' }}
                                 </div>
@@ -189,6 +207,7 @@
                                     @csrf
                                     <input type="hidden" name="shift_id"
                                         value="{{ session('duplicate_shift')->shift_id }}">
+                                    <input type="hidden" name="date" value="{{ session('Data')['date'] }}">
                                     <button type="submit" class="btn btn-primary">คัดลอกข้อมูล</button>
                                 </form>
                                 <form action="{{ route('SaveAddShift') }}" method="POST">
@@ -237,66 +256,51 @@
     </script>
 
     <script>
-        // Get references to the input fields
-        const dateInput = document.getElementById('date');
-        const dateReadonlyInput = document.getElementById('date-readonly');
-
-        // Listen for changes in the top date input
-        dateInput.addEventListener('change', function() {
-            // Update the readonly date input with the same value
-            dateReadonlyInput.value = dateInput.value;
-        });
-    </script>
-
-    <script>
         document.getElementById('btn-search-shift').addEventListener('click', function() {
-            const date = document.getElementById('date').value;
-            fetch(`{{ route('ShiftFilterDate') }}`, {
+            const month = document.getElementById('month').value;
+            fetch(`{{ route('ShiftFilterMonth') }}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        date: date
+                        month: month
                     })
                 })
                 .then(response => {
-                    console.log('Response object:', response); // ตรวจสอบ response
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Data received:', data); // ตรวจสอบข้อมูลทั้งหมดที่ได้รับกลับมา
-                    if (!data || !data.ShiftFilterDate) {
-                        console.error('Data structure is incorrect or ShiftFilterDate is missing');
+                    if (!data || !data.ShiftFilterMonth) {
+                        console.error('Data structure is incorrect or ShiftFilterMonth is missing');
                         return;
                     }
 
                     const shiftTableBody = document.getElementById('shift-table-body');
                     shiftTableBody.innerHTML = ''; // ล้างข้อมูลเก่าทั้งหมด
-                    data.ShiftFilterDate.forEach(shift => {
-                        console.log('Shift object:', shift); // ตรวจสอบข้อมูลแต่ละกะ
+                    data.ShiftFilterMonth.forEach(shift => {
                         const row = `
-                                        <tr>
-                                            <td>${formatDate(shift.date)}</td>
-                                            <td>${shift.shift_name}</td>
-                                            <td>${formatTime(shift.start_shift)}</td>
-                                            <td>${formatTime(shift.end_shift)}</td>
-                                            <td>${shift.note}</td>
-                                            <td>
-                                                <div class="d-flex">
-                                                    <a href="/EditShiftTeam/${shift.shift_id}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                                                    <form action="/DeleteShiftTeam/${shift.shift_id}" method="POST" onsubmit="return confirm('คุณแน่ใจว่าต้องการลบกะนี้หรือไม่?');">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    `;
+                        <tr>
+                            <td>${formatDate(shift.date)}</td>
+                            <td>${shift.shift_name}</td>
+                            <td>${formatTime(shift.start_shift)}</td>
+                            <td>${formatTime(shift.end_shift)}</td>
+                            <td>${shift.note}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="ManageShiftAndTeam/EditShiftTeam/${shift.shift_id}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                                    <form action="ManageShiftAndTeam/DeleteShiftTeam/${shift.shift_id}" method="POST" onsubmit="return confirm('คุณแน่ใจว่าต้องการลบกะนี้หรือไม่?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
                         shiftTableBody.insertAdjacentHTML('beforeend', row);
                     });
                 })
@@ -311,6 +315,100 @@
                 const d = new Date('1970-01-01T' + time);
                 return d.toTimeString().slice(0, 5);
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const monthInput = document.getElementById('month');
+            const hiddenMonthInput = document.getElementById('hidden-month');
+            const daySelect = document.getElementById('day-select');
+
+            // ฟังก์ชันสำหรับสร้างรายการวันที่
+            const populateDays = (year, month) => {
+                daySelect.innerHTML = ''; // ลบ option เดิม
+
+                // เพิ่ม option ตัวแรก "เลือกวันที่"
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'เลือกวันที่';
+                defaultOption.selected = true;
+                defaultOption.disabled = true;
+                daySelect.appendChild(defaultOption);
+
+                const daysInMonth = new Date(year, month, 0).getDate();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = day;
+                    daySelect.appendChild(option);
+                }
+            };
+
+            // อัปเดตรายการวันที่เมื่อเปลี่ยนเดือน
+            monthInput.addEventListener('change', () => {
+                hiddenMonthInput.value = monthInput.value;
+                const [year, month] = monthInput.value.split('-'); // แยกปีและเดือน
+                populateDays(year, parseInt(month));
+            });
+
+            // ตั้งค่าเริ่มต้นเมื่อโหลดหน้า
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = String(now.getMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
+
+            // ตั้งค่าค่าเริ่มต้นใน input เดือน
+            monthInput.value = `${currentYear}-${currentMonth}`;
+            hiddenMonthInput.value = monthInput.value;
+
+            // สร้างรายการวันที่พร้อมตัวเลือก "เลือกวันที่"
+            populateDays(currentYear, parseInt(currentMonth));
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const monthInput = document.getElementById('month'); // ตัวเลือกเดือน
+            const daySelect = document.getElementById('day-select'); // ตัวเลือกวันที่
+            const shiftSelect = document.getElementById('shift_name'); // ตัวเลือกกะพนักงาน
+
+            // ฟังก์ชันสำหรับส่งข้อมูลวันที่ไปที่เซิร์ฟเวอร์
+            const fetchShifts = (date) => {
+                fetch(`{{ route('ShiftFilter') }}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            date: date
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        shiftSelect.innerHTML = '<option selected value="">เลือกชื่อกะพนักงาน</option>';
+                        data.forEach(shift => {
+                            const option = document.createElement('option');
+                            option.value = shift.select_name;
+                            option.textContent = shift.select_name;
+                            shiftSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching shifts:', error));
+            };
+
+            const updateDate = () => {
+                const month = monthInput.value;
+                const day = daySelect.value;
+
+                if (month && day) {
+                    const date = `${month}-${day}`;
+                    fetchShifts(date);
+                }
+            };
+
+            monthInput.addEventListener('change', updateDate);
+            daySelect.addEventListener('change', updateDate);
         });
     </script>
 @endsection

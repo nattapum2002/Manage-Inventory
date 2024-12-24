@@ -19,6 +19,8 @@ class CustomerQueueController extends Controller
         }
 
         $CustomerQueues = $this->GetCustomerQueues($request->input('date') ?? now()->format('Y-m-d'));
+
+        // dd($CustomerQueues);
         return view('Admin.ManageQueue.ManageQueue', compact('CustomerQueues'));
     }
 
@@ -36,8 +38,8 @@ class CustomerQueueController extends Controller
     private function GetCustomerQueues($date)
     {
         return DB::table('customer_queue')
-            ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
-            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->leftJoin('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
+            ->leftJoin('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->select(
                 'customer_queue.queue_time',
                 'customer_queue.order_number',
@@ -113,6 +115,7 @@ class CustomerQueueController extends Controller
     public function SaveAddCustomerQueue(Request $request)
     {
         // Validate the filePath input
+
         $request->validate([
             'filePath' => 'required|string',
         ]);
@@ -202,12 +205,16 @@ class CustomerQueueController extends Controller
         }
 
         $customer_queue = DB::table('customer_queue')
-            ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
-            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            // ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
+            // ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->where('customer_queue.order_number', '=', $order_number)
             ->first();
 
+        // dd($customer_queue);
+
         $pallet = DB::table('pallet')
+            ->leftJoin('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
+            ->leftJoin('customer_order', 'pallet.customer_id', '=', 'customer_order.customer_id')
             ->select(
                 'pallet.id as pallet_id',
                 'pallet.room',
@@ -215,10 +222,9 @@ class CustomerQueueController extends Controller
                 'pallet_type.pallet_type',
                 'pallet.status',
                 'pallet.recive_status',
-                'pallet.order_id',
+                'customer_order.order_number',
             )
-            ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
-            ->where('pallet.order_id', '=', $order_number)
+            ->where('customer_order.order_number', '=', $order_number)
             ->get();
 
         return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue', 'pallet'));

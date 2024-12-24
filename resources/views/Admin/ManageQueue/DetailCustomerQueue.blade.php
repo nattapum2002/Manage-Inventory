@@ -18,7 +18,7 @@
                                 <div class="col-lg-1 col-md-2 col-sm-12">
                                     <label for="queue_no">ลําดับคิว</label>
                                     <input type="text" id="queue_no" name="queue_no" class="form-control"
-                                        value="{{ $customer_queue->queue_no }}" readonly>
+                                        value="{{ $customer_queue->queue_no ?? 'N/A' }}" readonly>
                                 </div>
                                 <div class="col-lg-2 col-md-3 col-sm-12">
                                     <label for="order_number">หมายเลขออเดอร์</label>
@@ -28,17 +28,17 @@
                                 <div class="col-lg-1 col-md-2 col-sm-12">
                                     <label for="customer_id">รหัสลูกค้า</label>
                                     <input type="text" id="customer_id" name="customer_id" class="form-control"
-                                        value="{{ $customer_queue->customer_id }}" readonly>
+                                        value="{{ $customer_queue->customer_id ?? 'N/A' }}" readonly>
                                 </div>
                                 <div class="col-lg-2 col-md-3 col-sm-12">
                                     <label for="customer_number">หมายเลขลูกค้า</label>
                                     <input type="text" id="customer_number" name="customer_number" class="form-control"
-                                        value="{{ $customer_queue->customer_number }}" readonly>
+                                        value="{{ $customer_queue->customer_number ?? 'N/A' }}" readonly>
                                 </div>
                                 <div class="col-lg-4 col-md-7 col-sm-12">
                                     <label for="customer_name">ชื่อลูกค้า</label>
                                     <input type="text" id="customer_name" name="customer_name" class="form-control"
-                                        value="{{ $customer_queue->customer_name }}" readonly>
+                                        value="{{ $customer_queue->customer_name ?? 'N/A' }}" readonly>
                                 </div>
                                 <div class="col-lg-1 col-md-2 col-sm-12">
                                     <label for="customer_grade">เกรด</label>

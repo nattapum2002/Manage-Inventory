@@ -6,27 +6,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class ShiftAndTeamController extends Controller
 {
-    public $select_shifts = [
-        ['select_name' => 'A'],
-        ['select_name' => 'B'],
-        ['select_name' => 'C'],
-        ['select_name' => 'D'],
-        ['select_name' => 'E'],
-        ['select_name' => 'F'],
-    ];
-
-    private function GetShifts($date)
+    private function GetShiftsByMonth($month)
     {
+        $year = substr($month, 0, 4);
+        $monthOnly = substr($month, 5, 2);
+
         return DB::table('work_shift')
-            ->whereDate('date', $date)
+            ->whereYear('date', $year)
+            ->whereMonth('date', $monthOnly)
             ->get();
     }
 
-    private function getFilteredShifts($date)
+    public function ShiftFilter(Request $request)
     {
+        $date = $request->input('date');
+
+        if (!$date) {
+            return response()->json(['error' => 'Date is required'], 400);
+        }
+
         $work_shifts = DB::table('work_shift')
             ->whereDate('date', $date)
             ->select('shift_name')
@@ -34,9 +36,20 @@ class ShiftAndTeamController extends Controller
             ->pluck('shift_name')
             ->toArray();
 
-        return array_filter($this->select_shifts, function ($team) use ($work_shifts) {
-            return !in_array($team['select_name'], $work_shifts);
+        $all_shifts = [
+            ['select_name' => 'A'],
+            ['select_name' => 'B'],
+            ['select_name' => 'C'],
+            ['select_name' => 'D'],
+            ['select_name' => 'E'],
+            ['select_name' => 'F'],
+        ];
+
+        $filtered_shifts = array_filter($all_shifts, function ($shift) use ($work_shifts) {
+            return !in_array($shift['select_name'], $work_shifts);
         });
+
+        return response()->json(array_values($filtered_shifts));
     }
 
     public function index(Request $request)
@@ -46,37 +59,52 @@ class ShiftAndTeamController extends Controller
             return redirect()->route('Login.index');
         }
 
-        $filtered_shifts = $this->getFilteredShifts($request->input('date') ?? now()->format('Y-m-d'));
-        $ShiftFilterDate = $this->GetShifts($request->input('date') ?? now()->format('Y-m-d'));
-        $select_shifts = $this->select_shifts;
+        $ShiftFilterMonth = $this->GetShiftsByMonth($request->input('date') ?? now()->format('Y-m'));
 
-        return view('Admin.ManageShiftTeam.ManageShiftTeam', compact('filtered_shifts', 'ShiftFilterDate', 'select_shifts'));
+        return view('Admin.ManageShiftTeam.ManageShiftTeam', compact('ShiftFilterMonth'));
     }
 
-    public function ShiftFilterDate(Request $request)
+    public function ShiftFilterMonth(Request $request)
     {
-        $filtered_shifts = $this->getFilteredShifts($request->input('date') ?? now()->format('Y-m-d'));
-        $ShiftFilterDate = $this->GetShifts($request->input('date') ?? now()->format('Y-m-d'));
+        // รับค่าเดือนจากคำขอ หรือใช้เดือนปัจจุบันหากไม่ได้ระบุ
+        $month = $request->input('month') ?? now()->format('Y-m');
+
+        // ดึงข้อมูลกะตามเดือน
+        $ShiftFilterMonth = $this->GetShiftsByMonth($month);
 
         // ส่งคืน JSON
         return response()->json([
-            'ShiftFilterDate' => $ShiftFilterDate
+            'ShiftFilterMonth' => $ShiftFilterMonth
         ]);
     }
-
 
     public function AddShift(Request $request)
     {
         // 1️⃣ ตรวจสอบความถูกต้องของข้อมูล
         $request->validate([
-            'shift_name' => 'required|string|max:255',
+            'shift_name' => 'required',
             'start_shift' => 'required|date_format:H:i',
             'end_shift' => 'required|date_format:H:i',
-            'date' => 'required|date',
+            'day' => 'required|date_format:d',
+            'month' => 'required|date_format:Y-m',
             'note' => 'nullable|string',
+        ], [
+            'shift_name.required' => 'กรุณาเลือกชื่อกะ',
+            'start_shift.required' => 'กรุณาเลือกเวลาเริ่มกะ',
+            'end_shift.required' => 'กรุณาเลือกเวลาสิ้นสุดกะ',
+            'day.required' => 'กรุณาเลือกวันที่',
         ]);
 
-        $data = $request->all();
+        $monthYear = $request->input('month');
+        $day = $request->input('day');
+
+        [$year, $month] = explode('-', $monthYear);
+
+        $date = Carbon::createFromDate($year, $month, $day)->format('Y-m-d');
+
+        $data = array_merge($request->all(), ['date' => $date]);
+
+        // dd($data);
 
         // 2️⃣ ตรวจสอบว่ามีกะที่ชื่อเหมือนกันแล้วหรือไม่
         $existingShift = DB::table('work_shift')
@@ -157,7 +185,7 @@ class ShiftAndTeamController extends Controller
                 'shift_name' => $request->input('shift_name'),
                 'start_shift' => $request->input('start_shift'),
                 'end_shift' => $request->input('end_shift'),
-                'date' => $request->input('date'),
+                'date' => $date,
                 'note' => $request->input('note'),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -205,7 +233,8 @@ class ShiftAndTeamController extends Controller
     {
         // 1️⃣ ตรวจสอบความถูกต้องของข้อมูล
         $request->validate([
-            'shift_id' => 'required|string|max:255', // กะต้นฉบับที่ต้องการคัดลอก
+            'shift_id' => 'required|string|max:255',
+            'date' => 'required|date',
         ]);
 
         try {
@@ -220,7 +249,7 @@ class ShiftAndTeamController extends Controller
                     'shift_name' => $originalShift->shift_name,
                     'start_shift' => $originalShift->start_shift,
                     'end_shift' => $originalShift->end_shift,
-                    'date' => now()->format('Y-m-d'), // ตั้งวันที่ใหม่
+                    'date' => $request->input('date'), // ตั้งวันที่ใหม่
                     'note' => $originalShift->note,
                     'created_at' => now(),
                     'updated_at' => now(),

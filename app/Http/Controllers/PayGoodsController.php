@@ -17,8 +17,8 @@ class PayGoodsController extends Controller
         }
 
         $customer_queues = DB::table('customer_queue')
-            ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
-            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->leftJoin('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
+            ->leftJoin('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
             ->where('queue_date', now()->format('Y-m-d'))
             ->select('customer_queue.queue_time', 'customer_queue.order_number', 'customer.customer_name', 'customer.customer_grade')
             ->orderBy('customer_queue.queue_time')
@@ -30,17 +30,17 @@ class PayGoodsController extends Controller
             ->first();
 
         $pallets_with_products = DB::table('pallet')
-            ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
-            ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
-            ->join('confirmOrder', 'pallet_order.pallet_id', '=', 'confirmOrder.id')
-            ->where('pallet.order_id', $auto_select_queue->order_number ?? null)
+            ->leftJoin('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
+            ->leftJoin('product', 'pallet_order.product_id', '=', 'product.item_id')
+            ->leftJoin('confirmOrder', 'pallet_order.pallet_id', '=', 'confirmOrder.id')
+            ->where('confirmOrder.order_id', $auto_select_queue->order_number ?? null)
             ->select(
                 'pallet.pallet_id',
                 'pallet.pallet_no',
                 'pallet.room',
                 'pallet.team_id',
                 'pallet_order.product_id',
-                'pallet.towing_staff_id',
+                // 'pallet.towing_staff_id',
                 'product.item_id',
                 'product.item_desc1',
                 'confirmOrder.quantity',
@@ -58,7 +58,7 @@ class PayGoodsController extends Controller
                     'pallet_no' => $firstItem->pallet_no,
                     'room' => $firstItem->room,
                     'team_id' => $firstItem->team_id,
-                    'towing_staff_id' => $firstItem->towing_staff_id,
+                    // 'towing_staff_id' => $firstItem->towing_staff_id,
                     'products' => $items->map(function ($item) {
                         return [
                             'product_id' => $item->product_id,
@@ -83,8 +83,8 @@ class PayGoodsController extends Controller
         //     ->get();
 
         $teams = DB::table('lock_team')
-            ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
-            ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
+            ->leftJoin('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
+            ->leftJoin('users', 'lock_team_user.user_id', '=', 'users.user_id')
             ->leftJoin('incentive_log', 'incentive_log.user_id', '=', 'users.user_id') // ดึงข้อมูล incentive_log
             ->where('lock_team.work', 'DragDropGoods')
             ->select('users.name', 'users.user_id', 'incentive_log.incentive_id', 'incentive_log.end_time')
