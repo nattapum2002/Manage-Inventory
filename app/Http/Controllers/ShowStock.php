@@ -34,9 +34,10 @@ class ShowStock extends Controller
     public function Admin_index()
     {
         $data = DB::table('stock')
-            ->Join('product', 'product.item_id', '=', 'stock.product_id')
-            ->join('warehouse','warehouse.id','=','product.warehouse')
-            ->get();
+        ->leftJoin('product', 'product.item_id', '=', 'stock.product_id') // ใช้ LEFT JOIN
+        ->leftJoin('warehouse', 'warehouse.id', '=', 'product.warehouse') // ใช้ LEFT JOIN เพื่อรวม warehouse ที่ NULL
+        ->select('stock.*', 'product.*', 'warehouse.*') // ระบุคอลัมน์ที่ต้องการ หรือใช้ทั้งหมด
+        ->get();
         return view('Admin.Stock.showstock', compact('data'));
     }
 
@@ -66,13 +67,13 @@ class ShowStock extends Controller
         ]);
 
         $data = $request->all();
-
         try {
             DB::table('product')
                 ->where('item_no', $data['product_id'])
                 ->update([
                     // 'item_desc1' => $data['product_name'],
-                    'warehouse' => $data['room']
+                    'warehouse' => $data['room'],
+                    'item_work_desc' => $data['product_work_desc']
                 ]);
 
             return redirect()->route("Edit name", $data['product_id'])->with('success', 'Updated successfully.');

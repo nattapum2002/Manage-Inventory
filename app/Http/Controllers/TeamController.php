@@ -172,7 +172,7 @@ class TeamController extends Controller
             $results[] = [
                 'label' => $item->team_name,  // ใช้ 'label' สำหรับการแสดงผลในรายการ autocomplete
                 'value' => $item->team_name,  // ใช้ 'value' สำหรับการเติมในช่อง input
-                'team_id' => $item->team_id,     // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
+                'team_id' => $item->id,     // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
             ];
         }
 

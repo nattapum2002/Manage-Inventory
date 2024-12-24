@@ -32,6 +32,15 @@
                                     value="{{ $item->item_desc1 }}">
                             </div>
                             <div class="form-group">
+                                <label for="product_work_desc">ลักษณะงาน</label>
+                                <select class="form-control" name="product_work_desc" id="product_work_desc">
+                                    <option value="1">แยกจ่าย</option>
+                                    <option value="2">รับจัด</option>
+                                    {{-- <option value="ไหลจ่าย">ไหลจ่าย</option> --}}
+                                    <option value="3">เลือด</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="product_name">หน่วย1 (item_um)</label>
                                 <input type="text" class="form-control" id="item_um" name="item_um"
                                     value="{{ $item->item_um }}" readonly>

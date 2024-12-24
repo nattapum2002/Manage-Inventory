@@ -29,11 +29,11 @@
                             <td>{!!$pallet->pallet_status == 1 ? '<p class="text-success">จัดพาเลทแล้ว</p>' : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}</td>
                             <td>{{$pallet->pallet_id}}</td>
                             <td>{{$pallet->pallet_no}}</td>
-                            <td>{{$pallet->room}}</td>
+                            <td id="warehouse-name">{{$pallet->room}}</td>
                             <td>{{$pallet->customer_name}}</td>
                             <td>{{$pallet->pallet_type}}</td>
                             <td>
-                                <a href="{{route('Em.Work.palletDetail',[$pallet->id , $pallet->order_id])}}" class="btn btn-info">รายละเอียด</a>
+                                <a href="{{route('Em.Work.palletDetail',[$pallet->id])}}" class="btn btn-info">รายละเอียด</a>
                             </td>
                         </tr>
                         @endforeach

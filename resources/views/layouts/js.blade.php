@@ -76,7 +76,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 {{-- <script src="//cdn.datatables.net/plug-ins/2.1.8/i18n/th.json"></script> --}}
+<script>
+    $(document).ready(function() {
+            $('[id^="warehouse-name"]').each(function() {
+                let warehouse = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
 
+                // เปลี่ยนค่าตามเงื่อนไข
+                if (warehouse === '1') {
+                    $(this).text('Cold-A');
+                } else if (warehouse === '2') {
+                    $(this).text('Cold-C');
+                } else if (warehouse === '3') {
+                    $(this).text('Blood');
+                }
+            });
+            $('[id^="work-type"]').each(function() {
+                let work_type = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
+
+                // เปลี่ยนค่าตามเงื่อนไข
+                if (work_type === '1') {
+                    $(this).text('แยกจ่าย');
+                } else if (work_type === '2') {
+                    $(this).text('รับจัด');
+                } else if (work_type === '3') {
+                    $(this).text('เลือด');
+                }
+            });
+    })
+</script>
 <script>
     // ฟังก์ชันสำหรับการเพิ่ม item และเรียกใช้งาน autocomplete
     let item_count = 1;
@@ -279,6 +306,34 @@
             });
         });
     });
+</script>
+
+<script>
+    $('#team').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{{route('AutocompleteSearchTeam')}}",
+                        data: {
+                            query: request.term
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                        },
+                        error: function(xhr, status, error) {
+                            alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
+                            console.log(xhr.responseText);
+                        }
+                    });
+                },
+                minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
+                select: function(event, ui) {
+                    $('#team-id').val(ui.item.team_id);
+                }
+            })
+            $('#team').focus(function() {
+                $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
+            });
 </script>
 {{-- สคริปต์ SlipDetail --}}
 {{-- <script>
@@ -503,11 +558,11 @@
                 }
             }
         });
-        $("#pallte").DataTable({
-            responsive: true,
+        $("#pallate").DataTable({
+            //responsive: true,
             lengthChange: true,
             autoWidth: true,
-            // scrollX: true,
+            scrollX: true,
             // layout: {
             //     topStart: {
             //         buttons: [
@@ -637,6 +692,7 @@
             ordering: true,
             paging: true,
             autoWidth: true,
+            scrollX: true
         })
     });
 </script>

@@ -132,15 +132,16 @@ Route::prefix('ManageLockStock')->group(function () {
     Route::get('/', [LockController::class, 'index'])->name('ManageLockStock');
     Route::get('/{CUS_id}/{ORDERED_DATE}', [LockController::class, 'DetailLockStock'])->name('DetailLockStock');
     Route::get('/Detail/{order_number}/', [LockController::class, 'AddPallet'])->name('AddPallet');
-    Route::get('/Detail/AddPallet/AutoCompleteAddPallet/{order_number}', [LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
+    Route::get('/Detail/AddPallet/AutoCompleteAddPallet', [LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
     Route::post('/Detail/{order_number}/Save', [LockController::class, 'SavePallet'])->name('SavePallet');
-    Route::get('/Detail/{order_number}/Pallet/{pallet_id}', [LockController::class, 'DetailPallets'])->name('DetailPallets');
-    Route::get('/Detail/forgetSession', [LockController::class, 'forgetSession'])->name('forgetSession');
+    Route::get('/Detail/{ORDER_DATE}/{CUS_ID}/Pallet/{pallet_id}', [LockController::class, 'DetailPallets'])->name('DetailPallets');
+    Route::get('/forgetSession/{CUS_ID}/{Ordered_date}', [LockController::class, 'forgetSession'])->name('forgetSession');
     Route::get('/Detail/removePallet/{key}', [LockController::class, 'Remove_Pallet'])->name('Remove_Pallet');
-    Route::get('/Detail/insertPallet/{order_number}', [LockController::class, 'insert_pallet'])->name('Insert_Pallet');
+    Route::get('/Detail/insertPallet/{CUS_ID}/{ORDER_DATE}', [LockController::class, 'insert_pallet'])->name('Insert_Pallet');
     Route::get('/Detail/editPalletOrde/{order_id}/{product_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
     Route::get('/Arrange/{CUS_id}/{ORDERED_DATE}', [LockController::class, 'ShowPreLock'])->name('PreLock');
     Route::get('/AUTO/{CUS_id}/{ORDERED_DATE}', [LockController::class, 'AutoLock'])->name('AutoLock');
+    Route::post('/UPDATE/{id}', [LockController::class, 'update_lock_team'])->name('UpdateLockTeam');
 });
 
 Route::prefix('ProductReceiptPlan')->group(function () {
@@ -237,7 +238,7 @@ Route::get('/User/Dashboard', function () {
 
 //employee Routes
 Route::get('/Pallet/Work/pallet', [UserWorkController::class, 'index'])->name('Em.Work.pallet');
-Route::get('/Pallet/Work/pallet/detail/{pallet_id}/{order_id}', [UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
+Route::get('/Pallet/Work/pallet/detail/{pallet_id}', [UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
 Route::get('/submit/{pallet_id}', [UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
 //employee Routes
 

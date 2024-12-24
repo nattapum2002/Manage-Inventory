@@ -338,31 +338,7 @@
             $(product_nameSelector).focus(function() {
                 $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
             });
-            $('#team').autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{{route('AutocompleteSearchTeam')}}",
-                        data: {
-                            query: request.term
-                        },
-                        success: function(data) {
-                            console.log(data);
-                            response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
-                        },
-                        error: function(xhr, status, error) {
-                            alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
-                            console.log(xhr.responseText);
-                        }
-                    });
-                },
-                minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
-                select: function(event, ui) {
-                    $('#team-id').val(ui.item.team_id);
-                }
-            })
-            $('#team').focus(function() {
-                $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
-            });
+            
         }
         initializePalletAutocomplete(`#product_name0`, `#product_id0`, `#ordered_quantity0`, `#ordered_quantity2_0`,
             `#bag_color0`, `#note0`,
