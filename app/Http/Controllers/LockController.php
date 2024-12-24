@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
 use PHPUnit\Framework\Attributes\Large;
@@ -20,6 +21,14 @@ class LockController extends Controller
     ];
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
+        // $CustomerOrders = DB::table('customer_order')
+        //     ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+        // ->join('lock_team', 'customer_order.team_id', '=', 'lock_team.team_id')
         $CustomerOrders = DB::table('master_order_details')
             ->select('master_order_details.CUSTOMER_ID', 'master_order_details.ORDERED_DATE', 'customer.customer_name', 'customer.customer_grade')
             ->join('customer', 'customer.customer_id', '=', 'master_order_details.CUSTOMER_ID')
@@ -32,11 +41,25 @@ class LockController extends Controller
 
     public function DetailLockStock($CUS_ID, $ORDER_DATE)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $CustomerOrders = DB::table('master_order_details')
             ->join('product', 'product.item_no', '=', 'master_order_details.ORDERED_ITEM')
             ->join('customer', 'customer.customer_id', '=', 'master_order_details.CUSTOMER_ID')
             ->whereDate('master_order_details.ORDERED_DATE', $ORDER_DATE)
             ->where('master_order_details.CUSTOMER_ID', $CUS_ID)
+<<<<<<< HEAD
+=======
+            ->get();
+        /* $CustomerOrders = DB::table('customer_order')
+            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->join('customer_order_detail', 'customer_order.order_number', '=', 'customer_order_detail.order_number')
+            ->join('product', 'customer_order_detail.product_id', '=', 'product.item_id')
+            ->where('customer_order_detail.order_number', '=', $order_id)
+>>>>>>> ae5a6fc80950f755bbc31442c9c0a22485b41237
             ->get();
         // $CustomerOrders = DB::table('customer_order')
         //     ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
@@ -60,9 +83,19 @@ class LockController extends Controller
         return view('Admin.ManageLockStock.DetailLockStock', compact('CustomerOrders', 'Pallets', 'CUS_ID', 'ORDER_DATE'));
     }
 
+<<<<<<< HEAD
     public function AddPallet($order_id)
     {
         // dd($CUS_ID , $ORDER_DATE);
+=======
+    public function AddPallet($order_number)
+    {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
+>>>>>>> ae5a6fc80950f755bbc31442c9c0a22485b41237
         // $Pallets = DB::table('customer_order')
         //     ->join('pallet', 'customer_order.order_number', '=', 'customer_order.order_number')
         //     ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
@@ -175,6 +208,7 @@ class LockController extends Controller
 
     public function DetailPallets($ORDER_DATE, $CUS_ID, $pallet_id)
     {
+<<<<<<< HEAD
         $Pallets = DB::table('confirmOrder')
             ->select(
                 'pallet.id',
@@ -201,6 +235,25 @@ class LockController extends Controller
             ->join('product', 'product.item_id', '=', 'confirmOrder.product_id')
             ->join('product_work_desc', 'product_work_desc.id', '=', 'confirmOrder.product_work_desc')
             ->where('confirmOrder.pallet_id', $pallet_id)
+=======
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
+        $Pallets = DB::table('pallet_order')
+            ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
+            ->join('pallet', 'pallet_order.pallet_id', '=', 'pallet.id')
+            ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
+            ->join('confirmOrder', 'pallet_order.id', '=', 'confirmOrder.pallet_order_id')
+            ->join('customer_order', 'confirmOrder.order_id', '=', 'customer_order.order_number')
+            ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+            ->leftJoin('customer_order_detail', function ($join) use ($order_number) {
+                $join->on('pallet_order.product_id', '=', 'customer_order_detail.product_id')
+                    ->where('customer_order_detail.order_number', '=', $order_number);
+            })
+            ->where('pallet_order.pallet_id', '=', $pallet_id)
+>>>>>>> ae5a6fc80950f755bbc31442c9c0a22485b41237
             ->get();
 
         // dd($Pallets);
@@ -209,6 +262,11 @@ class LockController extends Controller
 
     public function EditPalletOrder($order_id, $product_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $data = DB::table('confirmOrder')
             ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
             ->where('confirmOrder.product_id', '=', $product_id)
@@ -275,6 +333,7 @@ class LockController extends Controller
 
     function ShowPrelock($CUS_ID, $ORDER_DATE)
     {
+<<<<<<< HEAD
         $pallet_type = DB::table('pallet_type')->get();
         return view('Admin.ManageLockStock.AutoLock', compact('CUS_ID', 'ORDER_DATE', 'pallet_type'));
     }
@@ -296,6 +355,14 @@ class LockController extends Controller
                 'product.*',
                 'customer.*'
             )
+=======
+        return view('Admin.ManageLockStock.AutoLock', compact('CUS_ID', 'ORDER_DATE'));
+    }
+
+    function AutoLock($CUS_ID, $ORDER_DATE)
+    {
+        $CustomerOrders = DB::table('master_order_details')
+>>>>>>> ae5a6fc80950f755bbc31442c9c0a22485b41237
             ->join('product', 'product.item_no', '=', 'master_order_details.ORDERED_ITEM')
             ->join('customer', 'customer.customer_id', '=', 'master_order_details.CUSTOMER_ID')
             ->whereDate('master_order_details.ORDERED_DATE', $ORDER_DATE)
@@ -307,13 +374,18 @@ class LockController extends Controller
 
         return back();
     }
+<<<<<<< HEAD
     function splitItem($CustomerOrders, $CUS_ID)
+=======
+    function splitItem($CustomerOrders)
+>>>>>>> ae5a6fc80950f755bbc31442c9c0a22485b41237
     {
         $lock_items = []; // สำหรับจัดกลุ่มสินค้า (ล็อก)
         $current_group = []; // กลุ่มสินค้าที่กำลังสร้าง
         $current_weight = []; // น้ำหนักสะสมของแต่ละ warehouse และแต่ละลักษณะงาน
 
         foreach ($CustomerOrders as $itemOrder) {
+<<<<<<< HEAD
             $warehouse = $itemOrder->warehouse;
             $work_type = $itemOrder->item_work_desc;
 
@@ -353,10 +425,33 @@ class LockController extends Controller
                     ];
                 }
             }
+=======
+            if ($itemOrder->ORDER_BY_CUS <= 850) {
+                $this->smallOrder($itemOrder, $itemOrder->ORDER_BY_CUS, $current_group, $current_weight, $lock_items);
+            } else {
+                $this->largeOrder($itemOrder, $itemOrder->ORDER_BY_CUS, $current_group, $current_weight, $lock_items);
+            }
+        }
+
+        if (!empty($current_group)) {
+            $lock_items[] = $current_group;
+        }
+
+        dd($lock_items);
+    }
+
+    function smallOrder($itemOrder, $order_by_cus, &$current_group, &$current_weight, &$lock_items)
+    {
+        if ($current_weight + $order_by_cus >= 850) {
+            $lock_items[] = $current_group;
+            $current_group = [];
+            $current_weight = 0;
+>>>>>>> ae5a6fc80950f755bbc31442c9c0a22485b41237
         }
 
         session()->put('lock' . $CUS_ID, $lock_items);
 
+<<<<<<< HEAD
         //dd($lock_items);
         //dd(session()->all());
     }
@@ -454,6 +549,27 @@ class LockController extends Controller
                     'work_type' => $itemOrder->item_work_desc,
                 ]
             ]
+=======
+        $current_weight += $order_by_cus;
+    }
+
+    function largeOrder($itemOrder, $order_by_cus, &$current_group, &$current_weight, &$lock_items)
+    {
+        $remaining_quantity = $order_by_cus;
+        while ($remaining_quantity > 850) {
+            $lock_items[][] = [
+                'item_no' => $itemOrder->item_no,
+                'item_desc1' => $itemOrder->item_desc1,
+                'quantity' => 850,
+            ];
+            $remaining_quantity -= 850; // ลดน้ำหนักที่เหลือ
+        }
+        // เพิ่มส่วนที่เหลือ (ถ้ามี)
+        $current_group[] = [
+            'item_no' => $itemOrder->item_no,
+            'item_desc1' => $itemOrder->item_desc1,
+            'quantity' => $remaining_quantity,
+>>>>>>> ae5a6fc80950f755bbc31442c9c0a22485b41237
         ];
     }
 }
