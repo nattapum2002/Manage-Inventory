@@ -7,53 +7,154 @@
 @section('content')
     <section class="content">
         <div class="container-fluid">
+            {{-- <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="" method="POST">
+                                @csrf
+                                <article class="row">
+                                    <div class="col-lg-2 col-md-3 col-sm-10">
+                                        <div class="form-group">
+                                            <label for="pallet_id">รหัสพาเลท</label>
+                                            <input type="text" class="form-control" id="pallet_id" name="pallet_id"
+                                                placeholder="รหัสพาเลท">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-3 col-sm-10">
+                                        <div class="form-group">
+                                            <label for="pallet_no">หมายเลขพาเลท</label>
+                                            <input type="text" class="form-control" id="pallet_no" name="pallet_no"
+                                                placeholder="หมายเลขพาเลท">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="room">ห้องเก็บ</label>
+                                            <select class="form-control" name="room" id="room">
+                                                <option value="" selected>เลือกห้อง</option>
+                                                <option value="Cold-A">Cold-A</option>
+                                                <option value="Cold-C">Cold-C</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="note">ประเภทใบล็อค</label>
+                                            <select class="form-select" name="pallet_type_id" id="pallet_type">
+                                                @foreach ($pallet_type as $type )
+                                                    <option value="{{$type->id}}" {{$type->pallet_type === 'ทั่วไป' ? 'selected' : ''}}>{{$type->pallet_type}}</option>
+                                                @endforeach
+                                               
+                                            </select>
+                                        </div>
+                                    </div>
+                                </article>
+                                <hr>
+                                <article id="add-products">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-4 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="product_id[0]" class="form-label">รหัสสินค้า</label>
+                                                <input type="text" class="form-control" id="show_product_id0"
+                                                    name="show_product_id[0]" readonly>
+                                                <input type="hidden" class="form-control" id="product_id0"
+                                                    name="product_id[0]" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="product_name[0]" class="form-label">รายการ</label>
+                                                <input type="text" class="form-control" id="product_name0"
+                                                    name="product_name[0]">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-1 col-md-3 col-sm-4">
+                                            <div class="form-group">
+                                                <label for="ordered_quantity[0]" class="form-label">สั่งจ่าย</label>
+                                                <input type="text" class="form-control mb-3" id="ordered_quantity0"
+                                                    name="ordered_quantity[0]" disabled>
+                                                <input type="text" class="form-control" id="ordered_quantity2_0"
+                                                    name="ordered_quantity2[0]" disabled>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-1 col-md-2 col-sm-4">
+                                            <div class="form-group">
+                                                <label for="quantity[0]" class="form-label">จ่ายจริง</label>
+                                                <input type="number" class="form-control mb-3" id="quantity0"
+                                                    name="quantity[0]">
+                                                <input type="number" class="form-control" id="quantity2_0"
+                                                    name="quantity2[0]">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-1 col-md-2 col-sm-4">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">หน่วย</label>
+                                                <input type="text" class="form-control mb-3" id="quantity_um0"
+                                                    name="quantityUm[0]" readonly>
+                                                <input type="text" class="form-control" id="quantity_um2_0"
+                                                    name="quantityUm2_[0]" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-warning mr-3"
+                                        id="add-product">เพิ่มช่องสินค้า</button>
+                                    <button type="submit" id="submit" class="btn btn-primary">เพิ่มใบล็อค</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
             <div class="row">
                 <div class="card col-12">
                     <div class="card-header text-end">
-                        <a type="button" href="{{ route('AutoLock',[$CUS_ID,$ORDER_DATE])}}" class="btn btn-success" >จัดใบล็อค</a>
-                        <a type="button" href="{{ route('forgetSession') }}" class="btn btn-danger ">ล้าง</a>
+                        <a type="button" href="{{ route('AutoLock', [$CUS_ID, $ORDER_DATE]) }}"
+                            class="btn btn-info">สร้างใบล็อค</a>
+                        <a type="button" href="{{ route('forgetSession', [$CUS_ID, $ORDER_DATE]) }}"
+                            class="btn btn-danger ">ล้าง</a>
                     </div>
                     <div class="card-body">
                         <table id="show-pallet" class="table nowrap">
                             <thead>
-                                <th>หมายเลขพาเลท</th>
+                                <th>หมายเลข</th>
                                 <th>ห้อง</th>
+                                <th>ลักษณะงาน</th>
                                 <th>รหัสสินค้า</th>
                                 <th>ชื่อสินค้า</th>
-                                <th>จํานวน</th>
+                                <th>
+                                    จำนวน
+                                </th>
                                 <th>ประเภท</th>
                                 <th>#</th>
                             </thead>
                             <tbody>
-                                {{-- @dd(session('pallet')) --}}
-                                @if (session('pallet'))
-                                    @foreach (session('pallet') as $key => $pallet)
+                                @if (session('lock'.$CUS_ID))
+                                    @foreach (session('lock'.$CUS_ID) as $number => $lockItem)
                                         <tr>
-                                            <td>{{ $pallet['pallet_id'] }}</td>
-                                            <td>{{ $pallet['pallet_no'] }}</td>
-                                            <td>{{ $pallet['room'] }}</td>
+                                            <td>{{ $number }}</td>
+                                            <td id="warehouse-name">{{ $lockItem['warehouse'] }}</td>
+                                            <td id="work-type">{{ $lockItem['work_type'] ?? '' }}</td>
                                             <td>
-                                                @foreach ($pallet['show_product_id'] as $product_id)
-                                                    {{ $product_id }} <br>
+                                                @foreach ($lockItem['items'] as $itemNo)
+                                                    {{ $itemNo['item_no'] }} <br>
                                                 @endforeach
                                             </td>
                                             <td>
-                                                @foreach ($pallet['product_name'] as $name)
-                                                    {{ $name }} <br>
+                                                @foreach ($lockItem['items'] as $itemName)
+                                                    {{ $itemName['item_desc1'] }} <br>
                                                 @endforeach
                                             </td>
                                             <td>
-                                                @foreach (array_map(null, $pallet['quantity'], $pallet['quantityUm'], $pallet['quantity2'], $pallet['quantityUm2_']) as [$quantity, $quantityUm, $quantity2, $quantityUm2])
-                                                    {{ $quantity }} {{ $quantityUm }} : {{ $quantity2 }}
-                                                    {{ $quantityUm2 }} <br>
+                                                @foreach ($lockItem['items'] as $itemQtn)
+                                                    {{ $itemQtn['quantity'] }} {{ $itemQtn['quantity_um'] }} <br>
                                                 @endforeach
                                             </td>
-                                            <td>{{ $pallet['pallet_type_id'] }}</td>
-                                            <td>{{ $pallet['note'] ?? '' }}</td>
-                                            <td>
-                                                <a type="button" href="{{ route('Remove_Pallet', $key) }}"
-                                                    class="btn btn-danger ">ลบ</a>
-                                            </td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -61,10 +162,11 @@
                         </table>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="" class="btn btn-success ">บันทึกข้อมูล</a>
+                        <a href="{{route('Insert_Pallet',[$CUS_ID,$ORDER_DATE])}}" class="btn btn-success ">บันทึกข้อมูล</a>
                     </div>
                 </div>
             </div>
+            <a class="btn btn-warning" href="{{route('DetailLockStock',[$CUS_ID,$ORDER_DATE])}}">ย้อนกลับ</a>
     </section>
 @endsection
 
@@ -76,46 +178,126 @@
                 scrollX: true,
                 ordering: true,
                 paging: true,
-                columns: [{
-                        data: 'pallet_id',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'pallet_no',
-                        width: '15%',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'room',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'show_product_id',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'product_name',
-                        className: 'text-center'
-                    },
-                    {
-                        data: '',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'pallet_type_id',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'note'
-                    },
-                    {
-                        data: '#'
-                    },
-                ]
             });
-        })
+        }, )
+        
     </script>
+    <script>
+        var product_count = 1;
+        var $CUS_ID = "{{ $CUS_ID}}";
+        var $ORDER_DATE = "{{$ORDER_DATE}}"
+        $('#add-product').click(function() {
+            product_count++;
+            $('#add-products').append(`
+                <div class="row" id="product-${product_count}">
+                    <div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="product_id[${product_count}]" class="form-label">รหัสสินค้า</label>
+                            <input type="text" class="form-control" id="show_product_id${product_count}"
+                                name="show_product_id[${product_count}]" readonly>
+                            <input type="hidden" class="form-control" id="product_id${product_count}"
+                                name="product_id[${product_count}]" readonly>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="product_name[${product_count}]" class="form-label">รายการ</label>
+                            <input type="text" class="form-control" id="product_name${product_count}"
+                                name="product_name[${product_count}]">
+                        </div>
+                    </div>
+                    <div class="col-lg-1 col-md-4 col-sm-3">
+                        <div class="form-group">
+                            <label for="ordered_quantity[${product_count}]" class="form-label">สั่งจ่าย</label>
+                            <input type="text" class="form-control mb-3" id="ordered_quantity${product_count}"
+                                name="ordered_quantity[${product_count}]" disabled>
+                            <input type="text" class="form-control" id="ordered_quantity2_${product_count}"
+                                name="ordered_quantity2[${product_count}]" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4">
+                        <div class="form-group">
+                            <label for="quantity[${product_count}]" class="form-label">จ่ายจริง</label>
+                            <input type="number" class="form-control mb-3" id="quantity${product_count}"
+                                name="quantity[${product_count}]" >
+                            <input type="number" class="form-control" id="quantity2_${product_count}"
+                                name="quantity2[${product_count}]" >
+                        </div>
+                    </div>
+                    <div class="col-lg-1 col-md-2 col-sm-4">
+                        <div class="form-group">
+                            <label for="quantity_um${product_count}" class="form-label">หน่วย</label>
+                            <input type="text" class="form-control mb-3" id="quantity_um${product_count}"
+                                name="quantityUm[${product_count}]" readonly>
+                            <input type="text" class="form-control" id="quantity_um2_${product_count}"
+                                name="quantityUm2_[${product_count}]" readonly>
+                        </div>
+                    </div>
+                     <div class="col-lg-1 col-md-2 col-sm-1">
+                        <label for="remove-product" class="form-label">#</label>
+                        <div class="form-group">
+                        <button type="button" class="btn btn-danger remove-product">ลบ</button>
+                    </div>
+                </div>
+            `);
+            // เรียกใช้งาน autocomplete กับฟิลด์ที่เพิ่มใหม่
+            initializePalletAutocomplete(`#product_name${product_count}`, `#product_id${product_count}`,
+                `#ordered_quantity${product_count}`,
+                `#ordered_quantity2_${product_count}`,
+                `#order_number${product_count}`,
+                `#show_product_id${product_count}`,
+                `#quantity_um${product_count}`,
+                `#quantity_um2_${product_count}`,
+            );
+        });
 
+        // ฟังก์ชันสำหรับลบแถว
+        $(document).on('click', '.remove-product', function() {
+            $(this).closest('[id^="product-"]').remove();
+        });
+
+        // ฟังก์ชันสำหรับ autocomplete
+        function initializePalletAutocomplete(product_nameSelector, product_idSelector, ordered_quantitySelector,
+            ordered_quantity2Selector, order_numberSelector, show_product_idSelector, ordered_umSelector,
+            ordered_um2Selector) {
+            $(product_nameSelector).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{{ route('AutoCompleteAddPallet') }}",
+                        data: {
+                            query: request.term ,
+                            type:  $("#pallet_type").val(),
+                        },
+                        success: function(data) {
+                            // console.log(data);
+                            response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                        },
+                        error: function(xhr, status, error) {
+                            alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
+                            console.log(xhr.responseText);
+                        }
+                    });
+                },
+                minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
+                select: function(event, ui) {
+                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
+                    $(product_idSelector).val(ui.item.product_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
+                    $(show_product_idSelector).val(ui.item.product_no);
+                    $(product_nameSelector).val(ui.item.product_name); // เติมชื่อสินค้าในช่องชื่อสินค้า
+                    $(ordered_quantitySelector).val(ui.item.ordered_quantity);
+                    $(ordered_quantity2Selector).val(ui.item.ordered_quantity2);
+                    $(ordered_umSelector).val(ui.item.ordered_quantity_UM);
+                    $(ordered_um2Selector).val(ui.item.ordered_quantity_UM2);
+
+                }
+            });
+            $(product_nameSelector).focus(function() {
+                $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
+            });
+        }
+        initializePalletAutocomplete(`#product_name0`, `#product_id0`, `#ordered_quantity0`, `#ordered_quantity2_0`,
+            `#order_number0`, `#show_product_id0`, `#quantity_um0`, `#quantity_um2_0`);
+    </script>
     {{-- <script>
 
         $('#pallet_type').on('change', function() {

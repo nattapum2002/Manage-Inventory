@@ -116,8 +116,8 @@
                                     class="btn btn-primary">จัดใบล็อค</a>
                             </div>
                         </div>
-                        {{-- <div class="card-body">
-                            <table id="pallte" class="table table-bordered table-striped">
+                        <div class="card-body">
+                            <table id="pallate" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th colspan="9">
@@ -144,8 +144,8 @@
                                         <tr>
                                             <td>{{ $Pallet->pallet_id }}</td>
                                             <td>{{ $Pallet->pallet_no }}</td>
-                                            <td>{{ $Pallet->room }}</td>
-                                            <td>{{ $Pallet->team_name }}</td>
+                                            <td id="warehouse-name">{{ $Pallet->room }}</td>
+                                            <td>{{ $Pallet->team_name ?? 'ไม่มี' }}</td>
                                             <td>{{ $Pallet->pallet_type }}</td>
                                             <td>{{ $Pallet->note }}</td>
                                             <td>{!! $Pallet->status == 1
@@ -155,7 +155,7 @@
                                                 ? '<p class="text-success">ส่งแล้ว</p>'
                                                 : '<p class="text-danger">ยังไม่จัดส่ง</p>' !!}</td>
                                             <td>
-                                                <a href="{{ route('DetailPallets', ['order_number' => $order_id, 'pallet_id' => $Pallet->id]) }}"
+                                                <a href="{{route('DetailPallets',[$ORDER_DATE,$CUS_ID,$Pallet->id])}}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>
@@ -179,18 +179,18 @@
                                                 <div class="col-lg-6 col-md-6 col-sm-12">
                                                     หมายเหตุ : {{ $CustomerOrders[0]->note ?? 'N/A' }}
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                {{-- <div class="col-lg-6 col-md-6 col-sm-12">
                                                     พนักงานจัด :
                                                     @foreach ($LockTeams->where('team_id', $CustomerOrders[0]->team_id) as $LockTeam)
                                                         {{ $LockTeam->name }}
                                                     @endforeach
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </th>
                                     </tr>
                                 </tfoot>
                             </table>
-                        </div> --}}
+                        </div>
                     </div>
                 </div>
             </div>

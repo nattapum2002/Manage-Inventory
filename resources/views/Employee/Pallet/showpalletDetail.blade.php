@@ -9,14 +9,22 @@
     <section class="card shadow">
         <article class="card-header bg-primary text-white">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 col-sm-4">
                     <h5>ลูกค้า: {{$Pallets[0]->customer_name ?? 'N/A'}}</h5>
                 </div>
-                <div class="col-md-3 text-center">
-                    <h5>หมายเลขพาเลท: {{$Pallets[0]->pallet_no ?? 'N/A'}}</h5>
+                <div class="col-md-3 col-sm-4 text-center">
+                    <h5>หมายเลขพาเลท: {{$Pallets[0]->pallet_id?? 'N/A'}} / {{$Pallets[0]->pallet_no?? 'N/A'}}</h5>
                 </div>
-                <div class="col-md-3 text-end">
+                <div class="col-md-3 col-sm-4 text-end">
                     <h5>ประเภทพาเลท: {{$Pallets[0]->pallet_type ?? 'N/A'}}</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-4">
+                    <h5>ห้องเก็บ: {{$Pallets[0]->whs_name ?? 'N/A'}}</h5>
+                </div>
+                <div class="col-md-3 col-sm-4 text-center">
+                    <h5>ลักษณะงาน: {{$Pallets[0]->product_work_desc ?? 'N/A'}}</h5>
                 </div>
             </div>
         </article>
@@ -30,8 +38,6 @@
                         <th>ชื่อสินค้า</th>
                         <th>จำนวน</th>
                         <th>หน่วย</th>
-                        <th>จำนวน (เพิ่มเติม)</th>
-                        <th>หน่วย (เพิ่มเติม)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,9 +46,7 @@
                             <td>{{$item->item_no}}</td>
                             <td>{{$item->item_desc1}}</td>
                             <td>{{$item->quantity}}</td>
-                            <td>{{$item->item_um}}</td>
-                            <td>{{$item->quantity2}}</td>
-                            <td>{{$item->item_um2}}</td>
+                            <td>Kg.</td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -20,6 +20,7 @@
                             <th>จำนวนทั้งหมด</th>
                             <th>หน่วย</th>
                             <th>ห้องเก็บ</th>
+                            <th>ลักษณะงาน</th>
                             <th>จัดการ</th>
                         </thead>
                         <tbody>
@@ -31,7 +32,8 @@
                                     <td>{{ $item->quantity_UM }}</td>
                                     <td>{{ $item->quantity2 }}</td>
                                     <td>{{ $item->quantity_UM2 }}</td>
-                                    <td>{{ $item->whs_name ?? 'N/A' }}</td>
+                                    <td>{{ $item->whs_name ?? 'ยังไม่มี' }}</td>
+                                    <td>{{ $item->item_work_desc ?? 'ไม่มี' }}</td>
                                     <td>
                                         <a class="btn btn-primary" href="{{ route('Edit name', $item->item_no) }}">แก้ไข</a>
                                     </td>

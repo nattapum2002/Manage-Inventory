@@ -19,6 +19,7 @@ class ShowStock extends Controller
         $data = DB::table('stock')
             ->join('warehouse', 'warehouse.id', '=', 'product.warehouse')
             ->get();
+        dd($data);
         return view('showstock', compact('data'));
     }
     public function stock_coldA()
@@ -56,7 +57,7 @@ class ShowStock extends Controller
 
         $data = DB::table('stock')
             ->Join('product', 'product.item_id', '=', 'stock.product_id')
-            ->join('warehouse', 'warehouse.id', '=', 'product.warehouse')
+            ->leftJoin('warehouse', 'warehouse.id', '=', 'product.warehouse')
             ->get();
         return view('Admin.Stock.showstock', compact('data'));
     }
@@ -92,13 +93,13 @@ class ShowStock extends Controller
         ]);
 
         $data = $request->all();
-
         try {
             DB::table('product')
                 ->where('item_no', $data['product_id'])
                 ->update([
                     // 'item_desc1' => $data['product_name'],
-                    'warehouse' => $data['room']
+                    'warehouse' => $data['room'],
+                    'item_work_desc' => $data['product_work_desc']
                 ]);
 
             return redirect()->route("Edit name", $data['product_id'])->with('success', 'Updated successfully.');
