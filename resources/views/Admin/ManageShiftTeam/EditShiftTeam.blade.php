@@ -13,113 +13,118 @@
                         <div class="card-header">
                             <h5>รายละเอียด</h5>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-1 col-md-1 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="shift_name">กะ</label>
-                                        <input type="text" class="form-control" id="shift_name" name="shift_name"
-                                            value="{{ $ShiftTeams['shift_name'] }}" readonly>
+                        <form action="{{ route('SaveEditShift', $ShiftTeams['shift_id']) }}" method="POST">
+                            @csrf
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="shift_name">กะ</label>
+                                            <input type="text" class="form-control" id="shift_name" name="shift_name"
+                                                value="{{ $ShiftTeams['shift_name'] }}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-2 col-md-2 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="start_shift">เวลาเริ่ม</label>
-                                        <input type="text" class="form-control" id="start_shift" name="start_shift"
-                                            value="{{ (new DateTime($ShiftTeams['start_shift']))->format('H:i') }}"
-                                            readonly>
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="start_shift">เวลาเริ่ม</label>
+                                            <input type="text" class="form-control" id="start_shift" name="start_shift"
+                                                value="{{ (new DateTime($ShiftTeams['start_shift']))->format('H:i') }}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-2 col-md-2 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="end_shift">เวลาเลิก</label>
-                                        <input type="text" class="form-control" id="end_shift" name="end_shift"
-                                            value="{{ (new DateTime($ShiftTeams['end_shift']))->format('H:i') }}" readonly>
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="end_shift">เวลาเลิก</label>
+                                            <input type="text" class="form-control" id="end_shift" name="end_shift"
+                                                value="{{ (new DateTime($ShiftTeams['end_shift']))->format('H:i') }}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-2 col-md-2 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="date">วันที่</label>
-                                        <input type="text" class="form-control" id="date" name="date"
-                                            value="{{ (new DateTime($ShiftTeams['date']))->format('d/m/Y') }}" readonly>
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="date">วันที่</label>
+                                            <input type="text" class="form-control" id="date" name="date"
+                                                value="{{ (new DateTime($ShiftTeams['date']))->format('d/m/Y') }}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-5 col-md-5 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="note">หมายเหตุ</label>
-                                        <input type="text" class="form-control" id="note" name="note"
-                                            value="{{ $ShiftTeams['note'] }}" readonly>
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="note">หมายเหตุ</label>
+                                            <textarea type="text" class="form-control" id="note" name="note">{{ $ShiftTeams['note'] }}</textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-12 d-flex justify-content-center">
-                                    <button type="button" class="btn btn-success" data-toggle="modal"
-                                        data-target="#AddTeamShift">
-                                        เพิ่มทีม
-                                    </button>
-                                </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success">
+                                    บันทึก
+                                </button>
                             </div>
-
-                        </div>
+                        </form>
                     </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12 d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddTeamShift">
+                        เพิ่มทีม
+                    </button>
                 </div>
             </div>
             <div class="row">
                 @foreach ($ShiftTeams['teams'] as $team)
-                    <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="team_name">ทีม</label>
-                                            <input type="text" class="form-control" id="team_name" name="team_name"
-                                                value="{{ $team['team_name'] ?? 'N/A' }}" readonly>
+                    {{-- @dd($team) --}}
+                    @if ($team['team_id'] != null)
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="team_name">ทีม</label>
+                                                <input type="text" class="form-control" id="team_name" name="team_name"
+                                                    value="{{ $team['team_name'] ?? 'N/A' }}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="work">ลักษณะงาน</label>
-                                            <input type="text" class="form-control" id="work" name="work"
-                                                value="{{ $team['work'] ?? 'N/A' }}" readonly>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="work">ลักษณะงาน</label>
+                                                <input type="text" class="form-control" id="work" name="work"
+                                                    value="{{ $team['work'] ?? 'N/A' }}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="foreman">โฟร์แมน</label>
-                                            <input type="text" class="form-control" id="foreman" name="foreman"
-                                                value="{{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['name'] . ' ' . $team['users']->where('dmc_position', 'โฟร์แมน')[0]['surname'] ?? 'N/A' }}"
-                                                readonly>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="foreman">โฟร์แมน</label>
+                                                <input type="text" class="form-control" id="foreman" name="foreman"
+                                                    value="{{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['name'] ?? 'N/A' }} {{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['surname'] ?? 'N/A' }}"
+                                                    readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    {{-- <div class="col-lg-3 col-md-3 col-sm-12">
+                                        {{-- <div class="col-lg-3 col-md-3 col-sm-12">
                                         <div class="form-group">
                                             <label for="note">หมายเหตุ</label>
                                             <input type="text" class="form-control" id="note"
                                                 name="note" value="{{ $team['note'] }}" readonly>
                                         </div>
                                     </div> --}}
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
-                                        <div class="form-group">
-                                            <label>#</label>
-                                            <br>
-                                            <div class="d-flex ">
-                                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                                    data-target="#EditTeamShift" data-team='@json($team)'
-                                                    data-users='@json($team['users'])'>
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <a href="{{ route('DeleteTeam', ['Shift_id' => $ShiftTeams['shift_id'], 'team_id' => $team['team_id']]) }}"
-                                                    class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                <label>#</label>
+                                                <br>
+                                                <div class="d-flex ">
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                        data-target="#EditTeamShift"
+                                                        data-team='@json($team)'
+                                                        data-users='@json($team['users'])'>
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    {{-- <a href="{{ route('DeleteTeam', ['Shift_id' => $ShiftTeams['shift_id'], 'team_id' => $team['team_id']]) }}"
+                                                    class="btn btn-danger"><i class="fas fa-trash"></i></a> --}}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                @if ($team['team_id'] != null)
+                                <div class="card-body">
                                     <table id="" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
@@ -133,19 +138,19 @@
                                             @foreach ($team['users'] as $user)
                                                 <tr>
                                                     <td>{{ $user['user_id'] ?? 'N/A' }}</td>
-                                                    <td>{{ $user['name'] . ' ' . $user['surname'] ?? 'N/A' }}</td>
+                                                    <td>{{ $user['name'] ?? 'N/A' }} {{ $user['surname'] ?? 'N/A' }}</td>
                                                     <td>{{ $user['dmc_position'] ?? 'N/A' }}</td>
                                                     {{-- <td>{{ $user['note'] ?? 'N/A' }}</td> --}}
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
-                                @else
-                                    {{-- <p class="d-flex justify-content-center">กรุณาเพิ่มทีมพนักงาน</p> --}}
-                                @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @else
+                        {{-- <p class="d-flex justify-content-center">กรุณาเพิ่มทีมพนักงาน</p> --}}
+                    @endif
                 @endforeach
             </div>
             <div class="modal fade" id="AddTeamShift">

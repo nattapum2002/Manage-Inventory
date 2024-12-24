@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
@@ -11,6 +12,11 @@ class ManageImportProduct extends Controller
     //
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $show_per_date = DB::table('product_store')
             ->selectRaw('store_date, COUNT(DISTINCT(product_slip_number)) as total_slip') // หรือเลือกฟิลด์ที่คุณต้องการ
             ->groupBy('store_date')
@@ -20,6 +26,11 @@ class ManageImportProduct extends Controller
 
     public function show_slip($date)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $show_slip = DB::table('product_store')
             ->selectRaw('MAX(product_slip_id) as slip_id,MAX(department) as department , MAX(product_slip_number) as slip_number ,MAX(product_checker) as product_checker,MAX(domestic_checker) as domestic_checker, status ,id')
             ->groupBy('id', 'product_slip_id', 'status')
@@ -48,6 +59,11 @@ class ManageImportProduct extends Controller
     }
     public function show_slip_detail($slip_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $show_detail = DB::table('product_store_detail')
             ->join('product', 'product_store_detail.product_id', '=', 'product.item_id')
             ->join('product_store', 'product_store.id', '=', 'product_store_detail.product_slip_id')

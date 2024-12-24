@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -19,6 +20,11 @@ class ShiftController extends Controller
 
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $shifts = DB::table('work_shift')->get();
         $usersCounts = DB::table('shift_users')->get();
         return view('Admin.ManageShift.manageshift', compact('shifts', 'usersCounts'));
@@ -26,6 +32,11 @@ class ShiftController extends Controller
 
     public function EditShift($shift_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $work_shifts = DB::table('work_shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
 
         $filtered_shifts = array_filter($this->select_shifts, function ($team) use ($work_shifts) {
@@ -103,6 +114,11 @@ class ShiftController extends Controller
 
     public function AddShift(Request $request)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $work_shifts = DB::table('work_shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
 
         $filtered_shifts = array_filter($this->select_shifts, function ($team) use ($work_shifts) {

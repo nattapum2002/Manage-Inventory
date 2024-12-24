@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -10,11 +11,21 @@ class SlipController extends Controller
 {
     public function TransferSlip()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         return view('Admin.Slip.TransferSlip');
     }
 
     public function AddTransferSlip(Request $request)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $date = $request->input('date');
 
         $product_receipt_plans = DB::table('product_receipt_plan')

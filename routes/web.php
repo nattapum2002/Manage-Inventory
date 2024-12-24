@@ -17,6 +17,7 @@ use App\Http\Controllers\UserWorkController;
 use App\Http\Controllers\SlipController;
 use App\Http\Controllers\CustomerQueueController;
 use App\Http\Controllers\PayGoodsController;
+use App\Http\Controllers\IncentiveController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -39,13 +40,13 @@ Route::prefix('ManageIncentive')->group(function () {
     Route::get('/Incentive', function () {
         return view('Admin.ManageIncentive.IncentiveDashbord');
     })->name('IncentiveDashbord');
-    Route::get('/Incentive/Arrange', [App\Http\Controllers\IncentiveController::class, 'incentiveArrange'])->name('IncentiveArrange');
-    Route::get('/Incentive/Arrange/{date}/Worker', [App\Http\Controllers\IncentiveController::class, 'incentiveArrangeWorker'])->name('IncentiveArrangeWorker');
-    Route::get('/Incentive/Arrange/{date}/{user_id}/Detail', [App\Http\Controllers\IncentiveController::class, 'incentiveArrangeWorkerDetail'])->name('IncentiveArrangeWorkerDetail');
+    Route::get('/Incentive/Arrange', [IncentiveController::class, 'incentiveArrange'])->name('IncentiveArrange');
+    Route::get('/Incentive/Arrange/{date}/Worker', [IncentiveController::class, 'incentiveArrangeWorker'])->name('IncentiveArrangeWorker');
+    Route::get('/Incentive/Arrange/{date}/{user_id}/Detail', [IncentiveController::class, 'incentiveArrangeWorkerDetail'])->name('IncentiveArrangeWorkerDetail');
 
-    Route::get('/Incentive/Drag', [App\Http\Controllers\IncentiveController::class, 'incentiveDrag'])->name('IncentiveDrag');
-    Route::get('/Incentive/Drag/{month}/{year}/Worker', [App\Http\Controllers\IncentiveController::class, 'incentiveDragWorker'])->name('incentiveDragWorker');
-    Route::get('/Incentive/Drag/{month}/{year}/{user_id}/Detail', [App\Http\Controllers\IncentiveController::class, 'incentiveDragWorkerDetail'])->name('IncentiveDragWorkerDetail');
+    Route::get('/Incentive/Drag', [IncentiveController::class, 'incentiveDrag'])->name('IncentiveDrag');
+    Route::get('/Incentive/Drag/{month}/{year}/Worker', [IncentiveController::class, 'incentiveDragWorker'])->name('incentiveDragWorker');
+    Route::get('/Incentive/Drag/{month}/{year}/{user_id}/Detail', [IncentiveController::class, 'incentiveDragWorkerDetail'])->name('IncentiveDragWorkerDetail');
 });
 Route::get('/manageshift', function () {
     return view('Admin.ManageShift.manageshift');
@@ -77,9 +78,9 @@ Route::get('/Logout', [LoginController::class, 'logout'])->name('Logout');
 Route::get('NewItem', function () {
     return view('Admin.Stock.additem');
 })->name('NewItem');
-Route::get('ShowStat/Dispense/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat_dispense'])->name('Show_dispense_stat');
-Route::get('ShowStat/Imported/{date}', [App\Http\Controllers\ShowStat::class, 'show_stat_imported'])->name('Show_imported_stat');
-Route::get('ShowStatDate', [App\Http\Controllers\ShowStat::class, 'show_date'])->name('ShowStatDate');
+Route::get('ShowStat/Dispense/{date}', [ShowStat::class, 'show_stat_dispense'])->name('Show_dispense_stat');
+Route::get('ShowStat/Imported/{date}', [ShowStat::class, 'show_stat_imported'])->name('Show_imported_stat');
+Route::get('ShowStatDate', [ShowStat::class, 'show_date'])->name('ShowStatDate');
 
 Route::prefix('ShowStock')->group(function () {
     // Route::get('/ShowStock', [ShowStock::class, 'index'])->name('ShowStock');
@@ -146,6 +147,7 @@ Route::prefix('ManageLockStock')->group(function () {
 
 Route::prefix('ProductReceiptPlan')->group(function () {
     Route::get('/', [ProductReceiptPlanController::class, 'index'])->name('ProductReceiptPlan');
+    Route::get('/GetShifts', [ProductReceiptPlanController::class, 'GetShifts'])->name('GetShifts');
     Route::post('/Add', [ProductReceiptPlanController::class, 'AddProductReceiptPlan'])->name('AddProductReceiptPlan');
     Route::post('/Add/Save', [ProductReceiptPlanController::class, 'SaveAddProductReceiptPlan'])->name('SaveAddProductReceiptPlan');
     Route::get('/Edit/{product_receipt_plan_id}', [ProductReceiptPlanController::class, 'EditProductReceiptPlan'])->name('EditProductReceiptPlan');
@@ -171,6 +173,7 @@ Route::prefix('ManageShiftAndTeam')->group(function () {
     Route::post('/CopyShiftAndTeam', [ShiftAndTeamController::class, 'CopyShiftAndTeam'])->name('CopyShiftAndTeam');
     Route::post('/DeleteShiftTeam/{Shift_id}', [ShiftAndTeamController::class, 'DeleteShiftTeam'])->name('DeleteShiftTeam');
     Route::get('/EditShiftTeam/{Shift_id}', [ShiftAndTeamController::class, 'EditShiftTeam'])->name('EditShiftTeam');
+    Route::post('/EditShiftTeam/{Shift_id}/Save', [ShiftAndTeamController::class, 'SaveEditShift'])->name('SaveEditShift');
     Route::post('/EditShiftTeam/AddTeam/Save', [ShiftAndTeamController::class, 'SaveAddTeam'])->name('SaveAddTeam');
     Route::post('/EditShiftTeam/EditTeam/Save', [ShiftAndTeamController::class, 'SaveEditTeam'])->name('SaveEditTeam');
     Route::get('/EditShiftTeam/{Shift_id}/Delete/{team_id}', [ShiftAndTeamController::class, 'DeleteTeam'])->name('DeleteTeam');
@@ -196,20 +199,14 @@ Route::post('/Add-Slip', [App\Http\Controllers\ManageImportProduct::class, 'crea
 Route::get('/check-slip/{id}', [App\Http\Controllers\ManageImportProduct::class, 'check_slip'])->name('CheckSlip');
 Route::get('autocomplete', [App\Http\Controllers\ManageImportProduct::class, 'autocomplete'])->name('autocomplete');
 //
-
-Route::get('/ManageUsers', [UserController::class, 'index'])->name('ManageUsers');
-
-Route::get('/ManageUsers/Createuser', function () {
-    return view('Admin.ManageUsers.createuser');
-})->name('Createuser');
-Route::post('/ManageUsers/Createuser', [UserController::class, 'create'])->name('ManageUsers.Createuser');
-Route::get('/ManageUsers/Toggle/{user_id}/{status}', [UserController::class, 'toggle'])->name('ManageUsers.Toggle');
-Route::get('/ManageUsers/Edituser/{user_id}', [UserController::class, 'edit'])->name('Edituser');
-Route::post('/ManageUsers/Edituser/{user_id}', [UserController::class, 'update'])->name('Edituser.update');
-
-Route::get('/Profile', function () {
-    return view('Admin.profile');
-})->name('Profile');
+Route::prefix('ManageUsers')->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('ManageUsers');
+    Route::get('/Profile', [UserController::class, 'Profile'])->name('Profile');
+    Route::post('/Createuser', [UserController::class, 'create'])->name('ManageUsers.Createuser');
+    Route::get('/Toggle/{user_id}/{status}', [UserController::class, 'toggle'])->name('ManageUsers.Toggle');
+    Route::get('/Edituser/{user_id}', [UserController::class, 'edit'])->name('Edituser');
+    Route::post('/Edituser/{user_id}', [UserController::class, 'update'])->name('Edituser.update');
+});
 
 //Manager Routes
 
@@ -226,9 +223,9 @@ Route::get('/Manager/CustomerOrder/{order_id}', [StatisticsController::class, 'D
 Route::get('/Manager/Pallet', [StatisticsController::class, 'Pallet'])->name('Pallet');
 Route::get('/Manager/Pallet/{pallet_id}', [StatisticsController::class, 'DetailPallet'])->name('DetailPallet');
 
-Route::get('/Manager/Profile', function () {
-    return view('Manager.profile');
-})->name('Profile');
+// Route::get('/Manager/Profile', function () {
+//     return view('Manager.profile');
+// })->name('Profile');
 
 //User Routes
 

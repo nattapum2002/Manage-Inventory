@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -14,6 +15,11 @@ class ProductReceiptPlanController extends Controller
 {
     public function index()
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $ProductReceiptPlans = DB::table('product_receipt_plan')
             ->join('work_shift', 'product_receipt_plan.shift_id', '=', 'work_shift.shift_id')
             ->get();
@@ -25,8 +31,34 @@ class ProductReceiptPlanController extends Controller
         return view('Admin.ProductReceiptPlan.ProductReceiptPlan', compact('ProductReceiptPlans', 'shifts', 'ProductDetail'));
     }
 
+    public function GetShifts(Request $request)
+    {
+        $date = $request->input('date');
+
+        if (!$date) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'วันที่ไม่ถูกต้อง',
+                'shifts' => []
+            ]);
+        }
+
+        // ดึงรายการกะที่ตรงกับวันที่ที่เลือก
+        $shifts = DB::table('work_shift')->whereDate('date', $date)->get(['shift_id', 'shift_name']);
+
+        return response()->json([
+            'status' => 'success',
+            'shifts' => $shifts
+        ]);
+    }
+
     public function AddProductReceiptPlan(Request $request)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         // ตรวจสอบว่าไฟล์ถูกอัปโหลดและมีประเภทที่ถูกต้อง
         $request->validate([
             // 'product_receipt_plan_id' => 'required',
@@ -147,6 +179,11 @@ class ProductReceiptPlanController extends Controller
 
     public function EditProductReceiptPlan($product_receipt_plan_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $ProductReceiptPlans = DB::table('product_receipt_plan')
             ->join('work_shift', 'product_receipt_plan.shift_id', '=', 'work_shift.shift_id')
             ->select('work_shift.shift_id', 'work_shift.shift_name', 'product_receipt_plan.date', 'product_receipt_plan.note')

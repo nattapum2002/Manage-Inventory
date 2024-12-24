@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -40,6 +41,11 @@ class ShiftAndTeamController extends Controller
 
     public function index(Request $request)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $filtered_shifts = $this->getFilteredShifts($request->input('date') ?? now()->format('Y-m-d'));
         $ShiftFilterDate = $this->GetShifts($request->input('date') ?? now()->format('Y-m-d'));
         $select_shifts = $this->select_shifts;
@@ -294,6 +300,11 @@ class ShiftAndTeamController extends Controller
 
     public function EditShiftTeam($Shift_id)
     {
+        // Ensure the user is authenticated
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+
         $ShiftTeams = DB::table('work_shift')
             ->leftJoin('lock_team', 'work_shift.shift_id', '=', 'lock_team.shift_id')
             ->leftJoin('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
@@ -358,6 +369,54 @@ class ShiftAndTeamController extends Controller
             'ShiftTeams' => $ShiftTeams,
         ]);
     }
+
+    public function SaveEditShift(Request $request, $Shift_id)
+    {
+        $request->validate([
+            'shift_name' => 'required|string|max:255',
+            'start_shift' => 'required|date_format:H:i',
+            'end_shift' => 'required|date_format:H:i|after:start_shift',
+            'date' => 'required|date_format:d/m/Y',
+            'note' => 'nullable|string',
+        ]);
+
+        $formattedDate = \DateTime::createFromFormat('d/m/Y', $request->date)->format('Y-m-d');
+
+        $duplicateShift = DB::table('work_shift')
+            ->where('shift_name', $request->shift_name)
+            ->where('date', $formattedDate)
+            ->where('Shift_id', '!=', $Shift_id)
+            ->exists();
+
+        if ($duplicateShift) {
+            return back()->withErrors(['shift_name' => 'ชื่อกะนี้มีอยู่ในวันที่ที่เลือกแล้ว กรุณาเลือกชื่อกะใหม่'])
+                ->withInput();
+        }
+
+        $shiftTeam = DB::table('work_shift')->where('Shift_id', $Shift_id)->first();
+
+        if (!$shiftTeam) {
+            abort(404, 'ไม่พบข้อมูลกะที่ต้องการ');
+        }
+
+        try {
+            DB::table('work_shift')->where('Shift_id', $Shift_id)->update([
+                'shift_name' => $request->shift_name,
+                'start_shift' => $request->start_shift,
+                'end_shift' => $request->end_shift,
+                'date' => $formattedDate,
+                'note' => $request->note,
+                'updated_at' => now(),
+            ]);
+
+            return redirect()->route('EditShiftTeam')->with('success', 'แก้ไขข้อมูลกะสำเร็จแล้ว');
+        } catch (\Exception $e) {
+            // Handle the exception
+            return back()->withErrors(['error' => 'เกิดข้อผิดพลาดในการแก้ไขข้อมูลกะ: ' . $e->getMessage()])
+                ->withInput();
+        }
+    }
+
 
     public function SaveAddTeam(Request $request)
     {

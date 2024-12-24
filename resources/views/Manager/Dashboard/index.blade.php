@@ -34,18 +34,18 @@
                                 <tbody>
                                     @foreach ($product_stores as $product_store)
                                         <tr>
-                                            <td>{{ $product_store->product_slip_id }}</td>
-                                            <td>{{ $product_store->product_slip_number }}</td>
-                                            <td>{{ $product_store->product_id }}</td>
-                                            <td>{{ $product_store->department }}</td>
-                                            <td>{{ $product_store->weight }}</td>
-                                            <td>{{ $product_store->amount }}</td>
-                                            <td>{{ $product_store->store_date }}</td>
-                                            <td>{{ $product_store->store_time }}</td>
-                                            <td>{{ $product_store->status }}</td>
-                                            <td>{{ $product_store->comment }}</td>
-                                            <td>{{ $product_store->product_checker }}</td>
-                                            <td>{{ $product_store->domestic_checker }}</td>
+                                            <td>{{ $product_store->product_slip_id ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->product_slip_number ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->product_id ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->department ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->weight ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->amount ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->store_date ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->store_time ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->status ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->comment ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->product_checker ?? 'N/A' }}</td>
+                                            <td>{{ $product_store->domestic_checker ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -82,17 +82,17 @@
                                     <tr>
                                         <th>รหัสสินค้า</th>
                                         <th>รายการสินค้า</th>
-                                        <th>น้ำหนัก</th>
                                         <th>จํานวน</th>
+                                        <th>จํานวน 2</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($stocks as $stock)
                                         <tr>
                                             <td>{{ $stock->product_id }}</td>
-                                            <td>{{ $stock->product_name }}</td>
-                                            <td>{{ $stock->weight }}</td>
-                                            <td>{{ $stock->amount }}</td>
+                                            <td>{{ $stock->item_desc1 }}</td>
+                                            <td>{{ $stock->quantity . ' ' . $stock->quantity_UM }}</td>
+                                            <td>{{ $stock->quantity2 . ' ' . $stock->quantity_UM2 }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -100,8 +100,8 @@
                                     <tr>
                                         <th>รหัสสินค้า</th>
                                         <th>รายการสินค้า</th>
-                                        <th>น้ำหนัก</th>
                                         <th>จํานวน</th>
+                                        <th>จํานวน 2</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -131,13 +131,13 @@
                                 <tbody>
                                     @foreach ($customer_orders as $customer_order)
                                         <tr>
-                                            <td>{{ $customer_order->order_id }}</td>
-                                            <td>{{ $customer_order->product_id }}</td>
-                                            <td>{{ $customer_order->customer_id }}</td>
-                                            <td>{{ $customer_order->order_amount }}</td>
-                                            <td>{{ $customer_order->send_amount }}</td>
-                                            <td>{{ $customer_order->date }}</td>
-                                            <td>{{ $customer_order->packer_id }}</td>
+                                            <td>{{ $customer_order->order_id ?? 'N/A' }}</td>
+                                            <td>{{ $customer_order->product_id ?? 'N/A' }}</td>
+                                            <td>{{ $customer_order->customer_id ?? 'N/A' }}</td>
+                                            <td>{{ $customer_order->order_amount ?? 'N/A' }}</td>
+                                            <td>{{ $customer_order->send_amount ?? 'N/A' }}</td>
+                                            <td>{{ $customer_order->date ?? 'N/A' }}</td>
+                                            <td>{{ $customer_order->packer_id ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -183,17 +183,17 @@
                                 <tbody>
                                     @foreach ($pallets as $pallet)
                                         <tr>
-                                            <td>{{ $pallet->pallet_id }}</td>
-                                            <td>{{ $pallet->order_id }}</td>
-                                            <td>{{ $pallet->product_id }}</td>
-                                            <td>{{ $pallet->order_amount }}</td>
-                                            <td>{{ $pallet->send_amount }}</td>
-                                            <td>{{ $pallet->bag_color }}</td>
-                                            <td>{{ $pallet->room }}</td>
-                                            <td>{{ $pallet->pack_start_time }}</td>
-                                            <td>{{ $pallet->pack_end_time }}</td>
-                                            <td>{{ $pallet->checker_id }}</td>
-                                            <td>{{ $pallet->shift_id }}</td>
+                                            <td>{{ $pallet->pallet_id ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->order_id ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->product_id ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->order_amount ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->send_amount ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->bag_color ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->room ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->pack_start_time ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->pack_end_time ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->checker_id ?? 'N/A' }}</td>
+                                            <td>{{ $pallet->shift_id ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -238,12 +238,12 @@
                                 <tbody>
                                     @foreach ($customer_queues as $customer_queue)
                                         <tr>
-                                            <td>{{ $customer_queue->no }}</td>
-                                            <td>{{ $customer_queue->queue_time }}</td>
-                                            <td>{{ $customer_queue->queue_no }}</td>
-                                            <td>{{ $customer_queue->entry_time }}</td>
-                                            <td>{{ $customer_queue->release_time }}</td>
-                                            <td>{{ $customer_queue->customer_id }}</td>
+                                            <td>{{ $customer_queue->no ?? 'N/A' }}</td>
+                                            <td>{{ $customer_queue->queue_time ?? 'N/A' }}</td>
+                                            <td>{{ $customer_queue->queue_no ?? 'N/A' }}</td>
+                                            <td>{{ $customer_queue->entry_time ?? 'N/A' }}</td>
+                                            <td>{{ $customer_queue->release_time ?? 'N/A' }}</td>
+                                            <td>{{ $customer_queue->customer_id ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
