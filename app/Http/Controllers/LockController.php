@@ -462,6 +462,7 @@ class LockController extends Controller
     {
         $lock_items[] = [
             'warehouse' => $itemOrder->warehouse,
+            'work_type' => $itemOrder->item_work_desc,
             'items' =>
             [
                 [

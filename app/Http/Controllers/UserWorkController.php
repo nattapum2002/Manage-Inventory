@@ -28,7 +28,7 @@ class UserWorkController extends Controller
                 'pallet_type.pallet_type',
                 'lock_team.team_name',
             )
-            ->join('customer','pallet.customer_id','=','customer.customer_id')
+            ->join('customer', 'pallet.customer_id', '=', 'customer.customer_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->join('lock_team', 'pallet.team_id', '=', 'lock_team.team_id')
             ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
@@ -38,7 +38,7 @@ class UserWorkController extends Controller
             ->get();
 
 
-            // dd($data);
+        // dd($data);
         return view('Employee.Pallet.showpallet', compact('data'));
     }
     public function showPalletDetail($pallet_id)
@@ -48,10 +48,11 @@ class UserWorkController extends Controller
             return redirect()->route('Login.index');
         }
 
-        $Pallets = DB::table('pallet_order')
+        $Pallets = DB::table('confirmOrder')
             ->select(
                 'customer.customer_name',
                 'pallet.id',
+                'pallet.pallet_id',
                 'pallet.pallet_no',
                 'pallet.room',
                 'pallet_type.pallet_type',
@@ -60,15 +61,16 @@ class UserWorkController extends Controller
                 'product.item_no',
                 'product.item_um',
                 'product.item_um2',
+                'product_work_desc.product_work_desc',
+                'warehouse.whs_name',
                 'confirmOrder.quantity',
-                'confirmOrder.quantity2',
             )
-            ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
-            ->join('pallet', 'pallet_order.pallet_id', '=', 'pallet.id')
+            ->join('pallet', 'confirmOrder.pallet_id', '=', 'pallet.id')
+            ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->join('customer', 'pallet.customer_id', '=', 'customer.customer_id')
-            ->join('product_work_desc','confirmOrder.product_work_desc','=','product_work_desc.id')
-            ->join('warehouse','pallet.room','=','warehouse.id')
+            ->join('product_work_desc', 'confirmOrder.product_work_desc', '=', 'product_work_desc.id')
+            ->join('warehouse', 'pallet.room', '=', 'warehouse.id')
             ->where('confirmOrder.pallet_id', '=', $pallet_id)
             ->get();
 
@@ -79,7 +81,7 @@ class UserWorkController extends Controller
             ->join('pallet', 'lock_team.team_id', '=', 'pallet.team_id')
             ->where('pallet.id', '=', $pallet_id) // แก้เงื่อนไข where
             ->get();
-        
+
         //  dd($team);
         $groupedTeams = [];
         foreach ($team as $teams) {
@@ -91,7 +93,7 @@ class UserWorkController extends Controller
 
         // แสดงผลข้อมูล (กรณี Debug)
         //dd($Pallets);
-        return view('Employee.Pallet.showpalletDetail',compact('groupedTeams', 'Pallets'));
+        return view('Employee.Pallet.showpalletDetail', compact('groupedTeams', 'Pallets'));
     }
 
     public function submitPallet($pallet_id)
