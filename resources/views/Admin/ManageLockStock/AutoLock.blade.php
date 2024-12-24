@@ -137,7 +137,7 @@
                                         <tr>
                                             <td>{{ $number }}</td>
                                             <td id="warehouse-name">{{ $lockItem['warehouse'] }}</td>
-                                            <td id="work-type">{{ $lockItem['work_type'] }}</td>
+                                            <td id="work-type">{{ $lockItem['work_type'] ?? '' }}</td>
                                             <td>
                                                 @foreach ($lockItem['items'] as $itemNo)
                                                     {{ $itemNo['item_no'] }} <br>

@@ -24,8 +24,8 @@
                                         <label for="room_id">ห้องเก็บ</label>
                                         <select name="room" class="form-control" id="">
                                             @foreach ($Warehouse as $item2)
-                                                <option value="{{ $item2->whs_name }}"
-                                                    {{ $item->warehouse == $item2->whs_name ? 'selected' : '' }}>
+                                                <option value="{{ $item2->id }}"
+                                                    {{ $item->warehouse == $item2->id ? 'selected' : '' }}>
                                                     {{ $item2->whs_name }}</option>
                                             @endforeach
                                         </select>
@@ -52,21 +52,6 @@
                                             value="{{ $item->item_um2 }}" readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="room_id">ห้องเก็บ</label>
-                                <select name="room" class="form-control" id="">
-                                    @foreach ($Warehouse as $item2)
-                                        <option value="{{ $item2->id }}"
-                                            {{ $item->warehouse == $item2->whs_name ? 'selected' : '' }}>
-                                            {{ $item2->whs_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="product_name">ชื่อสินค้า</label>
-                                <input type="text" class="form-control" id="product_name" name="product_name"
-                                    value="{{ $item->item_desc1 }}">
                             </div>
                             <div class="form-group">
                                 <label for="product_work_desc">ลักษณะงาน</label>
