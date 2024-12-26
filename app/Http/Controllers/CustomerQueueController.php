@@ -21,6 +21,7 @@ class CustomerQueueController extends Controller
         $CustomerQueues = $this->GetCustomerQueues($request->input('date') ?? now()->format('Y-m-d'));
 
         // dd($CustomerQueues);
+
         return view('Admin.ManageQueue.ManageQueue', compact('CustomerQueues'));
     }
 
@@ -31,26 +32,33 @@ class CustomerQueueController extends Controller
             return redirect()->route('Login.index');
         }
 
-        $CustomerQueues = $this->GetCustomerQueues($request->input('date') ?? now()->format('Y-m-d'));
-        return view('Admin.ManageQueue.ManageQueue', compact('CustomerQueues'));
+        $date = $request->input('date');
+
+        if (!$date) {
+            return response()->json(['error' => 'Date is required'], 400);
+        }
+
+        $CustomerQueues = $this->GetCustomerQueues($date ?? now()->format('Y-m-d'));
+        return response()->json(['CustomerQueues' => $CustomerQueues, 'date' => $date]);
     }
 
     private function GetCustomerQueues($date)
     {
-        return DB::table('customer_queue')
-            ->leftJoin('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
-            ->leftJoin('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
+        return DB::table('master_order_details')
+            ->leftJoin('order_details', 'master_order_details.ORDER_NUMBER', '=', 'order_details.ORDER_NUMBER')
             ->select(
-                'customer_queue.queue_time',
-                'customer_queue.order_number',
-                'customer_queue.note',
-                'customer_queue.status',
-                'customer.customer_name',
-                'customer_queue.queue_no',
-                'customer_queue.queue_date',
-                'customer.customer_grade'
+                'master_order_details.ORDER_NUMBER',
+                'master_order_details.CUSTOMER_ID',
+                'order_details.CUSTOMER_NAME',
+                'order_details.CUST_GRADE',
+                'master_order_details.SCHEDULE_SHIP_DATE',
+                'order_details.TIME_QUE',
             )
-            ->whereDate('customer_queue.queue_date', $date)
+            ->whereDate('master_order_details.SCHEDULE_SHIP_DATE', $date)
+            // ->where('order_details.TIME_QUE', '!=', null)
+            ->where('order_details.CUSTOMER_NAME', '!=', null)
+            ->orderBy('master_order_details.SCHEDULE_SHIP_DATE')
+            ->orderBy('order_details.TIME_QUE')
             ->distinct()
             ->get();
     }
@@ -204,30 +212,64 @@ class CustomerQueueController extends Controller
             return redirect()->route('Login.index');
         }
 
-        $customer_queue = DB::table('customer_queue')
-            // ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
-            // ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            ->where('customer_queue.order_number', '=', $order_number)
-            ->first();
-
-        // dd($customer_queue);
-
-        $pallet = DB::table('pallet')
-            ->leftJoin('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
-            ->leftJoin('customer_order', 'pallet.customer_id', '=', 'customer_order.customer_id')
+        $customer_queue = DB::table('master_order_details')
+            ->leftJoin('order_details', 'master_order_details.ORDER_NUMBER', '=', 'order_details.ORDER_NUMBER')
+            ->where('master_order_details.ORDER_NUMBER', '=', $order_number)
             ->select(
-                'pallet.id as pallet_id',
-                'pallet.room',
-                'pallet.pallet_no',
-                'pallet_type.pallet_type',
-                'pallet.status',
-                'pallet.recive_status',
-                'customer_order.order_number',
+                'master_order_details.ORDER_NUMBER',
+                'master_order_details.CUSTOMER_ID',
+                'order_details.CUSTOMER_NAME',
+                'order_details.CUST_GRADE',
+                'master_order_details.SCHEDULE_SHIP_DATE',
+                'order_details.TIME_QUE',
+                'order_details.TIME_EXIT',
+                'order_details.ITEM_ID',
+                'order_details.ITEM_DESC1',
+                'order_details.ORDERED_QUANTITY',
+                'order_details.ORDER_BY_CUS',
+                'order_details.QUANTITY_UOM',
             )
-            ->where('customer_order.order_number', '=', $order_number)
-            ->get();
+            ->get()
+            ->groupBy('ORDER_NUMBER')
+            ->map(function ($groupOrder) {
+                $firstOrder = $groupOrder->first();
+                return [
+                    'ORDER_NUMBER' => $firstOrder->ORDER_NUMBER,
+                    'CUSTOMER_ID' => $firstOrder->CUSTOMER_ID,
+                    'CUSTOMER_NAME' => $firstOrder->CUSTOMER_NAME,
+                    'CUST_GRADE' => $firstOrder->CUST_GRADE,
+                    'SCHEDULE_SHIP_DATE' => $firstOrder->SCHEDULE_SHIP_DATE,
+                    'TIME_QUE' => $firstOrder->TIME_QUE,
+                    'TIME_EXIT' => $firstOrder->TIME_EXIT,
+                    'ITEMS' => $groupOrder->groupBy('ITEM_ID')->map(function ($groupItem) {
+                        $firstItem = $groupItem->first();
+                        return [
+                            'ITEM_ID' => $firstItem->ITEM_ID,
+                            'ITEM_DESC1' => $firstItem->ITEM_DESC1,
+                            'ORDERED_QUANTITY' => $groupItem->sum('ORDERED_QUANTITY'),
+                            'ORDER_BY_CUS' => $firstItem->ORDER_BY_CUS,
+                            'QUANTITY_UOM' => $firstItem->QUANTITY_UOM,
+                        ];
+                    })->filter(),
+                ];
+            })->first();
 
-        return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue', 'pallet'));
+        // $pallet = DB::table('pallet')
+        //     ->leftJoin('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
+        //     ->leftJoin('customer_order', 'pallet.customer_id', '=', 'customer_order.customer_id')
+        //     ->select(
+        //         'pallet.id as pallet_id',
+        //         'pallet.room',
+        //         'pallet.pallet_no',
+        //         'pallet_type.pallet_type',
+        //         'pallet.status',
+        //         'pallet.recive_status',
+        //         'customer_order.order_number',
+        //     )
+        //     ->where('customer_order.order_number', '=', $order_number)
+        //     ->get();
+
+        return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue'));
     }
 
     public function PalletDetail($pallet_id, $order_id)

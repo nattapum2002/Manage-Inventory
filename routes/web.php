@@ -183,7 +183,7 @@ Route::prefix('ManageShiftAndTeam')->group(function () {
 
 Route::prefix('PayGoods')->group(function () {
     Route::get('/', [PayGoodsController::class, 'index'])->name('PayGoods');
-    Route::get('/SelectPayGoods/{order_number}', [PayGoodsController::class, 'SelectPayGoods'])->name('SelectPayGoods');
+    Route::get('/SelectPayGoods', [PayGoodsController::class, 'SelectPayGoods'])->name('SelectPayGoods');
     Route::post('/Incentive/StartWork', [PayGoodsController::class, 'StartWork'])->name('StartWork');
     Route::post('/Incentive/EndWork', [PayGoodsController::class, 'EndWork'])->name('EndWork');
 });

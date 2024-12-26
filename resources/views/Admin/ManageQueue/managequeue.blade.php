@@ -7,7 +7,7 @@
 @section('content')
     <section class="content">
         <div class="container-fluid">
-            <div class="card">
+            {{-- <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <h5>เพิ่มคิวลูกค้า</h5>
@@ -38,20 +38,17 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> --}}
             <div class="card">
                 <article class="card-header">
                     <div class="d-flex justify-content-between">
                         <h5>รายชื่อคิวลูกค้า</h5>
                         <div>
-                            <form action="{{ route('ManageQueueFilterDate') }}" method="post">
-                                @csrf
-                                <div class="input-group">
-                                    <input type="date" class="form-control" name="date" id="date"
-                                        value="{{ $CustomerQueues->first()->queue_date ?? now()->format('Y-m-d') }}">
-                                    <button type="submit" class="btn btn-primary">ค้นหา</button>
-                                </div>
-                            </form>
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="date" id="date"
+                                    value="{{ now()->format('Y-m-d') }}">
+                                <button id="btn-search-date" type="button" class="btn btn-primary">ค้นหา</button>
+                            </div>
                         </div>
                     </div>
                 </article>
@@ -63,20 +60,20 @@
                             <th>ชื่อลูกค้า</th>
                             <th>เกรด</th>
                             <th>เวลา</th>
-                            <th>หมายเหตุ</th>
+                            <th>วันที่</th>
                             <th></th>
                         </thead>
                         <tbody id="queueTableBody">
                             @foreach ($CustomerQueues as $queue)
                                 <tr>
-                                    <td>{{ $queue->queue_no }}</td>
-                                    <td>{{ number_format($queue->order_number, 0, '.', '') }}</td>
-                                    <td>{{ $queue->customer_name ?? 'ไม่มีชื่อ' }}</td>
-                                    <td>{{ $queue->customer_grade ?? 'N/A' }}</td>
-                                    <td>{{ (new DateTime($queue->queue_time))->format('H:i') }}</td>
-                                    <td>{{ $queue->note }}</td>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $queue->ORDER_NUMBER }}</td>
+                                    <td>{{ $queue->CUSTOMER_NAME ?? 'ไม่มีชื่อ' }}</td>
+                                    <td>{{ $queue->CUST_GRADE ?? 'N/A' }}</td>
+                                    <td>{{ $queue->TIME_QUE ?? 'N/A' }}</td>
+                                    <td>{{ (new DateTime($queue->SCHEDULE_SHIP_DATE0))->format('d/m/Y') ?? 'N/A' }}</td>
                                     <td>
-                                        <a href="{{ route('DetailCustomerQueue', ['order_number' => $queue->order_number]) }}"
+                                        <a href="{{ route('DetailCustomerQueue', ['order_number' => $queue->ORDER_NUMBER]) }}"
                                             class="btn btn-primary"><i class="fas fa-info-circle"></i></a>
                                     </td>
                                 </tr>
@@ -88,7 +85,7 @@
                             <th>ชื่อลูกค้า</th>
                             <th>เกรด</th>
                             <th>เวลา</th>
-                            <th>หมายเหตุ</th>
+                            <th>วันที่</th>
                             <th></th>
                         </tfoot>
                     </table>
@@ -100,18 +97,68 @@
 
 @section('script')
     <script>
-        $("#CustomerQueueTable").DataTable({
+        // กำหนด DataTable
+        const dataTable = $("#CustomerQueueTable").DataTable({
             responsive: true,
             lengthChange: true,
-            autoWidth: true,
-            // scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
+            autoWidth: false
+        });
+
+        document.getElementById('btn-search-date').addEventListener('click', function() {
+            const date = document.getElementById('date').value;
+
+            fetch(`{{ route('ManageQueueFilterDate') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        date: date
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.CustomerQueues) {
+                        console.error('Data structure is incorrect or CustomerQueues is missing');
+                        return;
+                    }
+
+                    // ล้างข้อมูลใน DataTable
+                    dataTable.clear();
+
+                    if (data.CustomerQueues.length === 0) {
+                        console.warn('No data available in the result.');
+                        return;
+                    }
+
+                    // เพิ่มข้อมูลใหม่ใน DataTable
+                    const newRows = data.CustomerQueues.map((queue, index) => [
+                        index + 1,
+                        queue.ORDER_NUMBER,
+                        queue.CUSTOMER_NAME || 'ไม่มีชื่อ',
+                        queue.CUST_GRADE || 'N/A',
+                        queue.TIME_QUE || 'N/A',
+                        formatDate(queue.SCHEDULE_SHIP_DATE) || 'N/A',
+                        `<a href="{{ url('ManageQueue/Detail') }}/${queue.ORDER_NUMBER}" class="btn btn-primary">
+                        <i class="fas fa-info-circle"></i>
+                    </a>`
+                    ]);
+
+                    // อัปเดต DataTable
+                    dataTable.rows.add(newRows).draw();
+                })
+                .catch(error => console.error('Error:', error));
+
+            function formatDate(date) {
+                const d = new Date(date);
+                return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+            }
         });
     </script>
 @endsection

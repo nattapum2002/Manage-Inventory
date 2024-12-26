@@ -39,7 +39,12 @@
                     <div class="queue-list">
                         @if ($customer_queues->isNotEmpty())
                             @foreach ($customer_queues as $queue)
-                                <a href="{{ route('SelectPayGoods', ['order_number' => $queue->order_number]) }}"
+                                <button class="btn btn-primary mb-2 load-queue-detail"
+                                    data-queue-id="{{ $queue['order_number'] }}">
+                                    {{ $queue['customer_name'] }}
+                                    ({{ (new DateTime($queue['queue_time']))->format('H:i') }})
+                                </button>
+                                {{-- <a href="{{ route('SelectPayGoods', ['order_number' => $queue->order_number]) }}"
                                     class="text-decoration-none">
                                     <div class="card mb-2">
                                         <div class="card-body text-center">
@@ -49,7 +54,7 @@
                                             <div>{{ $queue->customer_name }}</div>
                                         </div>
                                     </div>
-                                </a>
+                                </a> --}}
                             @endforeach
                         @else
                             <div class="card mb-2">
@@ -69,37 +74,39 @@
                     <div class="card">
                         <div class="card-body">
                             <!-- Order Details -->
-                            <div class="row">
-                                <div class="col-md-6 col-lg-3 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
-                                        <h5>
-                                            {{ optional($select_queue)->order_number ? number_format(optional($select_queue)->order_number, 0, '.', '') : (optional($auto_select_queue)->order_number ? number_format(optional($auto_select_queue)->order_number, 0, '.', '') : 'N/A') }}
-                                        </h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-5 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
-                                        <h5>
-                                            {{ optional($select_queue)->customer_name ?? (optional($auto_select_queue)->customer_name ?? 'N/A') }}
-                                        </h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-2 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">เวลานัด</label>
-                                        <h5>
-                                            {{ optional($select_queue)->queue_time ? \Carbon\Carbon::parse(optional($select_queue)->queue_time)->format('H:i') : (optional($auto_select_queue)->queue_time ? \Carbon\Carbon::parse(optional($auto_select_queue)->queue_time)->format('H:i') : 'N/A') }}
-                                        </h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-2 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
-                                        <h5>
-                                            {{ $total_pallets ?? 'N/A' }}</h5>
-                                    </fieldset>
+                            <div id="order-details">
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-3 mb-2">
+                                        <fieldset>
+                                            <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
+                                            <h5>
+                                                {{ optional($select_queue)->order_number ? number_format(optional($select_queue)->order_number, 0, '.', '') : (optional($auto_select_queue)->order_number ? number_format(optional($auto_select_queue)->order_number, 0, '.', '') : 'N/A') }}
+                                            </h5>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-6 col-lg-5 mb-2">
+                                        <fieldset>
+                                            <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
+                                            <h5>
+                                                {{ optional($select_queue)->customer_name ?? (optional($auto_select_queue)->customer_name ?? 'N/A') }}
+                                            </h5>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-6 col-lg-2 mb-2">
+                                        <fieldset>
+                                            <label class="text-primary font-weight-bold">เวลานัด</label>
+                                            <h5>
+                                                {{ optional($select_queue)->queue_time ? \Carbon\Carbon::parse(optional($select_queue)->queue_time)->format('H:i') : (optional($auto_select_queue)->queue_time ? \Carbon\Carbon::parse(optional($auto_select_queue)->queue_time)->format('H:i') : 'N/A') }}
+                                            </h5>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-6 col-lg-2 mb-2">
+                                        <fieldset>
+                                            <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
+                                            <h5>
+                                                {{ $total_pallets ?? 'N/A' }}</h5>
+                                        </fieldset>
+                                    </div>
                                 </div>
                             </div>
 
@@ -180,8 +187,63 @@
     </div>
 @endsection
 
-
 @section('script')
+    <script>
+        $(document).ready(function() {
+            $('.load-queue-detail').on('click', function() {
+                let queueId = $(this).data('queue-id');
+
+                $.ajax({
+                    url: '{{ route('SelectPayGoods') }}',
+                    method: 'GET',
+                    data: {
+                        id: queueId
+                    },
+                    success: function(response) {
+                        if (response.select_queue) {
+
+                            const orderDetails = `
+                            <div class="row">
+                                <div class="col-md-6 col-lg-3 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
+                                        <h5>${response.select_queue.order_number}</h5>
+                                    </fieldset>
+                                </div>
+                                <div class="col-md-6 col-lg-5 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
+                                        <h5>${response.select_queue.customer_name}</h5>
+                                    </fieldset>
+                                </div>
+                                <div class="col-md-6 col-lg-2 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">เวลานัด</label>
+                                        <h5>${response.select_queue.queue_time}</h5>
+                                    </fieldset>
+                                </div>
+                                <div class="col-md-6 col-lg-2 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
+                                        <h5>${response.select_queue.total_pallets}</h5>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        `;
+
+                            $('#order-details').html(orderDetails);
+                        } else {
+                            alert('ไม่พบข้อมูล');
+                        }
+                    },
+                    error: function() {
+                        alert('ไม่สามารถโหลดข้อมูลได้');
+                    }
+                });
+            });
+        });
+    </script>
+
     <script>
         function openTab(evt, palletNo) {
             // ซ่อน tabcontent ทั้งหมด
