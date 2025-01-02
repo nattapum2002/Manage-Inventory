@@ -234,85 +234,88 @@
 
 @section('script')
     <script>
-        $("#ShiftTable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            // scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
-        });
-    </script>
-
-    <script>
         window.onload = function() {
             $('#duplicateShiftModal').modal('show');
         }
     </script>
 
     <script>
+        // กำหนด DataTable
+        const shiftDataTable = $("#ShiftTable").DataTable({
+            responsive: true,
+            lengthChange: true,
+            autoWidth: false,
+            order: [
+                [0, 'desc']
+            ]
+        });
+
         document.getElementById('btn-search-shift').addEventListener('click', function() {
             const month = document.getElementById('month').value;
+
             fetch(`{{ route('ShiftFilterMonth') }}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
                     body: JSON.stringify({
                         month: month
-                    })
+                    }),
                 })
-                .then(response => {
+                .then((response) => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
-                .then(data => {
-                    if (!data || !data.ShiftFilterMonth) {
-                        console.error('Data structure is incorrect or ShiftFilterMonth is missing');
+                .then((data) => {
+                    if (!data || !data.ShiftFilterMonth || data.ShiftFilterMonth.length === 0) {
+                        alert('ไม่พบข้อมูล');
                         return;
                     }
 
-                    const shiftTableBody = document.getElementById('shift-table-body');
-                    shiftTableBody.innerHTML = ''; // ล้างข้อมูลเก่าทั้งหมด
-                    data.ShiftFilterMonth.forEach(shift => {
-                        const row = `
-                        <tr>
-                            <td>${formatDate(shift.date)}</td>
-                            <td>${shift.shift_name}</td>
-                            <td>${formatTime(shift.start_shift)}</td>
-                            <td>${formatTime(shift.end_shift)}</td>
-                            <td>${shift.note}</td>
-                            <td>
-                                <div class="d-flex">
-                                    <a href="ManageShiftAndTeam/EditShiftTeam/${shift.shift_id}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                                    <form action="ManageShiftAndTeam/DeleteShiftTeam/${shift.shift_id}" method="POST" onsubmit="return confirm('คุณแน่ใจว่าต้องการลบกะนี้หรือไม่?');">
-                                        @csrf
-                                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                        shiftTableBody.insertAdjacentHTML('beforeend', row);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
+                    // ล้างข้อมูลใน DataTable
+                    shiftDataTable.clear();
 
+                    // เพิ่มข้อมูลใหม่ใน DataTable
+                    const newRows = data.ShiftFilterMonth.map((shift) => [
+                        formatDate(shift.date),
+                        shift.shift_name,
+                        formatTime(shift.start_shift),
+                        formatTime(shift.end_shift),
+                        shift.note || 'N/A',
+                        `
+                        <div class="d-flex">
+                            <a href="ManageShiftAndTeam/EditShiftTeam/${shift.shift_id}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="ManageShiftAndTeam/DeleteShiftTeam/${shift.shift_id}" method="POST" onsubmit="return confirm('คุณแน่ใจว่าต้องการลบกะนี้หรือไม่?');">
+                                @csrf
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    `,
+                    ]);
+
+                    // เพิ่มข้อมูลใหม่และรีเฟรช DataTable
+                    shiftDataTable.rows.add(newRows).draw();
+                })
+                .catch((error) => console.error('Error:', error));
+
+            // ฟังก์ชันสำหรับจัดรูปแบบวันที่
             function formatDate(date) {
                 const d = new Date(date);
-                return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+                return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1)
+                .toString()
+                .padStart(2, '0')}/${d.getFullYear()}`;
             }
 
+            // ฟังก์ชันสำหรับจัดรูปแบบเวลา
             function formatTime(time) {
-                const d = new Date('1970-01-01T' + time);
+                const d = new Date(`1970-01-01T${time}`);
                 return d.toTimeString().slice(0, 5);
             }
         });

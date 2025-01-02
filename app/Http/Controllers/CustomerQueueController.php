@@ -254,21 +254,6 @@ class CustomerQueueController extends Controller
                 ];
             })->first();
 
-        // $pallet = DB::table('pallet')
-        //     ->leftJoin('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
-        //     ->leftJoin('customer_order', 'pallet.customer_id', '=', 'customer_order.customer_id')
-        //     ->select(
-        //         'pallet.id as pallet_id',
-        //         'pallet.room',
-        //         'pallet.pallet_no',
-        //         'pallet_type.pallet_type',
-        //         'pallet.status',
-        //         'pallet.recive_status',
-        //         'customer_order.order_number',
-        //     )
-        //     ->where('customer_order.order_number', '=', $order_number)
-        //     ->get();
-
         return view('Admin.ManageQueue.DetailCustomerQueue', compact('customer_queue'));
     }
 

@@ -124,18 +124,13 @@
                     return response.json();
                 })
                 .then(data => {
-                    if (!data || !data.CustomerQueues) {
-                        console.error('Data structure is incorrect or CustomerQueues is missing');
+                    if (!data || !data.CustomerQueues || data.CustomerQueues.length === 0) {
+                        alert('ไม่พบข้อมูล');
                         return;
                     }
 
                     // ล้างข้อมูลใน DataTable
                     dataTable.clear();
-
-                    if (data.CustomerQueues.length === 0) {
-                        console.warn('No data available in the result.');
-                        return;
-                    }
 
                     // เพิ่มข้อมูลใหม่ใน DataTable
                     const newRows = data.CustomerQueues.map((queue, index) => [

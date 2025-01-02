@@ -109,7 +109,7 @@ class ShiftAndTeamController extends Controller
         // 2️⃣ ตรวจสอบว่ามีกะที่ชื่อเหมือนกันแล้วหรือไม่
         $existingShift = DB::table('work_shift')
             ->where('shift_name', $request->input('shift_name'))
-            ->orderBy('created_at', 'desc')
+            ->orderBy('date', 'desc')
             ->first();
 
         if ($existingShift) {
