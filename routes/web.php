@@ -75,9 +75,6 @@ Route::get('/', [LoginController::class, 'index'])->name('Login.index');
 Route::post('/Login', [LoginController::class, 'login'])->name('Login');
 Route::get('/Logout', [LoginController::class, 'logout'])->name('Logout');
 
-Route::get('NewItem', function () {
-    return view('Admin.Stock.additem');
-})->name('NewItem');
 Route::get('ShowStat/Dispense/{date}', [ShowStat::class, 'show_stat_dispense'])->name('Show_dispense_stat');
 Route::get('ShowStat/Imported/{date}', [ShowStat::class, 'show_stat_imported'])->name('Show_imported_stat');
 Route::get('ShowStatDate', [ShowStat::class, 'show_date'])->name('ShowStatDate');
@@ -87,6 +84,7 @@ Route::prefix('ShowStock')->group(function () {
     Route::get('/Cold-A', [ShowStock::class, 'stock_coldA'])->name('ShowStockA');
     Route::get('/Cold-C', [ShowStock::class, 'stock_coldC'])->name('ShowStockC');
     Route::get('/Admin/ShowStock', [ShowStock::class, 'Admin_index'])->name('AdminShowStock');
+    Route::get('/NewProduct', [ShowStock::class, 'AddProduct'])->name('NewItem');
     Route::get('/Edit-name/{product_id}', [ShowStock::class, 'Detail'])->name('Edit name');
     Route::post('Updatename', [ShowStock::class, 'edit_name'])->name('Updatename');
 });
@@ -139,10 +137,13 @@ Route::prefix('ManageLockStock')->group(function () {
     Route::get('/forgetSession/{CUS_ID}/{Ordered_date}', [LockController::class, 'forgetSession'])->name('forgetSession');
     Route::get('/Detail/removePallet/{key}', [LockController::class, 'Remove_Pallet'])->name('Remove_Pallet');
     Route::get('/Detail/insertPallet/{CUS_ID}/{ORDER_DATE}', [LockController::class, 'insert_pallet'])->name('Insert_Pallet');
-    Route::get('/Detail/editPalletOrde/{order_id}/{product_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
+    Route::get('/Detail/editPalletOrder/{confirmOrder_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
+    Route::get('/Detail/editPalletOrder/UPDATE/{confirmOrder_id}', [LockController::class, 'updateConfirmOrder'])->name('updateConfirmOrder');
+    Route::get('/Detail/PalletType/UPDATE/{pallet_id}', [LockController::class, 'updatePalletType'])->name('updatePalletType');
     Route::get('/Arrange/{CUS_id}/{ORDERED_DATE}', [LockController::class, 'ShowPreLock'])->name('PreLock');
     Route::get('/AUTO/{CUS_id}/{ORDERED_DATE}', [LockController::class, 'AutoLock'])->name('AutoLock');
     Route::post('/UPDATE/{id}', [LockController::class, 'update_lock_team'])->name('UpdateLockTeam');
+    Route::post('/UpSell/{CUS_ID}/{ORDER_DATE}', [LockController::class, 'addUpSellPallet'])->name('addUpSellPallet');
 });
 
 Route::prefix('ProductReceiptPlan')->group(function () {
@@ -187,9 +188,6 @@ Route::prefix('PayGoods')->group(function () {
     Route::post('/Incentive/EndWork', [PayGoodsController::class, 'EndWork'])->name('EndWork');
 });
 
-Route::get('AddItem', function () {
-    return view('Admin.ManageStock.addstock');
-})->name('Add item');
 
 Route::get('/ManageStock', [App\Http\Controllers\ManageImportProduct::class, 'index'])->name('ManageStock');
 Route::get('/ManageSlip/{date}', [App\Http\Controllers\ManageImportProduct::class, 'show_slip'])->name('ManageSlip');

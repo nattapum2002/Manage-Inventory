@@ -80,11 +80,15 @@ class IncentiveController extends Controller
                     $this->incentive_cal($value->quantity , $total_incentive_Org , 0.009);
                 }else if ($value->product_work_desc === 'รับจัด'){
                     $this->incentive_cal($value->quantity , $total_incentive_Spl , 0.01);
+                }else if ($value->product_work_desc === 'เลือด'){
+                    $this->incentive_cal($value->quantity , $total_incentive_Bl , 0.0025);
                 }
-            } 
+            }
+
             return [
                 'total_incentive_Org' => $total_incentive_Org,
                 'total_incentive_Spl' => $total_incentive_Spl,
+                'total_incentive_Bl' => $total_incentive_Bl,
             ];
         }
     
@@ -123,7 +127,7 @@ class IncentiveController extends Controller
         ->whereMonth('pallet.created_at', '=', $month)
         ->whereYear('pallet.created_at', '=', $year)
         ->where('lock_team_user.dmc_position', '=', 'Drag')
-        ->where('pallet.status', 1)
+        ->where('pallet.recive_status', 1)
         ->groupBy(
             'users.name',
             'users.surname',
@@ -144,58 +148,63 @@ class IncentiveController extends Controller
                 'users.name',
                 'users.surname',
                 'users.user_id',
-                'pallet.order_id',
                 'product.item_desc1',
                 'product.item_no',
-                'pallet_order.product_id',
                 'product.item_um',
                 'product.item_um2',
                 'confirmOrder.quantity',
-                'confirmOrder.quantity2',
+                'customer.customer_name',
+                'pallet.order_date',
                 DB::raw('DATENAME(MONTH, pallet.created_at) as month_name'),
                 )
             ->join('users', 'users.user_id', '=', 'lock_team_user.user_id')
             ->join('lock_team', 'lock_team.team_id', '=', 'lock_team_user.team_id')
             ->join('pallet', 'pallet.team_id', '=', 'lock_team.team_id')
-            ->join('pallet_order', 'pallet.id', '=', 'pallet_order.pallet_id')
-            ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
-            ->join('confirmOrder', 'pallet_order.id', '=', 'confirmOrder.pallet_order_id')
+            ->join('confirmOrder', 'pallet.id', '=', 'confirmOrder.pallet_id')
+            ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
+            ->join('warehouse', 'pallet.room', '=', 'warehouse.id')
+            ->join('customer', 'pallet.customer_id', '=', 'customer.customer_id')
             ->whereMonth('pallet.created_at', '=', $month)
             ->whereYear('pallet.created_at', '=', $year)
             ->where('users.user_id', '=', $user_id)
             ->where('pallet.recive_status', 1)
             ->get();
+            //dd($Dragincentive);
+            $total = $this->total_weight($Dragincentive);
+        
+        return view('Admin.ManageIncentive.IncentiveDragWorkerDetail',compact('Dragincentive','total','year'));
+    }
 
-        $quantityKg = [];
-        $quantityCtn = [];
-        $total_incentive_Kg = 0;
-        $total_incentive_Ctn = 0;
-        $total_incentive_BAG = 0;
-        foreach ($Dragincentive as $key => $value) {
-            if ($value->item_um == 'Kg' || $value->item_um2 == 'Kg') {
-                $quantityKg[$key] = [
-                    'product_id' => $value->product_id,
-                    'product_name' => $value->item_desc1,
-                    'quantity' => $value->quantity
-                ];
-
-                if ($value->item_um == 'Kg') {
-                    $total_incentive_Kg += $value->quantity;
-                } else if ($value->item_um2 == 'Kg') {
-                    $total_incentive_Kg += $value->quantity2;
-                }
-            } 
-            // elseif ($value->item_um == 'Ctn') {
-            //     $quantityCtn[$key] = [
-            //         'product_id' => $value->product_id,
-            //         'product_name' => $value->item_desc1,
-            //         'quantity' => $value->quantity
-            //     ];
-
-            //     $total_incentive_Ctn += $value->quantity;
-            // }
+    private function total_weight($data){
+        $total_weight_Kg = 0;
+        $incentive_drag = 0;
+        foreach ($data as $key => $value) {
+            $total_weight_Kg += $value->quantity;
         }
-        // dd($Dragincentive);
-        return view('Admin.ManageIncentive.IncentiveDragWorkerDetail',compact('Dragincentive','total_incentive_Kg','year'));
+
+        $this->incentive_drag_cal($total_weight_Kg , $incentive_drag);
+        return [ 'total_weight' => $total_weight_Kg , 'total_incentive' => $incentive_drag];
+    }
+
+    private function incentive_drag_cal($weight ,&$incentive_drag){
+        if($weight >= 4200){
+            $incentive_drag = 30;
+        }else if($weight >= 15501){
+            $incentive_drag = 50;
+        }else if($weight >= 26802){
+            $incentive_drag = 80;
+        }else if($weight >= 38103){
+            $incentive_drag = 100;
+        }else if($weight >= 38103){
+            $incentive_drag = 100;
+        }else if($weight >= 49404){
+            $incentive_drag = 120;
+        }else if($weight >= 60705){
+            $incentive_drag = 150;
+        }else if($weight >= 72006){
+            $incentive_drag = 180;
+        }else if($weight >= 83307){
+            $incentive_drag = 300;
+        }
     }
 }

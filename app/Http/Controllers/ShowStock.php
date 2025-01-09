@@ -62,6 +62,12 @@ class ShowStock extends Controller
         return view('Admin.Stock.showstock', compact('data'));
     }
 
+    public function AddProduct(){
+
+        $Warehouse = DB::table('warehouse')->get();
+        return view('Admin.Stock.additem',compact('Warehouse'));
+    }
+
     public function Detail($item_id)
     {
         // Ensure the user is authenticated

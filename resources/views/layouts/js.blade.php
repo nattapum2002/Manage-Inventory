@@ -78,31 +78,77 @@
 {{-- <script src="//cdn.datatables.net/plug-ins/2.1.8/i18n/th.json"></script> --}}
 <script>
     $(document).ready(function() {
-            $('[id^="warehouse-name"]').each(function() {
-                let warehouse = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
+        $('[id^="warehouse-name"]').each(function() {
+            let warehouse = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
 
-                // เปลี่ยนค่าตามเงื่อนไข
-                if (warehouse === '1') {
-                    $(this).text('Cold-A');
-                } else if (warehouse === '2') {
-                    $(this).text('Cold-C');
-                } else if (warehouse === '3') {
-                    $(this).text('Blood');
-                }
-            });
-            $('[id^="work-type"]').each(function() {
-                let work_type = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
+            // เปลี่ยนค่าตามเงื่อนไข
+            if (warehouse === '1') {
+                $(this).text('Cold-A');
+            } else if (warehouse === '2') {
+                $(this).text('Cold-C');
+            } else if (warehouse === '3') {
+                $(this).text('Blood');
+            }
+        });
+        $('[id^="work-type"]').each(function() {
+            let work_type = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
 
-                // เปลี่ยนค่าตามเงื่อนไข
-                if (work_type === '1') {
-                    $(this).text('แยกจ่าย');
-                } else if (work_type === '2') {
-                    $(this).text('รับจัด');
-                } else if (work_type === '3') {
-                    $(this).text('เลือด');
-                }
-            });
+            // เปลี่ยนค่าตามเงื่อนไข
+            if (work_type === '1') {
+                $(this).text('แยกจ่าย');
+            } else if (work_type === '2') {
+                $(this).text('รับจัด');
+            } else if (work_type === '3') {
+                $(this).text('เลือด');
+            }
+        });
+        $('[id^="pallet-type"]').each(function() {
+            let pallet_type = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
+            // เปลี่ยนค่าตามเงื่อนไข
+            if (pallet_type === '1') {
+                $(this).text('ทั่วไป');
+            } else if (pallet_type === '2') {
+                $(this).text('ขายเพิ่ม');
+            } else if (pallet_type === '3') {
+                $(this).text('รอเติม');
+            } else if (pallet_type === '4') {
+                $(this).text('จำนวน');
+            }
+        });
     })
+</script>
+<script>
+    $(document).ready(function() {
+        $('#edit-pallet-type').on('click', function() {
+            
+            if ($(this).hasClass('btn-primary')) {
+                // เปลี่ยนจากสถานะเริ่มต้นเป็นสถานะ "บันทึก"
+                showEditPalletType($(this));
+            } else {
+                // เปลี่ยนกลับไปสถานะเริ่มต้น
+                hideEditPalletType($(this));
+            }
+
+        });
+
+        $('#cancel-edit-pallet-type').on('click', function() {
+            $('#edit-pallet-type').removeClass('btn-success').addClass('btn-primary').attr('type',
+                'button').text('ปรับเปลี่ยน');
+            $('#edit-pallet-type-select').attr('disabled', true);
+            $(this).attr('hidden', true);
+        })
+
+        function showEditPalletType(btn) {
+            $('#edit-pallet-type-select').removeAttr('disabled');
+            $('#cancel-edit-pallet-type').removeAttr('hidden');
+            $(btn).removeClass('btn-primary').addClass('btn-success').attr('type','button').text('บันทึก');
+        };
+
+        function hideEditPalletType(btn) {
+            $('#cancel-edit-pallet-type').attr('hidden', true);
+            $(btn).removeClass('btn-success').addClass('btn-primary').attr('type', 'submit').text('ปรับเปลี่ยน');
+        };
+    });
 </script>
 <script>
     // ฟังก์ชันสำหรับการเพิ่ม item และเรียกใช้งาน autocomplete
@@ -310,30 +356,29 @@
 
 <script>
     $('#team').autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{{route('AutocompleteSearchTeam')}}",
-                        data: {
-                            query: request.term
-                        },
-                        success: function(data) {
-                            console.log(data);
-                            response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
-                        },
-                        error: function(xhr, status, error) {
-                            alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
-                            console.log(xhr.responseText);
-                        }
-                    });
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ route('AutocompleteSearchTeam') }}",
+                data: {
+                    query: request.term
                 },
-                minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
-                select: function(event, ui) {
-                    $('#team-id').val(ui.item.team_id);
+                success: function(data) {
+                    response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                },
+                error: function(xhr, status, error) {
+                    alert('มีข้อผิดพลาดในการบันทึกข้อมูล');
+                    console.log(xhr.responseText);
                 }
-            })
-            $('#team').focus(function() {
-                $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
             });
+        },
+        minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
+        select: function(event, ui) {
+            $('#team-id').val(ui.item.team_id);
+        }
+    })
+    $('#team').focus(function() {
+        $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
+    });
 </script>
 {{-- สคริปต์ SlipDetail --}}
 {{-- <script>

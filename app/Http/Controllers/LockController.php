@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Stmt\TryCatch;
 use PHPUnit\Framework\Attributes\Large;
 use Throwable;
 
@@ -47,6 +46,8 @@ class LockController extends Controller
         }
 
         $CustomerOrders = DB::table('master_order_details')
+            ->select('master_order_details.*' ,'product.*','customer.*')
+            ->selectRaw('master_order_details.id as master_order_id')
             ->join('product', 'product.item_no', '=', 'master_order_details.ORDERED_ITEM')
             ->join('customer', 'customer.customer_id', '=', 'master_order_details.CUSTOMER_ID')
             ->whereDate('master_order_details.ORDERED_DATE', $ORDER_DATE)
@@ -161,7 +162,7 @@ class LockController extends Controller
                         'customer_id' => $CUS_ID,
                         'order_date' => $ORDER_DATE,
                         'team_id' => null,
-                        'pallet_type_id' => '1',
+                        'pallet_type_id' => $data['pallet_type'],
                         'note' => null,
                         'status' => false,
                         'recive_status' => false,
@@ -184,7 +185,7 @@ class LockController extends Controller
                     $counter++;
                 }
             });
-            session()->forget('lock');
+            session()->forget('lock'.$CUS_ID);
         } catch (Throwable $e) {
             return response()->json(['error' => $e], 500);
         }
@@ -205,6 +206,7 @@ class LockController extends Controller
                 'master_order_details.UOM1',
                 'master_order_details.UOM2',
                 'confirmOrder.quantity',
+                'confirmOrder.id as confirmOrder_id',
                 'pallet_type.pallet_type',
                 'product.item_no',
                 'product.item_desc1',
@@ -216,11 +218,11 @@ class LockController extends Controller
             ->join('warehouse', 'warehouse.id', '=', 'pallet.room')
             ->join('pallet_type', 'pallet_type.id', '=', 'pallet.pallet_type_id')
             ->join('customer', 'customer.customer_id', '=', 'pallet.customer_id')
-            ->join('master_order_details', 'master_order_details.id', '=', 'confirmOrder.order_id')
+            ->leftJoin('master_order_details', 'master_order_details.id', '=', 'confirmOrder.order_id')
             ->join('product', 'product.item_id', '=', 'confirmOrder.product_id')
             ->join('product_work_desc', 'product_work_desc.id', '=', 'confirmOrder.product_work_desc')
             ->where('confirmOrder.pallet_id', $pallet_id)->get();
-
+        $pallet_type = DB::table('pallet_type')->get();
         // Ensure the user is authenticated
         if (!Auth::user()) {
             return redirect()->route('Login.index');
@@ -228,32 +230,59 @@ class LockController extends Controller
 
 
         // dd($Pallets);
-        return view('Admin.ManageLockStock.DetailPellets', compact('Pallets', 'ORDER_DATE', 'CUS_ID'));
+        return view('Admin.ManageLockStock.DetailPellets', compact('Pallets', 'ORDER_DATE', 'CUS_ID','pallet_type'));
     }
 
-    public function EditPalletOrder($order_id, $product_id)
+    public function EditPalletOrder($confirmOrder_id)
     {
         // Ensure the user is authenticated
         if (!Auth::user()) {
             return redirect()->route('Login.index');
         }
-
         $data = DB::table('confirmOrder')
             ->join('product', 'confirmOrder.product_id', '=', 'product.item_id')
-            ->where('confirmOrder.product_id', '=', $product_id)
-            ->where('confirmOrder.order_id', '=', $order_id)
+            ->where('confirmOrder.id', '=', $confirmOrder_id)
             ->get();
-        // dd($data);
-        return view('Admin.ManageLockStock.EditPalletOrder', compact('data'));
+        //dd($data);
+        return view('Admin.ManageLockStock.EditPalletOrder', compact('data','confirmOrder_id'));
+    }
+
+    public function updateConfirmOrder(Request $request ,$confirmOrder_id){
+        $data = $request->input();
+        try {
+            //code...
+            DB::table('confirmOrder')->where('id',$confirmOrder_id)
+            ->update([
+                'quantity' => $data['product_qty']
+            ]);
+
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
+    public function updatePalletType(Request $request ,$pallet_id ){
+        $data = $request->input();
+        try {
+            //code...
+            DB::table('pallet')->where('id',$pallet_id)->update([
+                'pallet_type_id' => $data['pallet_type_id'],
+            ]);
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
     public function AutoCompleteAddPallet(Request $request)
     {
         $query = $request->get('query');
-        $type = $request->get('type');
         // $order_number = $request->get('order_number');
         $data = DB::table('product')
-            ->select('item_id', 'item_desc1', 'item_no', 'item_um', 'item_um2')
-            ->where('item_desc1', 'like', '%' . $query . '%')
+            ->select('product.*','product_work_desc.*')
+            ->leftJoin('product_work_desc','product.item_work_desc','=','product_work_desc.id')
+            ->where('product.item_desc1', 'like', '%' . $query . '%')
             ->distinct()
             ->limit(10)
             ->get();
@@ -292,10 +321,8 @@ class LockController extends Controller
                 'value' => $item->item_desc1,
                 'product_no' => $item->item_no,
                 'product_id' => $item->item_id,
-                'ordered_quantity' => $item->order_quantity ?? 0,
-                'ordered_quantity_UM' => $item->item_um,
-                'ordered_quantity2' => $item->order_quantity2 ?? 0,
-                'ordered_quantity_UM2' => $item->item_um2 ?? 'ไม่มี',
+                'item_work_desc' => $item->product_work_desc,
+                'item_work_desc_id' => $item->item_work_desc
             ];
         });
 
@@ -305,9 +332,74 @@ class LockController extends Controller
     function ShowPrelock($CUS_ID, $ORDER_DATE)
     {
         $pallet_type = DB::table('pallet_type')->get();
+        //session()->forget('lock'.$CUS_ID);
+        //dd(session('lock'.$CUS_ID));
         return view('Admin.ManageLockStock.AutoLock', compact('CUS_ID', 'ORDER_DATE', 'pallet_type'));
     }
+    public function addUpSellPallet(Request $request , $CUS_ID , $ORDER_DATE)
+    {
+        $data = $request->validate([
+            'room' => 'required',
+            'work_desc' => 'required',
+            'show_product_id.*' => 'nullable',
+            'product_id.*' => 'nullable',
+            'product_name.0' => 'required',
+            'product_name.*' => 'nullable',
+            'quantity.*' => 'nullable',
+            'pallet_type_id' => 'required'
+        ],[
+            'room.required' => 'กรุณาเลือกห้อง',
+            'work_desc.required' => 'กรุณาเลือกลักษณะงาน',
+            'pallet_type_id.required' => 'กรุณาเลือกประเถทใบล็อค',
+            'product_name.0.required' => 'กรุณากรอกสินค้า',
+            // 'quantity.required' => 'กรุณากรอกจำนวน'
+        ]);
 
+        $item = $this->UpSellProduct($data,$CUS_ID , $ORDER_DATE);
+
+        foreach( $data as $index => $dataItem){
+            $UpSellLock = [
+                'warehouse' => intval($data['room']),
+                'pallet_type' => 2 ,
+                'work_type' =>  intval($data['work_desc']),
+                'items' => $item
+            ];
+        }
+
+        session()->push('lock' . $CUS_ID, $UpSellLock);
+
+        return redirect()->back();
+        //dd(session('lock'.$CUS_ID));
+    }
+    
+    function UpSellProduct($data , $CUS_ID , $ORDER_DATE){
+        $item = [];
+        foreach($data['product_id'] as $index => $product){
+            if (empty($product)) {
+                continue; // ข้ามค่า null หรือ empty
+            }
+            $item[] = [
+            'order_id' => '',
+            'order_no' => NULL,
+            'CUSTOMER_ID' => $CUS_ID,
+            'ORDERED_DATE' => $ORDER_DATE,
+            'item_id' => $product,
+            'item_no' => $data['show_product_id'][$index],
+            'item_desc1' => $data['product_name'][$index],
+            'ORDER_BY_CUS' => NULL,
+            'ORDERED_QUANTITY' => NULL,
+            'UOM1' => NULL,
+            'ORDERED_QUANTITY2' =>NULL ,
+            'UOM2' =>NULL ,
+            'quantity' => $data['quantity'][$index],
+            'quantity_um' => 'Kg',
+            'warehouse' =>  $data['room'],
+            'work_type' => $data['work_desc'],
+            ];
+        }
+        //dd($item);
+        return $item ;
+    }
     //คุณธีรพล พูลเพิ่ม test
     function AutoLock($CUS_ID, $ORDER_DATE)
     {
@@ -359,7 +451,7 @@ class LockController extends Controller
                     $itemOrder->ORDERED_QUANTITY,
                     $current_group[$warehouse][$work_type],
                     $current_weight[$warehouse][$work_type],
-                        $lock_items
+                    $lock_items
                 );
             } else if ($itemOrder->UOM2 === 'Kg') {
                 $this->split_product_work_type(
@@ -367,7 +459,7 @@ class LockController extends Controller
                     $itemOrder->ORDERED_QUANTITY2,
                     $current_group[$warehouse][$work_type],
                     $current_weight[$warehouse][$work_type],
-                        $lock_items
+                    $lock_items
                 );
             }
         }
@@ -378,6 +470,7 @@ class LockController extends Controller
                 if (!empty($group)) {
                     $lock_items[] = [
                         'warehouse' => $warehouse,
+                        'pallet_type' => 1 ,
                         'work_type' => $work_type,
                         'items' => $group,
                     ];
@@ -387,7 +480,7 @@ class LockController extends Controller
 
         session()->put('lock' . $CUS_ID, $lock_items);
         //dd($lock_items);
-        //dd(session()->all());
+        //dd(session('lock'.$CUS_ID));
     }
 
     function split_product_work_type($itemOrder, $quantity, &$current_group, &$current_weight, &$lock_items)
@@ -415,6 +508,7 @@ class LockController extends Controller
             // เก็บกลุ่มปัจจุบันลงใน lock_items และรีเซ็ต
             $lock_items[] = [
                 'warehouse' => $itemOrder->warehouse,
+                'work_type' => $itemOrder->item_work_desc,
                 'items' => $current_group
             ];
             $current_group = [];

@@ -34,10 +34,10 @@
                                                 <form class="row"
                                                     action="{{ route('UpdateLockTeam', [$Pallets[0]->id]) }}" method="POST">
                                                     @csrf
-                                                    <div class="col-lg-1 col-md-2 col-sm-3">
+                                                    <div class="col-lg-2 col-md-2 col-sm-3">
                                                         <label for="room">ทีมจัดพาเลท</label>
                                                     </div>
-                                                    <div class="col-lg-1 col-md-2 col-sm-7">
+                                                    <div class="col-lg-3 col-md-2 col-sm-7">
                                                         <input type="text" class="form-control" id="team"
                                                             name="" value="{{$Pallets[0]->team_name ?? ''}}" placholder="ค้นหาทีม">
                                                         <input type="hidden" class="form-control" id="team-id"
@@ -65,14 +65,14 @@
                                             <td>{{ $CustomerOrder->item_no }}</td>
                                             <td>{{ $CustomerOrder->item_desc1 }}</td>
                                             <td>{{ $CustomerOrder->ORDERED_QUANTITY ?? 0 }}</td>
-                                            <td>{{ $CustomerOrder->UOM1 }}</td>
+                                            <td>{{ $CustomerOrder->UOM1 ?? 'ไม่มี' }}</td>
                                             <td>{{ $CustomerOrder->ORDERED_QUANTITY2 ?? 0 }}</td>
-                                            <td>{{ $CustomerOrder->UOM2 }}</td>
+                                            <td>{{ $CustomerOrder->UOM2 ?? 'ไม่มี' }}</td>
                                             <td>{{ $CustomerOrder->quantity }}</td>
                                             <td>Kg</td>
                                             <td>{{ $CustomerOrder->status }}</td>
                                             <td>
-                                                <a href="" class="btn btn-primary">แก้ไข</a>
+                                                <a href="{{route('EditPalletOrder',[$CustomerOrder->confirmOrder_id])}}" class="btn btn-primary">แก้ไข</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -89,24 +89,32 @@
                                     <tr>
                                         <th colspan="10">
                                             <div class="row">
-                                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    <form action="" method="post">
-                                                        <div class="input-group">
-                                                            <span class="input-group-text">หมายเหตุ</span>
-                                                            <input type="text" class="form-control"
-                                                                name="pallet_order_note"
-                                                                value="{{ $Pallets[0]->pallet_type }}" disabled>
+                                                <div class="col-lg-5 col-md-12 col-sm-12">
+                                                    <form action="{{route('updatePalletType',[$Pallets[0]->id])}}">
+                                                        @csrf
+                                                        <div class="row">
+                                                            <!-- Column for Select and Edit Button -->
+                                                            <div class="col-lg-10 col-md-10 col-sm-10">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">ประเภทพาเลท</span>
+                                                                    <select class="form-select" name="pallet_type_id" id="edit-pallet-type-select" disabled>
+                                                                        @foreach ($pallet_type as $type)
+                                                                            <option value="{{$type->id}}" 
+                                                                                {{ $Pallets[0]->pallet_type == $type->pallet_type ? 'selected' : '' }}>
+                                                                                {{ $type->pallet_type }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <button type="button" id="edit-pallet-type" class="btn btn-primary">ปรับเปลี่ยน</button>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Column for Cancel Button -->
+                                                            <div class="col-lg-2 col-md-2 col-sm-2">
+                                                                <button type="button" id="cancel-edit-pallet-type" class="btn btn-danger" hidden>ยกเลิก</button>
+                                                            </div>
                                                         </div>
                                                     </form>
                                                 </div>
-                                                <div class="col-lg-3 col-md-6 col-sm-12"></div>
-                                                {{-- <div class="col-lg-3 col-md-6 col-sm-12">
-                                                    รวมสั่งจ่าย :
-                                                    {{-- {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_order') ?? 'N/A' }} --}}
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                                {{-- รวมจ่ายจริง :
-                                                    {{ $Pallets->where('pallet_id', $Pallets[0]->pallet_id)->where('order_number', $Pallets[0]->order_number)->sum('amount_paid') }} --}}
                                             </div>
                                         </th>
                                     </tr>

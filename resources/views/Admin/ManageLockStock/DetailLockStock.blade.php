@@ -111,7 +111,7 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3 class="card-title">ใบล็อค</h3>
-
+                                
                                 <a href="{{route('PreLock',[$CustomerOrders[0]->CUSTOMER_ID,$CustomerOrders[0]->ORDERED_DATE])}}"
                                     class="btn btn-primary">จัดใบล็อค</a>
                             </div>

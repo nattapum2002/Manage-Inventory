@@ -43,6 +43,10 @@
                                 <td colspan="6" class="text-end fw-bold">Incentive รับจัด (KG.)</td>
                                 <td>{{ $incentive_data['total_incentive_Spl'] }}</td>
                             </tr>
+                            <tr class="bg-light">
+                                <td colspan="6" class="text-end fw-bold">Incentive เลือด (KG.)</td>
+                                <td>{{ $incentive_data['total_incentive_Bl'] }}</td>
+                            </tr>
                         </tfoot>
                     </table>
                 </div>

@@ -10,7 +10,11 @@
 @include('layouts.css')
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
-
+    @php
+        if (!Auth::user()) {
+            return redirect()->route('Login.index');
+        }
+    @endphp
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand navbar-light">
             <ul class="navbar-nav">
