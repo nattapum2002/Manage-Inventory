@@ -32,9 +32,12 @@
                                         <div class="form-group">
                                             <label for="room">ห้องเก็บ</label>
                                             <select class="form-control" name="room" id="room">
-                                                <option value="" selected>เลือกห้อง</option>
-                                                <option value="Cold-A">Cold-A</option>
-                                                <option value="Cold-C">Cold-C</option>
+                                                @foreach ($warehouse as $room)
+                                                    <option {{ $data->warehouse_id == $room->id ? 'selected' : '' }}
+                                                        value="{{ $room->id }}">
+                                                        {{ $room->warehouse_name == 'Blood' ? 'เลือด' : $room->warehouse_name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>

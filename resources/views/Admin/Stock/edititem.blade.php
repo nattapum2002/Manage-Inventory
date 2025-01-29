@@ -22,15 +22,12 @@
                                 <div class="form-group">
                                     <label for="room_id">ห้องเก็บ</label>
                                     <select name="room" class="form-control" id="">
-                                        <option {{ $data->warehouse == 'Cold-A' ? 'selected' : '' }} value="Cold-A">
-                                            Cold-A
-                                        </option>
-                                        <option {{ $data->warehouse == 'Cold-C' ? 'selected' : '' }} value="Cold-C">
-                                            Cold-C
-                                        </option>
-                                        <option {{ $data->warehouse == 'Blood' ? 'selected' : '' }} value="Blood">
-                                            เลือด
-                                        </option>
+                                        @foreach ($warehouse as $room)
+                                            <option {{ $data->warehouse_id == $room->id ? 'selected' : '' }}
+                                                value="{{ $room->id }}">
+                                                {{ $room->warehouse_name == 'Blood' ? 'เลือด' : $room->warehouse_name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>

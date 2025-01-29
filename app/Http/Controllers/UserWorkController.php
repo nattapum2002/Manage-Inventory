@@ -52,7 +52,7 @@ class UserWorkController extends Controller
                 'product.product_um',
                 'product.product_um2',
                 'product_work_desc.product_work_desc',
-                'warehouse.warehouse',
+                'warehouse.warehouse_name as warehouse',
                 'confirmOrder.quantity',
             )
             ->join('pallet', 'confirmOrder.pallet_id', '=', 'pallet.id')
@@ -60,7 +60,7 @@ class UserWorkController extends Controller
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->join('customer', 'pallet.customer_id', '=', 'customer.customer_id')
             ->join('product_work_desc', 'confirmOrder.product_work_desc', '=', 'product_work_desc.id')
-            ->join('warehouse', 'pallet.room', '=', 'warehouse.id')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->where('confirmOrder.pallet_id', '=', $pallet_id)
             ->get();
 

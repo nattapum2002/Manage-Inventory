@@ -135,6 +135,7 @@ class ShowStat extends Controller
         $data = DB::table('product_stock')
             ->join('product_transactions', 'product_stock.product_id', '=', 'product_transactions.product_id')
             ->join('product', 'product_stock.product_id', '=', 'product.product_id')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->whereDate('product_transactions.datetime', $date)
             ->select(
                 'product_stock.product_id',
@@ -148,7 +149,7 @@ class ShowStat extends Controller
                 DB::raw("SUM(CASE WHEN product_transactions.transaction_type = 'IN' THEN product_transactions.quantity2 ELSE 0 END) as transaction_quantity_in2"),
                 DB::raw("SUM(CASE WHEN product_transactions.transaction_type = 'OUT' THEN product_transactions.quantity2 ELSE 0 END) as transaction_quantity_out2"),
                 'product.product_um2',
-                'product.warehouse',
+                'warehouse.warehouse_name as warehouse',
             )
             ->groupBy(
                 'product_stock.product_id',
@@ -158,7 +159,7 @@ class ShowStat extends Controller
                 'product.product_um',
                 'product_stock.quantity2',
                 'product.product_um2',
-                'product.warehouse',
+                'warehouse.warehouse_name as warehouse',
             )
             ->get();
 
@@ -170,6 +171,7 @@ class ShowStat extends Controller
         $data = DB::table('product_stock')
             ->join('product_transactions', 'product_stock.product_id', '=', 'product_transactions.product_id')
             ->join('product', 'product_stock.product_id', '=', 'product.product_id')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->whereDate('product_transactions.datetime', $date)
             ->select(
                 'product_stock.product_id',
@@ -183,7 +185,7 @@ class ShowStat extends Controller
                 DB::raw("SUM(CASE WHEN product_transactions.transaction_type = 'IN' THEN product_transactions.quantity2 ELSE 0 END) as transaction_quantity_in2"),
                 DB::raw("SUM(CASE WHEN product_transactions.transaction_type = 'OUT' THEN product_transactions.quantity2 ELSE 0 END) as transaction_quantity_out2"),
                 'product.product_um2',
-                'product.warehouse',
+                'warehouse.warehouse_name as warehouse',
             )
             ->groupBy(
                 'product_stock.product_id',
@@ -193,7 +195,7 @@ class ShowStat extends Controller
                 'product.product_um',
                 'product_stock.quantity2',
                 'product.product_um2',
-                'product.warehouse',
+                'warehouse.warehouse_name as warehouse',
             )
             ->get();
 

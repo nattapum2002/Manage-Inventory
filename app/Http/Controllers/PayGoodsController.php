@@ -51,13 +51,14 @@ class PayGoodsController extends Controller
         return DB::table('pallet')
             ->Join('pallet_detail', 'pallet.pallet_id', '=', 'pallet_detail.pallet_id')
             ->Join('product', 'pallet_detail.product_id', '=', 'product.product_id')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             // ->join('pallet_team', 'pallet.pallet_id', '=', 'pallet_team.pallet_id')
             // ->where('pallet.order_number', $order_number)
             ->select(
                 'pallet.pallet_id',
                 'pallet.order_number',
                 'pallet.pallet_name',
-                'pallet.warehouse',
+                'warehouse.warehouse_name as warehouse',
                 // 'pallet_team.team_id',
                 'pallet_detail.product_id',
                 'product.product_id',

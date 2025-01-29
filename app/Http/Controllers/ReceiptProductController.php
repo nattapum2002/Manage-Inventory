@@ -22,6 +22,7 @@ class ReceiptProductController extends Controller
             ->join('shift_time', 'shift.shift_time_id', '=', 'shift_time.shift_time_id')
             ->join('receipt_plan_detail', 'receipt_plan.receipt_plan_id', '=', 'receipt_plan_detail.receipt_plan_id')
             ->join('product', 'receipt_plan_detail.product_id', '=', 'product.product_id')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->select(
                 'receipt_plan.receipt_plan_id',
                 'receipt_plan.date',
@@ -30,7 +31,7 @@ class ReceiptProductController extends Controller
                 'product.product_number',
                 'product.product_description',
                 'receipt_plan_detail.total_weight',
-                'product.warehouse'
+                'warehouse.warehouse_name as warehouse'
             )
             ->whereDate('receipt_plan.date', $date)
             ->where('shift.shift_time_id', $shift_id)
@@ -178,7 +179,7 @@ class ReceiptProductController extends Controller
                         'quantity' => $item['receipt_quantity'],
                         'quantity2' => $item['receipt_quantity2'],
                         'transaction_type' => 'IN',
-                        'warehouse' => $item['warehouse'],
+                        'warehouse_id' => $item['warehouse'],
                         'department' => $validated['department'],
                         'datetime' => $timestamp,
                     ];

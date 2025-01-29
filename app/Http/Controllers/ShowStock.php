@@ -16,13 +16,15 @@ class ShowStock extends Controller
     private function GetProducts($product_id = null)
     {
         $query = DB::table('product')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->select(
                 'product_id',
                 'product_number',
                 'product_description',
                 'product_um',
                 'product_um2',
-                'warehouse',
+                'warehouse.id as warehouse_id',
+                'warehouse_name as warehouse',
                 'note',
                 'status'
             );
@@ -38,6 +40,7 @@ class ShowStock extends Controller
     {
         return DB::table('product_stock')
             ->join('product', 'product.product_id', '=', 'product_stock.product_id')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->select(
                 'product.product_id',
                 'product.product_number',
@@ -46,15 +49,15 @@ class ShowStock extends Controller
                 'product.product_um',
                 'product_stock.quantity2',
                 'product.product_um2',
-                'product.warehouse',
+                'warehouse.warehouse_name as warehouse',
                 'product.note',
                 'product.status'
             )
             ->when($Warehouse !== 'All', function ($query) use ($Warehouse) {
-                $query->where('product.warehouse', $Warehouse);
+                $query->where('warehouse.warehouse_name', $Warehouse);
             })
             ->when($showAll == false, function ($query) {
-                $query->whereNotNull('product.warehouse');
+                $query->whereNotNull('warehouse.warehouse_name');
             })
             ->get();
     }
@@ -97,7 +100,9 @@ class ShowStock extends Controller
     {
         $data = $this->GetProducts($product_id);
 
-        return view('Admin.Stock.edititem', compact('data'));
+        $warehouse = DB::table('warehouse')->get();
+
+        return view('Admin.Stock.edititem', compact('data', 'warehouse'));
     }
 
     public function SaveEditProduct(Request $request)
@@ -114,7 +119,7 @@ class ShowStock extends Controller
                     ->where('product_number', $validated['product_id'])
                     ->update([
                         'product_description' => $validated['product_name'],
-                        'warehouse' => $validated['room'],
+                        'warehouse_id' => $validated['room'],
                     ]);
             });
 

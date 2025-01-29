@@ -221,7 +221,7 @@ class LockController extends Controller
                         'order_number' => str_replace(" ", "", $data['order_no']),
                         'pallet_name' => $counter,
                         'pallet_type' => 'ทั่วไป',
-                        'warehouse' => $data['warehouse'],
+                        'warehouse_id' => $data['warehouse'],
                         'note' => null,
                         'arrange_pallet_status' => false,
                         'recive_status' => false,
@@ -315,13 +315,14 @@ class LockController extends Controller
             // ->join('customer', 'customer.customer_id', '=', 'orders.customer_id')
             ->join('pallet_detail', 'pallet.pallet_id', '=', 'pallet_detail.pallet_id')
             ->join('product', 'pallet_detail.product_id', '=', 'product.product_id')
+            ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->leftJoin('pallet_team', 'pallet.pallet_id', '=', 'pallet_team.pallet_id')
             ->leftJoin('team', 'pallet_team.team_id', '=', 'team.team_id')
             ->select(
                 'pallet.id',
                 'pallet.pallet_id',
                 'pallet.arrange_pallet_status as status',
-                'pallet.warehouse',
+                'warehouse.warehouse_name as warehouse',
                 'pallet_detail.quantity',
                 'pallet_detail.quantity2',
                 'product.product_um',
