@@ -21,28 +21,30 @@
                                         <div class="form-group">
                                             <label for="shift_name">กะ</label>
                                             <input type="text" class="form-control" id="shift_name" name="shift_name"
-                                                value="{{ $ShiftTeams['shift_name'] }}">
+                                                value="{{ $ShiftTeams['shift_name'] }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label for="start_shift">เวลาเริ่ม</label>
                                             <input type="text" class="form-control" id="start_shift" name="start_shift"
-                                                value="{{ (new DateTime($ShiftTeams['start_shift']))->format('H:i') }}">
+                                                value="{{ (new DateTime($ShiftTeams['start_shift']))->format('H:i') }}"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label for="end_shift">เวลาเลิก</label>
                                             <input type="text" class="form-control" id="end_shift" name="end_shift"
-                                                value="{{ (new DateTime($ShiftTeams['end_shift']))->format('H:i') }}">
+                                                value="{{ (new DateTime($ShiftTeams['end_shift']))->format('H:i') }}"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label for="date">วันที่</label>
                                             <input type="text" class="form-control" id="date" name="date"
-                                                value="{{ (new DateTime($ShiftTeams['date']))->format('d/m/Y') }}">
+                                                value="{{ (new DateTime($ShiftTeams['date']))->format('d/m/Y') }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12">
@@ -63,39 +65,33 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <div class="col-12 d-flex justify-content-center">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddTeamShift">
+                <div class="col-12 d-flex justify-content-between">
+                    <a href="{{ route('AddTeamForm', $ShiftTeams['shift_id']) }}"
+                        class="btn btn-primary">เพิ่มแบบฟอร์มทีม</a>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#AddTeamShift">
                         เพิ่มทีม
                     </button>
                 </div>
             </div>
             <div class="row">
                 @foreach ($ShiftTeams['teams'] as $team)
-                    {{-- @dd($team) --}}
                     @if ($team['team_id'] != null)
                         <div class="col-lg-6">
                             <div class="card">
                                 <div class="card-header">
                                     <div class="row">
-                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
                                             <div class="form-group">
                                                 <label for="team_name">ทีม</label>
                                                 <input type="text" class="form-control" id="team_name" name="team_name"
                                                     value="{{ $team['team_name'] ?? 'N/A' }}" readonly>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-md-3 col-sm-12">
-                                            <div class="form-group">
-                                                <label for="work">ลักษณะงาน</label>
-                                                <input type="text" class="form-control" id="work" name="work"
-                                                    value="{{ $team['work'] ?? 'N/A' }}" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
                                             <div class="form-group">
                                                 <label for="foreman">โฟร์แมน</label>
                                                 <input type="text" class="form-control" id="foreman" name="foreman"
-                                                    value="{{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['name'] ?? 'N/A' }} {{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['surname'] ?? 'N/A' }}"
+                                                    value="{{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['name'] ?? 'N/A' }} {{ $team['users']->where('dmc_position', 'โฟร์แมน')[0]['surname'] ?? '' }}"
                                                     readonly>
                                             </div>
                                         </div>
@@ -106,7 +102,7 @@
                                                 name="note" value="{{ $team['note'] }}" readonly>
                                         </div>
                                     </div> --}}
-                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
                                             <div class="form-group">
                                                 <label>#</label>
                                                 <br>
@@ -117,8 +113,8 @@
                                                         data-users='@json($team['users'])'>
                                                         <i class="fa fa-edit"></i>
                                                     </button>
-                                                    {{-- <a href="{{ route('DeleteTeam', ['Shift_id' => $ShiftTeams['shift_id'], 'team_id' => $team['team_id']]) }}"
-                                                    class="btn btn-danger"><i class="fas fa-trash"></i></a> --}}
+                                                    <a href="{{ route('DeleteTeam', ['Shift_id' => $ShiftTeams['shift_id'], 'team_id' => $team['team_id']]) }}"
+                                                        class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -131,6 +127,7 @@
                                                 <th>รหัสพนักงาน</th>
                                                 <th>ชื่อพนักงาน</th>
                                                 <th>ตําแหน่งในทีม</th>
+                                                <th>รายละเอียดงาน</th>
                                                 {{-- <th>หมายเหตุ</th> --}}
                                             </tr>
                                         </thead>
@@ -140,6 +137,7 @@
                                                     <td>{{ $user['user_id'] ?? 'N/A' }}</td>
                                                     <td>{{ $user['name'] ?? 'N/A' }} {{ $user['surname'] ?? 'N/A' }}</td>
                                                     <td>{{ $user['dmc_position'] ?? 'N/A' }}</td>
+                                                    <td>{{ $user['work_description'] ?? 'N/A' }}</td>
                                                     {{-- <td>{{ $user['note'] ?? 'N/A' }}</td> --}}
                                                 </tr>
                                             @endforeach
@@ -156,7 +154,7 @@
             <div class="modal fade" id="AddTeamShift">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                        <form action="{{ route('SaveAddTeam') }}" method="POST">
+                        <form action="{{ route('SaveAddTeam', $ShiftTeams['shift_id']) }}" method="POST">
                             @csrf
                             <div class="modal-header">
                                 <h4 class="modal-title">เพิ่มทีม</h4>
@@ -172,16 +170,10 @@
                                             <input type="text" class="form-control" name="team_name">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label>ลักษณะงาน</label>
-                                            <input type="text" class="form-control" name="work">
-                                        </div>
-                                    </div>
                                     <div class="col-lg-6 col-md-12 col-sm-12">
                                         <div class="form-group">
                                             <label>หมายเหตุ</label>
-                                            <input type="text" class="form-control" name="note">
+                                            <textarea class="form-control" name="note" rows="1"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -196,6 +188,9 @@
                                         <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="name">ชื่อ</label>
                                             <input type="text" class="form-control" id="name0" name="name[0]">
+                                            @error('name')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="surname">นามสกุล</label>
@@ -203,19 +198,25 @@
                                                 disabled>
                                         </div>
                                         <div class="col-lg-2 col-md-4 col-sm-12">
-                                            <label for="position">ตําแหน่ง</label>
-                                            <input type="text" class="form-control" id="position0" name="position[0]"
-                                                disabled>
+                                            <label for="dmc_position">ตําแหน่งในทีม</label>
+                                            <input type="text" class="form-control" id="dmc_position0"
+                                                name="dmc_position[0]">
+                                            @error('dmc_position')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-lg-2 col-md-4 col-sm-12">
-                                            <label for="dmc_position">ตําแหน่งในทีม</label>
-                                            <input type="text" class="form-control" name="dmc_position[0]">
+                                            <label for="work_description">รายละเอียดงาน</label>
+                                            <input type="text" class="form-control" id="work_description0"
+                                                name="work_description[0]">
+                                            @error('work_description')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-lg-2 col-md-4 col-sm-12">
                                             <label for="#">#</label>
                                         </div>
                                     </div>
-                                    <hr>
                                 </div>
                                 <div id="add-user-team"></div>
                                 <div class="d-flex justify-content-center mt-3">
@@ -235,7 +236,7 @@
             <div class="modal fade" id="EditTeamShift">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                        <form action="{{ route('SaveEditTeam') }}" method="POST">
+                        <form action="{{ route('SaveEditTeam', $ShiftTeams['shift_id']) }}" method="POST">
                             @csrf
                             <div class="modal-header">
                                 <h4 class="modal-title">แก้ไขทีม</h4>
@@ -252,16 +253,10 @@
                                                 name="team_name">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label>ลักษณะงาน</label>
-                                            <input type="text" class="form-control" id="edit_work" name="work">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-12 col-sm-12">
+                                    <div class="col-lg-9 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label>หมายเหตุ</label>
-                                            <input type="text" class="form-control" id="edit_note" name="note">
+                                            <textarea class="form-control" name="note" id="edit_note" rows="1"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -360,112 +355,192 @@
     </script>
 
     <script>
-        let userCount = 0;
+        let userCount = 0; // สำหรับการเพิ่มผู้ใช้
+        let editUserCount = 0; // สำหรับการแก้ไขผู้ใช้
 
-        // 1️⃣ ฟังก์ชันช่วยเหลือต่างๆ
-        function createUserRow(index, user = {}) {
+        // ฟังก์ชันสร้างแถวผู้ใช้ (ใช้ร่วมกันทั้ง add และ edit)
+        function createUserRow(index, user = {}, mode = 'add') {
+            const prefix = mode === 'edit' ? 'edit_' : '';
             return `
-            <div class="row mb-3" id="user-${index}">
+            <div class="row mb-3" id="${prefix}user-${index}">
                 <div class="col-lg-2 col-md-4 col-sm-12">
-                    <label for="user_id">รหัสพนักงาน</label>
-                    <input type="text" class="form-control" id="user_id${index}" name="user_id[${index}]" value="${user.user_id || ''}" readonly>
+                    <label for="${prefix}user_id">รหัสพนักงาน</label>
+                    <input type="text" class="form-control" id="${prefix}user_id${index}" name="${prefix}user_id[${index}]" value="${user.user_id || ''}" readonly>
                 </div>
                 <div class="col-lg-2 col-md-4 col-sm-12">
-                    <label for="name">ชื่อ</label>
-                    <input type="text" class="form-control" id="name${index}" name="name[${index}]" value="${user.name || ''}">
+                    <label for="${prefix}name">ชื่อ</label>
+                    <input type="text" class="form-control" id="${prefix}name${index}" name="${prefix}name[${index}]" value="${user.name || ''}">
                 </div>
                 <div class="col-lg-2 col-md-4 col-sm-12">
-                    <label for="surname">นามสกุล</label>
-                    <input type="text" class="form-control" id="surname${index}" name="surname[${index}]" value="${user.surname || ''}" disabled>
+                    <label for="${prefix}surname">นามสกุล</label>
+                    <input type="text" class="form-control" id="${prefix}surname${index}" name="${prefix}surname[${index}]" value="${user.surname || ''}" disabled>
                 </div>
                 <div class="col-lg-2 col-md-4 col-sm-12">
-                    <label for="position">ตําแหน่ง</label>
-                    <input type="text" class="form-control" id="position${index}" name="position[${index}]" value="${user.position || ''}" disabled>
+                    <label for="${prefix}dmc_position">ตําแหน่งในทีม</label>
+                    <input type="text" class="form-control" id="${prefix}dmc_position${index}" name="${prefix}dmc_position[${index}]" value="${user.dmc_position || ''}">
                 </div>
                 <div class="col-lg-2 col-md-4 col-sm-12">
-                    <label for="dmc_position">ตําแหน่งในทีม</label>
-                    <input type="text" class="form-control" name="dmc_position[${index}]" value="${user.dmc_position || ''}">
+                    <label for="${prefix}work_description">รายละเอียดงาน</label>
+                    <input type="text" class="form-control" id="${prefix}work_description${index}" name="${prefix}work_description[${index}]" value="${user.work_description || ''}">
                 </div>
                 <div class="col-lg-2 col-md-4 col-sm-12">
                     <label for="#">#</label><br>
-                    <button type="button" class="btn btn-danger remove-user"><i class="fas fa-trash"></i></button>
+                    <button type="button" class="btn btn-danger ${prefix}remove-user"><i class="fas fa-trash"></i></button>
                 </div>
-            </div><hr>`;
+            </div>`;
         }
 
-        function initializeModal(modalId, teamData, users) {
-            $(`#${modalId} #team_id`).val(teamData.team_id);
-            $(`#${modalId} #edit_team_name`).val(teamData.team_name);
-            $(`#${modalId} #edit_work`).val(teamData.work);
-            $(`#${modalId} #edit_note`).val(teamData.note);
-            $(`#${modalId} #edit-user-team`).html('');
+        // ฟังก์ชันจัดการ Autocomplete
+        function initializeAutocomplete({
+            nameSelector,
+            idSelector,
+            surnameSelector,
+            departmentSelector,
+            positionSelector,
+            workSelector,
+            autocompleteRoute
+        }) {
+            if (nameSelector) {
+                $(nameSelector).autocomplete({
+                    source: function(request, response) {
+                        $.ajax({
+                            url: autocompleteRoute.name || "{{ route('AutoCompleteTeam') }}",
+                            data: {
+                                query: request.term
+                            },
+                            success: function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 0,
+                    select: function(event, ui) {
+                        $(idSelector).val(ui.item.user_id);
+                        $(nameSelector).val(ui.item.name);
+                        $(surnameSelector).val(ui.item.surname);
+                        $(departmentSelector).val(ui.item.department);
+                    }
+                }).focus(function() {
+                    $(this).autocomplete('search', '');
+                });
+            }
 
-            users.forEach((user, index) => {
-                $(`#${modalId} #edit-user-team`).append(createUserRow(index, user));
-                initializeTeamAutocomplete(`#name${index}`, `#user_id${index}`, `#surname${index}`,
-                    `#position${index}`);
-            });
+            if (positionSelector) {
+                $(positionSelector).autocomplete({
+                    source: function(request, response) {
+                        $.ajax({
+                            url: autocompleteRoute.position ||
+                                "{{ route('AutocompleteDMCPosition') }}",
+                            data: {
+                                query: request.term
+                            },
+                            success: function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 0,
+                    select: function(event, ui) {
+                        $(positionSelector).val(ui.item.dmc_position);
+                    }
+                }).focus(function() {
+                    $(this).autocomplete('search', '');
+                });
+            }
+
+            if (workSelector) {
+                $(workSelector).autocomplete({
+                    source: function(request, response) {
+                        $.ajax({
+                            url: autocompleteRoute.work ||
+                                "{{ route('AutocompleteWork') }}",
+                            data: {
+                                query: request.term
+                            },
+                            success: function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 0,
+                    select: function(event, ui) {
+                        $(workSelector).val(ui.item.work_description);
+                    }
+                }).focus(function() {
+                    $(this).autocomplete('search', '');
+                });
+            }
         }
 
-        function initializeTeamAutocomplete(nameSelector, idSelector, surnameSelector, positionSelector) {
-            $(nameSelector).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{{ route('AutoCompleteTeam') }}",
-                        data: {
-                            query: request.term
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 0,
-                select: function(event, ui) {
-                    $(idSelector).val(ui.item.user_id);
-                    $(nameSelector).val(ui.item.name);
-                    $(surnameSelector).val(ui.item.surname);
-                    $(positionSelector).val(ui.item.position);
-                }
-            });
+        // ฟังก์ชันเพิ่มแถวผู้ใช้
+        function addUserRow(containerSelector, mode = 'add') {
+            let currentCount;
+            if (mode === 'add') {
+                userCount++;
+                currentCount = userCount;
+            } else if (mode === 'edit') {
+                editUserCount++;
+                currentCount = editUserCount;
+            }
 
-            $(nameSelector).focus(function() {
-                $(this).autocomplete('search', '');
-            });
-        }
-
-        // 2️⃣ ฟังก์ชันเพิ่มแถวผู้ใช้
-        function addUserRow(containerSelector) {
-            userCount++;
-            const userRow = createUserRow(userCount);
+            const userRow = createUserRow(currentCount, {}, mode);
             $(containerSelector).append(userRow);
-            initializeTeamAutocomplete(`#name${userCount}`, `#user_id${userCount}`, `#surname${userCount}`,
-                `#position${userCount}`);
+
+            const prefix = mode === 'edit' ? '#edit_' : '#';
+            initializeAutocomplete({
+                nameSelector: `${prefix}name${currentCount}`,
+                idSelector: `${prefix}user_id${currentCount}`,
+                surnameSelector: `${prefix}surname${currentCount}`,
+                departmentSelector: `${prefix}department${currentCount}`,
+                positionSelector: `${prefix}dmc_position${currentCount}`,
+                workSelector: `${prefix}work_description${currentCount}`,
+                autocompleteRoute: {}
+            });
         }
 
-        // 3️⃣ การทำงานต่างๆ ที่เกี่ยวข้องกับปุ่มและโมดอล
+        // การจัดการปุ่มและโมดอล
         $(document).on('click', '#add-user', function() {
             addUserRow('#add-user-team');
         });
 
         $(document).on('click', '#edit-add-user', function() {
-            addUserRow('#edit-user-team');
+            addUserRow('#edit-user-team', 'edit');
         });
 
         $(document).on('click', '.remove-user', function() {
             $(this).closest('[id^="user-"]').remove();
         });
 
-        $('#EditTeamShift').on('show.bs.modal', function(event) {
-            let button = $(event.relatedTarget);
-            let teamData = button.data('team');
-            let users = button.data('users');
-            initializeModal('EditTeamShift', teamData, users);
+        $(document).on('click', '.edit_remove-user', function() {
+            $(this).closest('[id^="edit_user-"]').remove();
         });
 
-        // ตรวจสอบว่ามีช่อง name0 หรือไม่ ถ้ามีให้เรียก initializeTeamAutocomplete
+        $('#EditTeamShift').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const teamData = button.data('team');
+            const users = button.data('users');
+            $('#EditTeamShift #team_id').val(teamData.team_id);
+            $('#EditTeamShift #edit_team_name').val(teamData.team_name);
+            $('#EditTeamShift #edit_note').val(teamData.note);
+            $('#EditTeamShift #edit-user-team').html('');
+
+            editUserCount = users.length; // ตั้งค่าเริ่มต้นของ editUserCount
+            users.forEach((user, index) => {
+                $('#EditTeamShift #edit-user-team').append(createUserRow(index + 1, user, 'edit'));
+            });
+        });
+
+        // เริ่มต้น
         if ($('#name0').length) {
-            initializeTeamAutocomplete('#name0', '#user_id0', '#surname0', '#position0');
+            initializeAutocomplete({
+                nameSelector: '#name0',
+                idSelector: '#user_id0',
+                surnameSelector: '#surname0',
+                departmentSelector: '#department0',
+                positionSelector: '#dmc_position0',
+                workSelector: '#work_description0',
+                autocompleteRoute: {}
+            });
         }
     </script>
 @endsection

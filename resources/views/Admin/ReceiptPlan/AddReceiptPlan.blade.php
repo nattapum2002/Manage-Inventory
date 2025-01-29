@@ -11,22 +11,15 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('SaveAddProductReceiptPlan') }}" method="POST">
+                            <form action="{{ route('SaveAddReceiptPlan') }}" method="POST">
                                 @csrf
                                 <article class="row">
-                                    {{-- <div class="col-lg-2 col-md-4 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="product_receipt_plan_id">รหัสแผนรับสินค้า</label>
-                                            <input type="text" class="form-control" id="product_receipt_plan_id"
-                                                name="product_receipt_plan_id" placeholder="รหัสแผนรับสินค้า"
-                                                value="{{ $filteredRequest['product_receipt_plan_id'] }}" readonly>
-                                        </div>
-                                    </div> --}}
                                     <div class="col-lg-3 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="shift_id">กะพนักงาน</label>
-                                            <select class="form-control" id="shift_id" name="shift_id">
-                                                <option selected value="{{ $shift->shift_id }}">{{ $shift->shift_name }}
+                                            <select class="form-control" id="shift_id" name="shift_id" readonly>
+                                                <option selected value="{{ $shift->shift_id }}">
+                                                    {{ $shift->shift_name }}
                                                 </option>
                                             </select>
                                             <input type="hidden" class="form-control" id="shift_id" name="shift_id"
@@ -49,7 +42,7 @@
                                     </div>
                                 </article>
                                 <hr>
-                                <table id="AddProductReceiptPlanTable" class="table table-bordered table-striped">
+                                <table id="AddReceiptPlanTable" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             @foreach ($detailHeader as $header)
@@ -81,6 +74,8 @@
                                 <div class="d-flex justify-content-center mt-3">
                                     <input type="hidden" id="filePath" name="filePath" value="{{ $filePath }}">
                                     <button type="submit" class="btn btn-success">บันทึก</button>
+                                    <a href="{{ route('CancelAddReceiptPlan', ['filePath' => $filePath]) }}"
+                                        class="btn btn-danger">ยกเลิก</a>
                                 </div>
                             </form>
                         </div>
@@ -94,18 +89,17 @@
 @section('script')
     <script>
         $(function() {
-            $("#AddProductReceiptPlanTable").DataTable({
-                responsive: true,
-                lengthChange: true,
-                autoWidth: true,
-                // scrollX: true,
-                // layout: {
-                //     topStart: {
-                //         buttons: [
-                //             'copy', 'excel', 'pdf'
-                //         ]
-                //     }
-                // }
+            $("#AddReceiptPlanTable").DataTable({
+                // responsive: true,
+                // lengthChange: true,
+                // autoWidth: true,
+                info: false,
+                scrollX: true,
+                ordering: true,
+                paging: true,
+                pageLength: 50,
+                lengthMenu: [25, 50, 100],
+                order: [],
             });
         });
     </script>

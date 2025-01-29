@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <form action="{{ route('SaveAddCustomerQueue') }}" method="POST">
                         @csrf
-                        <table id="AddCustomerQueueTable" class="table table-bordered table-striped">
+                        <table id="AddCustomerQueueTable" class="table table-bordered table-striped nowrap">
                             <thead>
                                 <tr>
                                     <th>ลำดับ</th>
@@ -56,17 +56,16 @@
 @section('script')
     <script>
         $("#AddCustomerQueueTable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            // scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
+            // responsive: true,
+            // lengthChange: true,
+            // autoWidth: true,
+            info: false,
+            scrollX: true,
+            ordering: true,
+            paging: true,
+            pageLength: 25,
+            lengthMenu: [25, 50, 100],
+            order: []
         });
     </script>
 @endsection

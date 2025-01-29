@@ -14,7 +14,7 @@ class LockTeamUserSeeder extends Seeder
     public function run(): void
     {
         for ($i = 0; $i < 30; $i++) {
-            DB::table('lock_team_user')->insert([
+            DB::table('team_user')->insert([
                 'team_id' => $i,
                 'user_id' => $i,
             ]);

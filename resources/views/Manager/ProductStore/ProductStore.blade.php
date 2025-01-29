@@ -24,16 +24,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($product_stores as $product_store)
+                                    @foreach ($product_stores as $receipt_product)
                                         <tr>
-                                            <td>{{ $product_store->product_slip_id }}</td>
-                                            <td>{{ $product_store->product_slip_number }}</td>
-                                            <td>{{ $product_store->store_date }}</td>
-                                            <td>{{ $product_store->store_time }}</td>
-                                            <td>{{ $product_store->product_checker }}</td>
-                                            <td>{{ $product_store->domestic_checker }}</td>
+                                            <td>{{ $receipt_product->product_slip_id }}</td>
+                                            <td>{{ $receipt_product->product_slip_number }}</td>
+                                            <td>{{ $receipt_product->store_date }}</td>
+                                            <td>{{ $receipt_product->store_time }}</td>
+                                            <td>{{ $receipt_product->product_checker }}</td>
+                                            <td>{{ $receipt_product->domestic_checker }}</td>
                                             <td>
-                                                <a href="{{ route('DetailProductStore', $product_store->product_slip_id) }}"
+                                                <a href="{{ route('DetailProductStore', $receipt_product->product_slip_id) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>

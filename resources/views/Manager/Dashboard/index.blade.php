@@ -11,7 +11,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">การถ่ายโอนสินค้า (product_store)</h3>
+                            <h3 class="card-title">การถ่ายโอนสินค้า (receipt_product)</h3>
                         </div>
                         <div class="card-body">
                             <table id="product_storetable" class="table table-bordered table-striped">
@@ -32,20 +32,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($product_stores as $product_store)
+                                    @foreach ($product_stores as $receipt_product)
                                         <tr>
-                                            <td>{{ $product_store->product_slip_id ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->product_slip_number ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->product_id ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->department ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->weight ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->amount ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->store_date ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->store_time ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->status ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->comment ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->product_checker ?? 'N/A' }}</td>
-                                            <td>{{ $product_store->domestic_checker ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->product_slip_id ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->product_slip_number ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->product_id ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->department ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->weight ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->amount ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->store_date ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->store_time ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->status ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->comment ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->product_checker ?? 'N/A' }}</td>
+                                            <td>{{ $receipt_product->domestic_checker ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -74,7 +74,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">สินค้าคงคลัง (stock)</h3>
+                            <h3 class="card-title">สินค้าคงคลัง (product_stock)</h3>
                         </div>
                         <div class="card-body">
                             <table id="stocktable" class="table table-bordered table-striped">
@@ -87,12 +87,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($stocks as $stock)
+                                    @foreach ($stocks as $product_stock)
                                         <tr>
-                                            <td>{{ $stock->product_id }}</td>
-                                            <td>{{ $stock->item_desc1 }}</td>
-                                            <td>{{ $stock->quantity . ' ' . $stock->quantity_UM }}</td>
-                                            <td>{{ $stock->quantity2 . ' ' . $stock->quantity_UM2 }}</td>
+                                            <td>{{ $product_stock->product_id }}</td>
+                                            <td>{{ $product_stock->product_description }}</td>
+                                            <td>{{ $product_stock->quantity . ' ' . $product_stock->product_um }}</td>
+                                            <td>{{ $product_stock->quantity2 . ' ' . $product_stock->product_um2 }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

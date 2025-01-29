@@ -8,73 +8,67 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-body">
-                    @foreach ($data as $item)
-                        <form action="{{ route('Updatename') }}" method="post">
-                            @csrf
-                            <div class="row">
-                                <div class="col-lg col-md-4 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="product_id">รหัสสินค้า</label>
-                                        <input type="text" class="form-control" id="product_id" name="product_id"
-                                            value="{{ $item->item_no }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg col-md-4 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="room_id">ห้องเก็บ</label>
-                                        <select name="room" class="form-control" id="">
-                                            @foreach ($Warehouse as $item2)
-                                                <option value="{{ $item2->id }}"
-                                                    {{ $item->warehouse == $item2->id ? 'selected' : '' }}>
-                                                    {{ $item2->whs_name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg col-md-4 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="product_name">ชื่อสินค้า</label>
-                                        <input type="text" class="form-control" id="product_name" name="product_name"
-                                            value="{{ $item->item_desc1 }}">
-                                    </div>
-                                </div>
-                                <div class="col-lg col-md-4 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="product_name">หน่วย1 (item_um)</label>
-                                        <input type="text" class="form-control" id="item_um" name="item_um"
-                                            value="{{ $item->item_um }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg col-md-4 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="product_name">หน่วย2 (item_um2)</label>
-                                        <input type="text" class="form-control" id="item_um2" name="item_um2"
-                                            value="{{ $item->item_um2 }}" readonly>
-                                    </div>
+                    <form action="{{ route('SaveEditProduct') }}" method="post">
+                        @csrf
+                        <div class="row">
+                            <div class="col-lg col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="product_id">รหัสสินค้า</label>
+                                    <input type="text" class="form-control" id="product_id" name="product_id"
+                                        value="{{ $data->product_number }}" readonly>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="product_work_desc">ลักษณะงาน</label>
-                                <select class="form-control" name="product_work_desc" id="product_work_desc">
-                                    <option value="1">แยกจ่าย</option>
-                                    <option value="2">รับจัด</option>
-                                    {{-- <option value="ไหลจ่าย">ไหลจ่าย</option> --}}
-                                    <option value="3">เลือด</option>
-                                </select>
+                            <div class="col-lg col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="room_id">ห้องเก็บ</label>
+                                    <select name="room" class="form-control" id="">
+                                        <option {{ $data->warehouse == 'Cold-A' ? 'selected' : '' }} value="Cold-A">
+                                            Cold-A
+                                        </option>
+                                        <option {{ $data->warehouse == 'Cold-C' ? 'selected' : '' }} value="Cold-C">
+                                            Cold-C
+                                        </option>
+                                        <option {{ $data->warehouse == 'Blood' ? 'selected' : '' }} value="Blood">
+                                            เลือด
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="product_name">หน่วย1 (item_um)</label>
-                                <input type="text" class="form-control" id="item_um" name="item_um"
-                                    value="{{ $item->item_um }}" readonly>
+                            <div class="col-lg col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="product_name">ชื่อสินค้า</label>
+                                    <input type="text" class="form-control" id="product_name" name="product_name"
+                                        value="{{ $data->product_description }}">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="product_name">หน่วย2 (item_um2)</label>
-                                <input type="text" class="form-control" id="item_um2" name="item_um2"
-                                    value="{{ $item->item_um2 }}" readonly>
+                            <div class="col-lg col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="product_name">หน่วย1 (UM1)</label>
+                                    <input type="text" class="form-control" id="product_um" name="product_um"
+                                        value="{{ $data->product_um }}" readonly>
+                                </div>
                             </div>
-                            <button class="btn btn-primary" type="submit">บันทึก</button>
-                        </form>
-                    @endforeach
+                            <div class="col-lg col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="product_name">หน่วย2 (UM2)</label>
+                                    <input type="text" class="form-control" id="product_um2" name="product_um2"
+                                        value="{{ $data->product_um2 }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="product_work_desc">ลักษณะงาน</label>
+                                    <select class="form-control" name="product_work_desc" id="product_work_desc">
+                                        <option selected>เลือกลักษณะงาน</option>
+                                        <option value="แยกจ่าย">แยกจ่าย</option>
+                                        <option value="รับจัด">รับจัด</option>
+                                        <option value="เลือด">เลือด</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">บันทึก</button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -13,24 +13,24 @@
                         <div class="card-body">
                             <form action="{{ route('SaveEditDetail') }}" method="POST">
                                 @csrf
-                                <article class="row">
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
                                         <div class="form-group">
-                                            <label for="product_receipt_plan_id">รหัสแผนรับสินค้า</label>
-                                            <input type="text" class="form-control" id="product_receipt_plan_id"
-                                                name="product_receipt_plan_id" value="{{ $product_receipt_plan_id }}"
+                                            <label for="receipt_plan_id">รหัสแผนรับสินค้า</label>
+                                            <input type="text" class="form-control" id="receipt_plan_id"
+                                                name="receipt_plan_id" value="{{ $receipt_plan_id }}"
                                                 placeholder="รหัสแผนรับสินค้า" readonly>
-                                            @error('product_receipt_plan_id')
+                                            @error('receipt_plan_id')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="shift_id">กะพนักงาน</label>
-                                            <select class="form-control" id="shift_id" name="shift_id">
-                                                <option selected value="{{ $ProductReceiptPlans->shift_id }}">
-                                                    {{ $ProductReceiptPlans->shift_name }}
+                                            <select class="form-control" id="shift_id" name="shift_id" readonly>
+                                                <option selected value="{{ $ReceiptPlans->shift_id }}">
+                                                    {{ $ReceiptPlans->shift_name }}
                                                 </option>
                                                 @foreach ($shifts as $shift)
                                                     <option value="{{ $shift->shift_id }}">{{ $shift->shift_name }}
@@ -42,21 +42,20 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label for="date">วันที่</label>
                                             <input type="date" class="form-control" id="date" name="date"
-                                                value="{{ $ProductReceiptPlans->date }}" placeholder="วันที่">
+                                                value="{{ $ReceiptPlans->date }}" placeholder="วันที่">
                                             @error('date')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-5 col-md-10 col-sm-12">
+                                    <div class="col-lg-11 col-md-10 col-sm-12">
                                         <div class="form-group">
                                             <label for="note">หมายเหตุ</label>
-                                            <input type="text" class="form-control" id="note" name="note"
-                                                value="{{ $ProductReceiptPlans->note }}" placeholder="หมายเหตุ">
+                                            <textarea name="note" class="form-control" id="note" name="note" placeholder="หมายเหตุ" rows="1">{{ $ReceiptPlans->note ?? '' }}</textarea>
                                             @error('note')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -68,10 +67,10 @@
                                             <button type="submit" class="btn btn-success">บันทึก</button>
                                         </div>
                                     </div>
-                                </article>
+                                </div>
                             </form>
                             <hr>
-                            <table id="EditProductReceiptPlanTable" class="table table-bordered table-striped">
+                            <table id="EditReceiptPlanTable" class="table table-bordered table-striped nowrap">
                                 <thead>
                                     <tr>
                                         <th>รหัสสินค้า</th>
@@ -80,31 +79,30 @@
                                         <th>เพิ่มจำนวนสินค้า(กก.)</th>
                                         <th>ลดจำนวนสินค้า(กก.)</th>
                                         <th>จำนวนสินค้าทั้งหมด(กก.)</th>
-                                        <th>หมายเหตุ</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($ProductReceiptPlansDetails as $Product)
+                                    @foreach ($ReceiptPlansDetails as $Product)
                                         <tr>
                                             <td>
                                                 <span id="span_product_id_{{ $Product->product_id }}">
-                                                    {{ $Product->product_id }}
+                                                    {{ $Product->product_number }}
                                                 </span>
                                                 <input type="text" class="form-control"
                                                     id="edit_product_id_{{ $Product->product_id }}" name="edit_product_id"
-                                                    value="{{ $Product->product_id }}" style="display:none;">
+                                                    value="{{ $Product->product_number }}" style="display:none;">
                                                 @error('edit_product_id_{{ $Product->product_id }}')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </td>
                                             <td>
                                                 <span id="span_product_name_{{ $Product->product_id }}">
-                                                    {{ $Product->item_desc1 }}
+                                                    {{ $Product->product_description }}
                                                 </span>
                                                 <input type="text" class="form-control"
                                                     id="edit_product_name_{{ $Product->product_id }}"
-                                                    name="edit_product_name" value="{{ $Product->item_desc1 }}"
+                                                    name="edit_product_name" value="{{ $Product->product_description }}"
                                                     style="display:none;" readonly>
                                             </td>
                                             <td>
@@ -144,26 +142,23 @@
                                                     style="display:none;" readonly>
                                             </td>
                                             <td>
-                                                <span id="span_note_{{ $Product->product_id }}">
-                                                    {{ $Product->note ?? 'N/A' }}
-                                                </span>
-                                                <input type="text" class="form-control"
-                                                    id="edit_note_{{ $Product->product_id }}" name="edit_note"
-                                                    value="{{ $Product->note ?? 'N/A' }}" style="display:none;">
-                                            </td>
-                                            <td>
                                                 <input type="hidden" id="edit_old_product_id_{{ $Product->product_id }}"
                                                     name="edit_old_product_id" value="{{ $Product->product_id }}"
                                                     style="display:none;" readonly>
-                                                <button type="button" class="btn btn-primary edit_product"
-                                                    data-product_id="{{ $Product->product_id }}">แก้ไข</button>
-                                                <button type="button" class="btn btn-danger"
-                                                    id="cancel_edit_product_{{ $Product->product_id }}"
-                                                    style="display:none;">ยกเลิก</button>
-                                                {{-- <a href="#" class="btn btn-danger btn-sm"
-                                                        onclick="DeleteProductReceiptPlanDetail({{ $Product->product_receipt_plan_detail_id }})">
+                                                <input type="hidden" id="receipt_plan_id" name="receipt_plan_id"
+                                                    value="{{ $receipt_plan_id }}" readonly>
+                                                <div class="d-flex">
+                                                    <button type="button" class="btn btn-primary edit_product"
+                                                        data-product_id="{{ $Product->product_id }}">แก้ไข</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="cancel_edit_product_{{ $Product->product_id }}"
+                                                        style="display:none;">ยกเลิก</button>
+                                                    <a href="{{ route('DeleteProduct', ['receipt_plan_id' => $receipt_plan_id, 'product_id' => $Product->product_id]) }}"
+                                                        class="btn btn-danger delete_product ms-2"
+                                                        id="delete_product_{{ $Product->product_id }}">
                                                         <i class="fas fa-trash"></i>
-                                                    </a> --}}
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -176,7 +171,6 @@
                                         <th>เพิ่มจำนวนสินค้า(กก.)</th>
                                         <th>ลดจำนวนสินค้า(กก.)</th>
                                         <th>จำนวนสินค้าทั้งหมด(กก.)</th>
-                                        <th>หมายเหตุ</th>
                                         <th></th>
                                     </tr>
                                 </tfoot>
@@ -190,16 +184,16 @@
                         <div class="card-body">
                             <form action="{{ route('AddProduct') }}" method="POST">
                                 @csrf
-                                <article style="display:none;" class="row">
-                                </article>
+                                <div style="display:none;" class="row">
+                                </div>
 
-                                <article id="add-products">
+                                <div id="add-products">
                                     @error('product_id[${product_count}]')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                </article>
-                                <input type="hidden" id="product_receipt_plan_id" name="product_receipt_plan_id"
-                                    value="{{ $product_receipt_plan_id }}" style="display:none;" readonly>
+                                </div>
+                                <input type="hidden" id="receipt_plan_id" name="receipt_plan_id"
+                                    value="{{ $receipt_plan_id }}" style="display:none;" readonly>
                                 <div class="d-flex justify-content-center">
                                     <button type="button" class="btn btn-primary mr-3"
                                         id="add-product">เพิ่มสินค้า</button>
@@ -216,19 +210,152 @@
 
 @section('script')
     <script>
-        $("#EditProductReceiptPlanTable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            // scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
+        $("#EditReceiptPlanTable").DataTable({
+            // responsive: true,
+            // lengthChange: true,
+            // autoWidth: true,
+            info: false,
+            scrollX: true,
+            ordering: true,
+            paging: true,
+            pageLength: 50,
+            lengthMenu: [25, 50, 100],
+            order: [],
         });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            let fields = ['product_id', 'product_name', 'product_quantity', 'increase_quantity', 'reduce_quantity',
+                'total_quantity', 'old_product_id'
+            ];
+
+            const receipt_plan_id = $('#receipt_plan_id').val();
+
+            function hideEdit(edit_product_id) {
+                fields.forEach(function(field) {
+                    $('#span_' + field + '_' + edit_product_id).show();
+                    $('#edit_' + field + '_' + edit_product_id).hide();
+                });
+                $('.save_product_btn').text('แก้ไข').removeClass('btn-success')
+                    .addClass('btn-primary').removeClass('save_product_btn').addClass('edit_product');
+                $('#cancel_edit_product_' + edit_product_id).hide();
+                $('#delete_product_' + edit_product_id).show();
+            }
+
+            $(document).on('click', '.edit_product', function() {
+                let edit_product_id = $(this).data('product_id');
+                fields.forEach(function(field) {
+                    $('#span_' + field + '_' + edit_product_id).hide();
+                    $('#edit_' + field + '_' + edit_product_id).show();
+                });
+                $('#cancel_edit_product_' + edit_product_id).show();
+                $('#delete_product_' + edit_product_id).hide();
+                $(this).text('บันทึก').removeClass('btn-primary').addClass('btn-success')
+                    .removeClass('edit_product').addClass('save_product_btn').attr('type', 'button');
+
+                $('#cancel_edit_product_' + edit_product_id).click(function() {
+                    hideEdit(edit_product_id);
+                });
+
+                // Initialize autocomplete for each field when edit mode is activated
+                initializeProductAutocomplete('#edit_product_name_' + edit_product_id,
+                    '#edit_product_id_' + edit_product_id);
+
+                $(`#edit_product_quantity_${edit_product_id}, #edit_increase_quantity_${edit_product_id}, #edit_reduce_quantity_${edit_product_id}`)
+                    .on('input', function() {
+                        const productQuantity = parseFloat($(`#edit_product_quantity_` +
+                                edit_product_id)
+                            .val()) || 0;
+                        const increaseQuantity = parseFloat($(`#edit_increase_quantity_` +
+                                edit_product_id)
+                            .val()) || 0;
+                        const reduceQuantity = parseFloat($(`#edit_reduce_quantity_` + edit_product_id)
+                            .val()) || 0;
+
+                        const totalQuantity = productQuantity + increaseQuantity - reduceQuantity;
+                        $(`#edit_total_quantity_` + edit_product_id).val(totalQuantity.toFixed(2));
+                    });
+            });
+
+            $(document).on('click', '.save_product_btn', function() {
+                let edit_product_id = $(this).data('product_id');
+                let data_product = {};
+
+                // รวบรวมข้อมูลจากฟิลด์ต่างๆ
+                $.each(fields, function(index, field) {
+                    data_product[field] = $('#edit_' + field + '_' + edit_product_id).val();
+                    $('#span_' + field + '_' + edit_product_id).text($('#edit_' + field + '_' +
+                        edit_product_id).val());
+                });
+
+                // ส่งข้อมูลด้วย fetch
+                fetch("{{ route('SaveEditProduct') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            receipt_plan_id: receipt_plan_id,
+                            product_edit: data_product
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert(data.message);
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+
+                hideEdit(edit_product_id);
+            });
+        });
+
+        function initializeProductAutocomplete(nameSelector, idSelector) {
+            $(idSelector).autocomplete({
+                source: function(request, response) {
+                    fetch("{{ route('AutocompleteProduct') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                query: request.term // ส่งข้อมูลที่ต้องการค้นหา
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
+                        })
+                        .catch(error => {
+                            console.error("Error fetching autocomplete data:", error);
+                        });
+                },
+                minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 0 ตัวอักษร
+                select: function(event, ui) {
+                    // เมื่อเลือกสินค้า ให้เติมข้อมูลในทั้งสองช่อง
+                    $(nameSelector).val(ui.item.product_name); // เติมชื่อสินค้า
+                    $(idSelector).val(ui.item.product_id); // เติมรหัสสินค้า
+                }
+            });
+
+            $(idSelector).focus(function() {
+                $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
+            });
+        }
     </script>
 
     <script>
@@ -254,15 +381,6 @@
                                     <label for="product_name[${product_count}]" class="form-label">รายการสินค้า</label>
                                     <input type="text" class="form-control" id="product_name${product_count}" name="product_name[${product_count}]" readonly>
                                     @error('product_name${product_count}')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-lg-5 col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <label for="note[${product_count}]" class="form-label">หมายเหตุ</label>
-                                    <input type="text" class="form-control" id="note${product_count}" name="note[${product_count}]">
-                                    @error('note${product_count}')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -345,143 +463,28 @@
         function initializeProductAutocomplete(nameSelector, idSelector) {
             $(idSelector).autocomplete({
                 source: function(request, response) {
-                    $.ajax({
-                        url: "{{ route('AutocompleteProduct') }}",
-                        data: {
-                            query: request
-                                .term // ส่งข้อมูลเพื่อระบุว่าเราค้นหาจาก product_name หรือ product_id
-                        },
-                        success: function(data) {
-                            console.log(data); // แสดงข้อมูลที่ได้รับใน console
+                    fetch("{{ route('AutocompleteProduct') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                query: request.term // ส่งข้อมูลที่ต้องการค้นหา
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
                             response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
-                        }
-                    });
-                },
-                minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 0 ตัวอักษร
-                select: function(event, ui) {
-                    // เมื่อเลือกสินค้า ให้เติมข้อมูลในทั้งสองช่อง
-                    $(nameSelector).val(ui.item.product_name); // เติมชื่อสินค้า
-                    $(idSelector).val(ui.item.product_id); // เติมรหัสสินค้า
-                }
-            });
-
-            $(idSelector).focus(function() {
-                $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
-            });
-
-        }
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            let fields = ['product_id', 'product_name', 'product_quantity', 'increase_quantity', 'reduce_quantity',
-                'total_quantity', 'note', 'old_product_id'
-            ];
-
-            function hideEdit(edit_product_id) {
-                fields.forEach(function(field) {
-                    $('#span_' + field + '_' + edit_product_id).show();
-                    $('#edit_' + field + '_' + edit_product_id).hide();
-                });
-                $('.save_product_btn').text('แก้ไข').removeClass('btn-success')
-                    .addClass('btn-primary').removeClass('save_product_btn').addClass('edit_product');
-                $('#cancel_edit_product_' + edit_product_id).hide();
-            }
-
-            $(document).on('click', '.edit_product', function() {
-                let edit_product_id = $(this).data('product_id');
-                fields.forEach(function(field) {
-                    $('#span_' + field + '_' + edit_product_id).hide();
-                    $('#edit_' + field + '_' + edit_product_id).show();
-                });
-                $('#cancel_edit_product_' + edit_product_id).show();
-                $(this).text('บันทึก').removeClass('btn-primary').addClass('btn-success')
-                    .removeClass('edit_product').addClass('save_product_btn').attr('type', 'button');
-
-                $('#cancel_edit_product_' + edit_product_id).click(function() {
-                    hideEdit(edit_product_id);
-                });
-
-                // Initialize autocomplete for each field when edit mode is activated
-                initializeProductAutocomplete('#edit_product_name_' + edit_product_id,
-                    '#edit_product_id_' + edit_product_id);
-
-                $(`#edit_product_quantity_${edit_product_id}, #edit_increase_quantity_${edit_product_id}, #edit_reduce_quantity_${edit_product_id}`)
-                    .on('input', function() {
-                        const productQuantity = parseFloat($(`#edit_product_quantity_` +
-                                edit_product_id)
-                            .val()) || 0;
-                        const increaseQuantity = parseFloat($(`#edit_increase_quantity_` +
-                                edit_product_id)
-                            .val()) || 0;
-                        const reduceQuantity = parseFloat($(`#edit_reduce_quantity_` + edit_product_id)
-                            .val()) || 0;
-
-                        const totalQuantity = productQuantity + increaseQuantity - reduceQuantity;
-                        $(`#edit_total_quantity_` + edit_product_id).val(totalQuantity.toFixed(2));
-                    });
-            });
-
-            $(document).on('click', '.save_product_btn', function() {
-                let edit_product_id = $(this).data('product_id');
-                let data_product = {};
-
-                $.each(fields, function(index, field) {
-                    data_product[field] = $('#edit_' + field + '_' + edit_product_id)
-                        .val();
-                });
-
-                $.ajax({
-                    url: "{{ route('SaveEditProduct') }}",
-                    method: "POST",
-                    dataType: "json",
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        product_receipt_plan_id: {{ $product_receipt_plan_id }},
-                        product_edit: data_product,
-
-                    },
-                    success: function(response) {
-                        alert(response.status);
-                        console.log(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error:", error); // แสดงข้อผิดพลาดใน console
-                        console.error("Response Text:", xhr
-                            .responseText); // แสดงข้อความจาก response
-
-                        // ลองดึงข้อความ error message ออกมา (ถ้า API ส่งกลับมาในรูปแบบ JSON)
-                        try {
-                            let errorData = JSON.parse(xhr
-                                .responseText); // แปลง responseText เป็น JSON
-                            console.log("Error Data:", errorData);
-
-                            // ส่งข้อความ error กลับไปแสดงใน autocomplete (เป็น array เปล่าหรือข้อความ)
-                            response([]);
-                        } catch (e) {
-                            console.error("Could not parse error response.");
-                            response([]); // ในกรณีที่ไม่สามารถแปลงได้
-                        }
-                    }
-                });
-                hideEdit(edit_product_id);
-
-            });
-        });
-
-        function initializeProductAutocomplete(nameSelector, idSelector) {
-            $(idSelector).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{{ route('AutocompleteProduct') }}",
-                        data: {
-                            query: request.term
-                        },
-                        success: function(data) {
-                            console.log(data); // แสดงข้อมูลที่ได้รับใน console
-                            response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
-                        }
-                    });
+                        })
+                        .catch(error => {
+                            console.error("Error fetching autocomplete data:", error);
+                        });
                 },
                 minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 0 ตัวอักษร
                 select: function(event, ui) {

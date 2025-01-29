@@ -61,13 +61,13 @@ class ExcelImportController extends Controller
 
             // บันทึกข้อมูลลงฐานข้อมูล
             foreach ($rows as $row) {
-                DB::table('product_receipt_plan_detail')->insert([
+                DB::table('receipt_plan_detail')->insert([
                     'product_id' => $row[0],
                     'product_quantity' => $row[1] ?? 0,
                     'increase_quantity' => $row[2] ?? 0,
                     'reduce_quantity' => $row[3] ?? 0,
                     'total_quantity' => $row[4] ?? 0,
-                    'product_receipt_plan_id' => $row[5],
+                    'receipt_plan_id' => $row[5],
                     'note' => $row[6],
                     'status' => $row[7],
                 ]);

@@ -7,67 +7,65 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\error;
+
 class PayGoodsController extends Controller
 {
-    private function getCustomerQueues($today)
+    public function __construct()
     {
-        $queues = DB::table('customer_queue')
-            ->leftJoin('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
-            ->leftJoin('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-            ->where('queue_date', $today)
-            ->select(
-                'customer_queue.queue_time',
-                'customer_queue.order_number',
-                'customer.customer_name',
-                'customer.customer_grade'
-            )
-            ->orderBy('customer_queue.queue_time')
-            ->get();
-
-        $formattedQueues = $queues->map(function ($queue) {
-            return [
-                'queue_time' => \Carbon\Carbon::parse($queue->queue_time)->format('H:i'),
-                'order_number' => intval($queue->order_number),
-                'customer_name' => $queue->customer_name,
-                'customer_grade' => $queue->customer_grade ?? 'N/A', // กรณีค่าเป็น null
-            ];
-        });
-
-        return $formattedQueues;
+        $this->middleware('auth');
     }
+
+    private function getCustomerQueues($date, $order_number = null)
+    {
+        $queue = DB::table('queue')
+            ->join('orders', 'queue.order_number', '=', 'orders.order_number')
+            ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
+            ->whereDate('queue.queue_datetime', $date)
+            ->when($order_number, fn($query, $order_number) => $query->where('queue.order_number', $order_number))
+            ->select(
+                'queue.order_number',
+                'customer.customer_name',
+                'customer.customer_grade',
+                'queue.queue_datetime',
+                DB::raw("FORMAT(queue.queue_datetime, 'HH:mm') as queue_time") // ใช้ FORMAT()
+            )
+            ->distinct()
+            ->orderBy('queue.queue_datetime');
+
+        if ($order_number) {
+            return $queue->first();
+        } else {
+            return $queue->get();
+        }
+    }
+
 
     private function getSelectedQueue($customer_queues, $order_number)
     {
         return $customer_queues->firstWhere('order_number', $order_number);
     }
 
-    private function getAutoSelectQueue($customer_queues, $currentTime)
-    {
-        return $customer_queues
-            ->filter(fn($queue) => $queue['queue_time'] >= $currentTime)
-            ->sortBy('queue_time')
-            ->first();
-    }
-
     private function getPalletsWithProducts($order_number)
     {
         return DB::table('pallet')
-            ->leftJoin('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
-            ->leftJoin('product', 'pallet_order.product_id', '=', 'product.item_id')
-            ->leftJoin('confirmOrder', 'pallet_order.pallet_id', '=', 'confirmOrder.id')
-            ->where('confirmOrder.order_id', $order_number)
+            ->Join('pallet_detail', 'pallet.pallet_id', '=', 'pallet_detail.pallet_id')
+            ->Join('product', 'pallet_detail.product_id', '=', 'product.product_id')
+            // ->join('pallet_team', 'pallet.pallet_id', '=', 'pallet_team.pallet_id')
+            // ->where('pallet.order_number', $order_number)
             ->select(
                 'pallet.pallet_id',
-                'pallet.pallet_no',
-                'pallet.room',
-                'pallet.team_id',
-                'pallet_order.product_id',
-                'product.item_id',
-                'product.item_desc1',
-                'confirmOrder.quantity',
-                'product.item_um',
-                'confirmOrder.quantity2',
-                'product.item_um2'
+                'pallet.order_number',
+                'pallet.pallet_name',
+                'pallet.warehouse',
+                // 'pallet_team.team_id',
+                'pallet_detail.product_id',
+                'product.product_id',
+                'product.product_description',
+                'pallet_detail.quantity',
+                'product.product_um',
+                'pallet_detail.quantity2',
+                'product.product_um2'
             )
             ->orderBy('pallet.pallet_id')
             ->get()
@@ -76,17 +74,18 @@ class PayGoodsController extends Controller
                 $firstItem = $items->first();
 
                 return [
-                    'pallet_no' => $firstItem->pallet_no,
-                    'room' => $firstItem->room,
-                    'team_id' => $firstItem->team_id,
+                    'pallet_no' => $firstItem->pallet_name,
+                    'order_number' => $firstItem->order_number,
+                    'room' => $firstItem->warehouse,
+                    // 'team_id' => $firstItem->team_id,
                     'products' => $items->map(fn($item) => [
                         'product_id' => $item->product_id,
-                        'item_id' => $item->item_id,
-                        'item_desc1' => $item->item_desc1,
+                        'product_id' => $item->product_id,
+                        'product_description' => $item->product_description,
                         'quantity' => $item->quantity,
-                        'item_um' => $item->item_um,
+                        'product_um' => $item->product_um,
                         'quantity2' => $item->quantity2,
-                        'item_um2' => $item->item_um2,
+                        'product_um2' => $item->product_um2,
                     ]),
                 ];
             });
@@ -94,68 +93,60 @@ class PayGoodsController extends Controller
 
     private function getTeams()
     {
-        return DB::table('lock_team')
-            ->leftJoin('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
-            ->leftJoin('users', 'lock_team_user.user_id', '=', 'users.user_id')
-            ->leftJoin('incentive_log', 'incentive_log.user_id', '=', 'users.user_id')
-            ->where('lock_team.work', 'DragDropGoods')
+        return DB::table('team')
+            ->Join('team_user', 'team.team_id', '=', 'team_user.team_id')
+            ->Join('users', 'team_user.user_id', '=', 'users.user_id')
+            ->leftJoin('incentive_transactions', 'incentive_transactions.user_id', '=', 'users.user_id')
+            ->where('team.team_name', 'ลากจ่ายหน้าลาน')
             ->select(
                 'users.name',
                 'users.user_id',
-                'incentive_log.incentive_id',
-                'incentive_log.end_time'
+                'incentive_transactions.incentive_id',
+                'incentive_transactions.end_time'
             )
             ->get();
     }
 
     public function index()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
         $today = now()->format('Y-m-d');
-        $currentTime = now()->toTimeString();
+        $currentTime = now()->format('H:i:s');
 
         $customer_queues = $this->getCustomerQueues($today);
-        $auto_select_queue = $this->getAutoSelectQueue($customer_queues, $currentTime);
-        $pallets_with_products = $this->getPalletsWithProducts(optional($auto_select_queue)->order_number);
+        // $select_queue = $this->getCustomerQueues($today, '11512002591');
+        // dd($select_queue);
         $teams = $this->getTeams();
 
         return view('Admin.PayGoods.PayGoods', [
             'customer_queues' => $customer_queues,
             'select_queue' => null,
-            'auto_select_queue' => $auto_select_queue,
-            'pallets_with_products' => $pallets_with_products,
-            'total_pallets' => $pallets_with_products->count(),
             'teams' => $teams,
         ]);
     }
 
     public function SelectPayGoods(Request $request)
     {
-        $queueId = $request->id;
-
+        $queueId = $request->queueId;
         $today = now()->format('Y-m-d');
         $currentTime = now()->toTimeString();
 
-        $customer_queues = $this->getCustomerQueues($today);
-        $select_queue = $this->getSelectedQueue($customer_queues, $queueId);
+        $select_queue = $this->getCustomerQueues($today, $queueId);
+        $pallets_with_products = $this->getPalletsWithProducts($select_queue->order_number);
+        $teams = $this->getTeams();
 
-        if (!$select_queue) {
+        if (!$select_queue || !$pallets_with_products) {
             return response()->json(['error' => 'ไม่พบข้อมูล'], 404);
         }
 
-        return response()->json(['select_queue' => $select_queue]);
+        return response()->json([
+            'select_queue' => $select_queue,
+            'pallets_with_products' => $pallets_with_products,
+            'teams' => $teams,
+        ]);
     }
 
     // public function SelectPayGoods(Request $request)
     // {
-    //     // Ensure the user is authenticated
-    //     if (!Auth::user()) {
-    //         return redirect()->route('Login.index');
-    //     }
 
     //     $customer_queues = DB::table('customer_queue')
     //         ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
@@ -175,9 +166,9 @@ class PayGoodsController extends Controller
 
     //     $pallets_with_products = DB::table('pallet')
     //         ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
-    //         ->join('product', 'pallet_order.product_id', '=', 'product.item_id')
-    //         ->join('confirmOrder', 'pallet_order.pallet_id', '=', 'confirmOrder.id')
-    //         ->where('pallet.order_id', $order_number)
+    //         ->join('product', 'pallet_order.product_id', '=', 'product.product_id')
+    //         ->join('orders', 'pallet_order.pallet_id', '=', 'orders.id')
+    //         ->where('pallet.order_number', $order_number)
     //         ->select(
     //             'pallet.pallet_id',
     //             'pallet.pallet_no',
@@ -185,12 +176,12 @@ class PayGoodsController extends Controller
     //             'pallet.team_id',
     //             'pallet.towing_staff_id',
     //             'pallet_order.product_id',
-    //             'product.item_id',
-    //             'product.item_desc1',
-    //             'confirmOrder.quantity',
-    //             'product.item_um',
-    //             'confirmOrder.quantity2',
-    //             'product.item_um2',
+    //             'product.product_id',
+    //             'product.product_description',
+    //             'orders.quantity',
+    //             'product.product_um',
+    //             'orders.quantity2',
+    //             'product.product_um2',
     //         )
     //         ->orderBy('pallet.pallet_id')
     //         ->get()
@@ -206,12 +197,12 @@ class PayGoodsController extends Controller
     //                 'products' => $items->map(function ($item) {
     //                     return [
     //                         'product_id' => $item->product_id,
-    //                         'item_id' => $item->item_id,
-    //                         'item_desc1' => $item->item_desc1,
+    //                         'product_id' => $item->product_id,
+    //                         'product_description' => $item->product_description,
     //                         'quantity' => $item->quantity,
-    //                         'item_um' => $item->item_um,
+    //                         'product_um' => $item->product_um,
     //                         'quantity2' => $item->quantity2,
-    //                         'item_um2' => $item->item_um2,
+    //                         'product_um2' => $item->product_um2,
     //                     ];
     //                 })
     //             ];
@@ -219,21 +210,21 @@ class PayGoodsController extends Controller
 
     //     $total_pallets = $pallets_with_products->count();
 
-    //     // $teams = DB::table('lock_team')
-    //     //     ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
-    //     //     ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
-    //     //     ->where('lock_team.work', 'DragDropGoods')
+    //     // $teams = DB::table('team')
+    //     //     ->join('team_user', 'team.team_id', '=', 'team_user.team_id')
+    //     //     ->join('users', 'team_user.user_id', '=', 'users.user_id')
+    //     //     ->where('team.work', 'DragDropGoods')
     //     //     ->select('users.name', 'users.user_id')
     //     //     ->get();
 
-    //     // $incentives = DB::table('incentive_log')->first();
+    //     // $incentives = DB::table('incentive_transactions')->first();
 
-    //     $teams = DB::table('lock_team')
-    //         ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
-    //         ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
-    //         ->leftJoin('incentive_log', 'incentive_log.user_id', '=', 'users.user_id') // ดึงข้อมูล incentive_log
-    //         ->where('lock_team.work', 'DragDropGoods')
-    //         ->select('users.name', 'users.user_id', 'incentive_log.incentive_id', 'incentive_log.end_time')
+    //     $teams = DB::table('team')
+    //         ->join('team_user', 'team.team_id', '=', 'team_user.team_id')
+    //         ->join('users', 'team_user.user_id', '=', 'users.user_id')
+    //         ->leftJoin('incentive_transactions', 'incentive_transactions.user_id', '=', 'users.user_id') // ดึงข้อมูล incentive_transactions
+    //         ->where('team.work', 'DragDropGoods')
+    //         ->select('users.name', 'users.user_id', 'incentive_transactions.incentive_id', 'incentive_transactions.end_time')
     //         ->get();
 
     //     // dd($teams);
@@ -252,7 +243,7 @@ class PayGoodsController extends Controller
     {
         $incentive_id = Str::uuid();
 
-        DB::table('incentive_log')->insert([
+        DB::table('incentive_transactions')->insert([
             'incentive_id' => $incentive_id,
             'user_id' => $request->input('user_id'),
             'start_time' => now(),
@@ -276,15 +267,15 @@ class PayGoodsController extends Controller
         // คำนวณ sumQuantity
         $sumQuantity = 0;
         foreach ($products as $product) {
-            if (isset($product['item_um'], $product['quantity']) && $product['item_um'] == 'Kg') {
+            if (isset($product['product_um'], $product['quantity']) && $product['product_um'] == 'Kg') {
                 $sumQuantity += $product['quantity'];
-            } elseif (isset($product['item_um2'], $product['quantity2']) && $product['item_um2'] == 'Kg') {
+            } elseif (isset($product['product_um2'], $product['quantity2']) && $product['product_um2'] == 'Kg') {
                 $sumQuantity += $product['quantity2'];
             }
         }
 
         // อัพเดตข้อมูลเมื่อจบงาน
-        DB::table('incentive_log')
+        DB::table('incentive_transactions')
             ->where('incentive_id', $request->input('incentive_id'))
             ->update([
                 'incentive_value' => $sumQuantity,

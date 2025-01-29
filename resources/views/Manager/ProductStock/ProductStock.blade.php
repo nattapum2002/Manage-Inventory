@@ -21,12 +21,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($stocks as $stock)
+                                    @foreach ($stocks as $product_stock)
                                         <tr>
-                                            <td>{{ $stock->product_id }}</td>
-                                            <td>{{ $stock->product_name }}</td>
-                                            <td>{{ $stock->weight }}</td>
-                                            <td>{{ $stock->amount }}</td>
+                                            <td>{{ $product_stock->product_id }}</td>
+                                            <td>{{ $product_stock->product_name }}</td>
+                                            <td>{{ $product_stock->weight }}</td>
+                                            <td>{{ $product_stock->amount }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

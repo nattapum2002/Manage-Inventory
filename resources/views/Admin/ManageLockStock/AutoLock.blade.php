@@ -42,10 +42,10 @@
                                         <div class="form-group">
                                             <label for="note">ประเภทใบล็อค</label>
                                             <select class="form-select" name="pallet_type_id" id="pallet_type">
-                                                @foreach ($pallet_type as $type )
+                                                @foreach ($pallet_type as $type)
                                                     <option value="{{$type->id}}" {{$type->pallet_type === 'ทั่วไป' ? 'selected' : ''}}>{{$type->pallet_type}}</option>
                                                 @endforeach
-                                               
+
                                             </select>
                                         </div>
                                     </div>
@@ -110,63 +110,66 @@
                 </div>
             </div> --}}
             <div class="row">
-                <div class="card col-12">
-                    <div class="card-header text-end">
-                        <a type="button" href="{{ route('AutoLock', [$CUS_ID, $ORDER_DATE]) }}"
-                            class="btn btn-info">สร้างใบล็อค</a>
-                        <a type="button" href="{{ route('forgetSession', [$CUS_ID, $ORDER_DATE]) }}"
-                            class="btn btn-danger ">ล้าง</a>
-                    </div>
-                    <div class="card-body">
-                        <table id="show-pallet" class="table nowrap">
-                            <thead>
-                                <th>หมายเลข</th>
-                                <th>ห้อง</th>
-                                <th>ลักษณะงาน</th>
-                                <th>รหัสสินค้า</th>
-                                <th>ชื่อสินค้า</th>
-                                <th>
-                                    จำนวน
-                                </th>
-                                <th>ประเภท</th>
-                                <th>#</th>
-                            </thead>
-                            <tbody>
-                                @if (session('lock'.$CUS_ID))
-                                    @foreach (session('lock'.$CUS_ID) as $number => $lockItem)
-                                        <tr>
-                                            <td>{{ $number }}</td>
-                                            <td id="warehouse-name">{{ $lockItem['warehouse'] }}</td>
-                                            <td id="work-type">{{ $lockItem['work_type'] ?? '' }}</td>
-                                            <td>
-                                                @foreach ($lockItem['items'] as $itemNo)
-                                                    {{ $itemNo['item_no'] }} <br>
-                                                @endforeach
-                                            </td>
-                                            <td>
-                                                @foreach ($lockItem['items'] as $itemName)
-                                                    {{ $itemName['item_desc1'] }} <br>
-                                                @endforeach
-                                            </td>
-                                            <td>
-                                                @foreach ($lockItem['items'] as $itemQtn)
-                                                    {{ $itemQtn['quantity'] }} {{ $itemQtn['quantity_um'] }} <br>
-                                                @endforeach
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer text-center">
-                        <a href="{{route('Insert_Pallet',[$CUS_ID,$ORDER_DATE])}}" class="btn btn-success ">บันทึกข้อมูล</a>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header text-end">
+                            <a type="button" href="{{ route('AutoLock', [$CUS_ID, $ORDER_DATE]) }}"
+                                class="btn btn-info">สร้างใบล็อค</a>
+                            <a type="button" href="{{ route('forgetSession', [$CUS_ID, $ORDER_DATE]) }}"
+                                class="btn btn-danger ">ล้าง</a>
+                        </div>
+                        <div class="card-body">
+                            <table id="show-pallet" class="table nowrap table-striped table-bordered">
+                                <thead>
+                                    <th>หมายเลข</th>
+                                    <th>ห้อง</th>
+                                    <th>ลักษณะงาน</th>
+                                    <th>รหัสสินค้า</th>
+                                    <th>ชื่อสินค้า</th>
+                                    <th>
+                                        จำนวน
+                                    </th>
+                                    <th>ประเภท</th>
+                                    <th>#</th>
+                                </thead>
+                                <tbody>
+                                    @if (session('lock' . $CUS_ID))
+                                        @foreach (session('lock' . $CUS_ID) as $number => $lockItem)
+                                            <tr>
+                                                <td>{{ $number }}</td>
+                                                <td id="warehouse-name">{{ $lockItem['warehouse'] }}</td>
+                                                <td id="work-type">{{ $lockItem['work_type'] ?? '' }}</td>
+                                                <td>
+                                                    @foreach ($lockItem['items'] as $itemNo)
+                                                        {{ $itemNo['product_number'] }} <br>
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    @foreach ($lockItem['items'] as $itemName)
+                                                        {{ $itemName['product_description'] }} <br>
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    @foreach ($lockItem['items'] as $itemQtn)
+                                                        {{ $itemQtn['quantity'] }} {{ $itemQtn['quantity_um'] }} <br>
+                                                    @endforeach
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="{{ route('Insert_Pallet', [$CUS_ID, $ORDER_DATE]) }}"
+                                class="btn btn-success ">บันทึกข้อมูล</a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <a class="btn btn-warning" href="{{route('DetailLockStock',[$CUS_ID,$ORDER_DATE])}}">ย้อนกลับ</a>
+            <a class="btn btn-warning" href="{{ route('DetailLockStock', [$CUS_ID, $ORDER_DATE]) }}">ย้อนกลับ</a>
     </section>
 @endsection
 
@@ -178,14 +181,15 @@
                 scrollX: true,
                 ordering: true,
                 paging: true,
+                pageLength: 25,
+                lengthMenu: [25, 50, 100],
             });
         }, )
-        
     </script>
     <script>
         var product_count = 1;
-        var $CUS_ID = "{{ $CUS_ID}}";
-        var $ORDER_DATE = "{{$ORDER_DATE}}"
+        var $CUS_ID = "{{ $CUS_ID }}";
+        var $ORDER_DATE = "{{ $ORDER_DATE }}"
         $('#add-product').click(function() {
             product_count++;
             $('#add-products').append(`
@@ -265,8 +269,8 @@
                     $.ajax({
                         url: "{{ route('AutoCompleteAddPallet') }}",
                         data: {
-                            query: request.term ,
-                            type:  $("#pallet_type").val(),
+                            query: request.term,
+                            type: $("#pallet_type").val(),
                         },
                         success: function(data) {
                             // console.log(data);
@@ -280,7 +284,7 @@
                 },
                 minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
                 select: function(event, ui) {
-                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
+                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ product_id
                     $(product_idSelector).val(ui.item.product_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
                     $(show_product_idSelector).val(ui.item.product_no);
                     $(product_nameSelector).val(ui.item.product_name); // เติมชื่อสินค้าในช่องชื่อสินค้า
@@ -306,7 +310,7 @@
                 changePalletType(type); // เรียกฟังก์ชันพร้อมส่งค่าประเภท
             }
         });
-    
+
         function changePalletType(type) {
             $.ajax({
                 url: "{{ route('AutoCompleteAddPallet', ['order_number' => $order_number]) }}", // ตรวจสอบว่า order_number มีค่าหรือส่งจาก Blade

@@ -127,7 +127,7 @@
             <div class="col-lg-2 col-md-3 col-sm-12">
                 <div class="form-group">
                     <label for="item_id_${item_count}" class="form-label">${item_count} รหัสสินค้า</label>
-                    <input type="text" class="form-control" id="item_id_${item_count}" name="item_id[${item_count}]" readonly>
+                    <input type="text" class="form-control" id="item_id_${item_count}" name="product_id[${item_count}]" readonly>
                     <input type="hidden" class="form-control" id="save_item_id_${item_count}" name="save_item_id[${item_count}]"
                                         readonly="">
                 </div>
@@ -155,7 +155,7 @@
                         <div class="col-lg-3 col-md-3 col-sm-12">
                             <div class="form-group">
                                 <label for="item_um_${item_count}" class="form-label">หน่วย</label>
-                                <input type="text" class="form-control" id="item_um_${item_count}" name="item_um[${item_count}]" disabled>
+                                <input type="text" class="form-control" id="item_um_${item_count}" name="product_um[${item_count}]" disabled>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12">
@@ -167,7 +167,7 @@
                         <div class="col-lg-3 col-md-3 col-sm-12">
                             <div class="form-group">
                                 <label for="item_um2_${item_count}" class="form-label">หน่วย</label>
-                                <input type="text" class="form-control" id="item_um2_${item_count}" name="item_um2[${item_count}]" disabled>
+                                <input type="text" class="form-control" id="item_um2_${item_count}" name="product_um2[${item_count}]" disabled>
                             </div>
                         </div>
                     </div>
@@ -207,11 +207,11 @@
             },
             minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
             select: function(event, ui, response) {
-                // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
+                // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ product_id
                 $(idSelector).val(ui.item.product_no); // เติมรหัสสินค้าในช่องรหัสสินค้า
                 $(nameSelector).val(ui.item.value); // เติมชื่อสินค้าในช่องชื่อสินค้า
-                $(umSelector).val(ui.item.item_um ? ui.item.item_um : 'ไม่มี');
-                $(um2Selector).val(ui.item.item_um2 ? ui.item.item_um2 : 'ไม่มี');
+                $(umSelector).val(ui.item.product_um ? ui.item.product_um : 'ไม่มี');
+                $(um2Selector).val(ui.item.product_um2 ? ui.item.product_um2 : 'ไม่มี');
                 $(save_item_idSelector).val(ui.item.id);
                 // $(roomSelector).val(ui.item.room);
                 console.log(200);
@@ -407,7 +407,7 @@
             },
             minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
             select: function(event, ui) {
-                // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
+                // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ product_id
                 $(idSelector).val(ui.item.user_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
                 $(nameSelector).val(ui.item.name); // เติมชื่อสินค้าในช่องชื่อสินค้า
                 $(surnameSelector).val(ui.item.surname);
@@ -550,13 +550,13 @@
             lengthChange: true,
             autoWidth: true,
             scrollX: true,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            }
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             'copy', 'excel', 'pdf'
+            //         ]
+            //     }
+            // }
         });
         $("#pallate").DataTable({
             //responsive: true,
@@ -584,19 +584,6 @@
                 }
             }
         });
-        $("#ProductReceiptPlanTable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            // scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
-        });
         $("#producttable").DataTable({
             responsive: true,
             lengthChange: true,
@@ -610,7 +597,7 @@
             //     }
             // }
         });
-        $('#stock-all-table').DataTable({
+        $('#product_stock-all-table').DataTable({
             info: false,
             ordering: true,
             paging: true
@@ -643,20 +630,6 @@
             paging: true
         })
         $('#customer-queue-pallet-detail').DataTable({
-            info: false,
-            ordering: true,
-            paging: true
-        })
-        $('#stat-table').DataTable({
-            info: false,
-            ordering: true,
-            paging: true,
-            responsive: true,
-            lengthChange: true,
-            // autoWidth: true,
-
-        })
-        $('#date-stat-table').DataTable({
             info: false,
             ordering: true,
             paging: true

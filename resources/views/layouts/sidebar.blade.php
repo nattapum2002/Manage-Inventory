@@ -28,14 +28,6 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                            N/A
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{{ route('ShowStatDate') }}" class="nav-link has-dropdown">
                         <i class="far fa-circle nav-icon"></i>
                         <p>
@@ -72,7 +64,7 @@
                         <a href="{{ route('ManageLockStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                ใบล็อค
+                                จัดการล็อคสินค้า
                             </p>
                         </a>
                     </li>
@@ -80,7 +72,7 @@
                         <a href="{{ route('ManageQueue') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Manage Queue
+                                จัดการคิว
                             </p>
                         </a>
                     </li>
@@ -88,7 +80,7 @@
                         <a href="{{ route('ManageShiftTeam') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Shift And Team
+                                จัดการกะ/ทีม
                             </p>
                         </a>
                     </li>
@@ -108,35 +100,35 @@
                             </p>
                         </a>
                     </li> --}}
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a href="{{ route('ManageStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 Manage Stock
                             </p>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a href="{{ route('ManageUsers') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Manage Users
+                                จัดการผู้ใช้งาน
                             </p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('ProductReceiptPlan') }}" class="nav-link">
+                        <a href="{{ route('ReceiptPlan') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                1. Product Pickup Plan
+                                1. แพลนรับสินค้ารายกะ
                             </p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('TransferSlip') }}" class="nav-link">
+                        <a href="{{ route('ReceiptProduct') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                2. Transfer Slip
+                                2. รับใบ Tranfer slip
                             </p>
                         </a>
                     </li>

@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class TeamController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public $select_teams = [
         ['select_name' => 'A'],
         ['select_name' => 'B'],
@@ -19,27 +24,17 @@ class TeamController extends Controller
     ];
     public function index()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
-        $teams = DB::table('lock_team')->get();
-        $usersCounts = DB::table('lock_team_user')->get();
+        $teams = DB::table('team')->get();
+        $usersCounts = DB::table('team_user')->get();
         return view('Admin.ManageTeam.manageTeam', compact('teams', 'usersCounts'));
     }
 
     public function EditTeam($team_id)
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
-        $teams = DB::table('lock_team')
-            ->join('lock_team_user', 'lock_team.team_id', '=', 'lock_team_user.team_id')
-            ->join('users', 'lock_team_user.user_id', '=', 'users.user_id')
-            ->where('lock_team.team_id', $team_id)->get();
+        $teams = DB::table('team')
+            ->join('team_user', 'team.team_id', '=', 'team_user.team_id')
+            ->join('users', 'team_user.user_id', '=', 'users.user_id')
+            ->where('team.team_id', $team_id)->get();
         return view('Admin.ManageTeam.EditTeam', compact('teams'));
     }
 
@@ -47,9 +42,9 @@ class TeamController extends Controller
     {
         // Validate the incoming data
         $validated = $request->validate([
-            'team_id' => 'required|exists:lock_team,team_id', // ตรวจสอบ team_id ในตาราง lock_team
+            'team_id' => 'required|exists:team,team_id', // ตรวจสอบ team_id ในตาราง team
             'team_edit.user_id' => 'required|exists:users,id', // ตรวจสอบ user_id ในตาราง users
-            'team_edit.old_user_id' => 'required|exists:lock_team_user,user_id', // ตรวจสอบ old_user_id
+            'team_edit.old_user_id' => 'required|exists:team_user,user_id', // ตรวจสอบ old_user_id
         ]);
 
         // Extract the validated data
@@ -66,7 +61,7 @@ class TeamController extends Controller
         }
 
         // ตรวจสอบว่าความสัมพันธ์ใหม่มีอยู่แล้วหรือไม่
-        $existingRelation = DB::table('lock_team_user')
+        $existingRelation = DB::table('team_user')
             ->where('team_id', $team_id)
             ->where('user_id', $new_user_id)
             ->exists();
@@ -81,7 +76,7 @@ class TeamController extends Controller
         // ใช้ Transaction เพื่อความปลอดภัยของข้อมูล
         DB::transaction(function () use ($team_id, $old_user_id, $new_user_id) {
 
-            DB::table('lock_team_user')
+            DB::table('team_user')
                 ->where('team_id', $team_id)
                 ->where('user_id', $old_user_id)
                 ->update([
@@ -97,7 +92,7 @@ class TeamController extends Controller
 
     public function Toggle($team_id, $status)
     {
-        DB::table('lock_team')->where('team_id', $team_id)->update([
+        DB::table('team')->where('team_id', $team_id)->update([
             'status' => $status,
         ]);
 
@@ -106,12 +101,7 @@ class TeamController extends Controller
 
     public function AddTeam()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
-        $team_names = DB::table('lock_team')->select('team_name')->distinct()->pluck('team_name')->toArray();
+        $team_names = DB::table('team')->select('team_name')->distinct()->pluck('team_name')->toArray();
 
         $filtered_teams = array_filter($this->select_teams, function ($team) use ($team_names) {
             return !in_array($team['select_name'], $team_names);
@@ -124,7 +114,7 @@ class TeamController extends Controller
     {
         $data = $request->all();
         DB::transaction(function () use ($data) {
-            DB::table('lock_team')->updateOrInsert(
+            DB::table('team')->updateOrInsert(
                 ['team_id' => $data['team_id']], // Condition to check for existing record
                 [
                     'team_name' => $data['team_name'], // Data to update/insert
@@ -134,7 +124,7 @@ class TeamController extends Controller
                 ]
             );
             foreach ($data['user_id'] as $key => $value) {
-                DB::table('lock_team_user')->insert([
+                DB::table('team_user')->insert([
                     'team_id' => $data['team_id'],
                     'user_id' => $data['user_id'][$key],
                 ]);
@@ -145,7 +135,7 @@ class TeamController extends Controller
 
     public function DeleteTeam($team_id, $user_id)
     {
-        DB::table('lock_team_user')->where('team_id', $team_id)->where('user_id', $user_id)->delete();
+        DB::table('team_user')->where('team_id', $team_id)->where('user_id', $user_id)->delete();
         return redirect()->route('ManageTeam')->with('success', 'Team has been deleted successfully.');
     }
 
@@ -154,7 +144,7 @@ class TeamController extends Controller
         $query = $request->get('query');
         // ดึงข้อมูลเฉพาะฟิลด์ที่ต้องการ เช่น product_name และ product_id
         $data = DB::table('users')
-            ->select('user_id', 'name', 'surname', 'position') // เลือกเฉพาะฟิลด์ product_name และ product_id
+            ->select('user_id', 'name', 'surname', 'department') // เลือกเฉพาะฟิลด์ product_name และ product_id
             ->where('name', 'like', '%' . $query . '%')
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
             ->get();
@@ -167,7 +157,7 @@ class TeamController extends Controller
                 'value' => $item->name,  // ใช้ 'value' สำหรับการเติมในช่อง input
                 'user_id' => $item->user_id,     // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
                 'surname' => $item->surname,      // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
-                'position' => $item->position       // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
+                'department' => $item->department       // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
             ];
         }
 
@@ -178,7 +168,7 @@ class TeamController extends Controller
     {
         $query = $request->get('query');
 
-        $data = DB::table('lock_team')
+        $data = DB::table('team')
             ->where('team_name', 'like', '%' . $query . '%')
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
             ->get();

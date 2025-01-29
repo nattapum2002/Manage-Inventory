@@ -50,12 +50,12 @@
                                                     value="{{ $request->time }}" readonly>
                                             </div>
                                         </div>
-                                        <input type="hidden" class="form-control" id="product_receipt_plan_id"
-                                            name="product_receipt_plan_id" value="{{ $product_receipt_plan_id }}">
+                                        <input type="hidden" class="form-control" id="receipt_plan_id"
+                                            name="receipt_plan_id" value="{{ $receipt_plan_id }}">
                                     </div>
                                 </article>
                                 <hr>
-                                <table id="AddTransferSlipTable" class="table table-bordered table-striped">
+                                <table id="AddTransferSlipTable" class="table table-bordered table-striped nowrap">
                                     <thead>
                                         <tr>
                                             <th>รหัสสินค้า</th>
@@ -72,7 +72,7 @@
                                         @foreach ($mergedData as $Product)
                                             <tr>
                                                 <td>{{ $Product['product_id'] }}</td>
-                                                <td>{{ $Product['item_desc1'] }}</td>
+                                                <td>{{ $Product['product_description'] }}</td>
                                                 <td>{{ $Product['total_weight'] }}</td>
                                                 <td>
                                                     {{ $Product['total_sum'] }}
@@ -89,11 +89,11 @@
                                                         {{ $Product['total_sum'] == 0 ? 'readonly' : '' }}>
                                                 </td>
                                                 <td>
-                                                    {{ $Product['item_um'] }}
+                                                    {{ $Product['product_um'] }}
                                                     {{-- <input type="hidden" class="form-control"
                                                         id="quantity_um_{{ $Product['product_id'] }}"
                                                         name="quantity_um[{{ $Product['product_id'] }}]"
-                                                        value="{{ $Product['item_um'] }}"> --}}
+                                                        value="{{ $Product['product_um'] }}"> --}}
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control"
@@ -137,17 +137,16 @@
     <script>
         $(function() {
             $("#AddTransferSlipTable").DataTable({
-                responsive: true,
-                lengthChange: true,
-                autoWidth: true,
-                // scrollX: true,
-                // layout: {
-                //     topStart: {
-                //         buttons: [
-                //             'copy', 'excel', 'pdf'
-                //         ]
-                //     }
-                // }
+                // responsive: true,
+                // lengthChange: true,
+                // autoWidth: true,
+                info: false,
+                scrollX: true,
+                ordering: true,
+                paging: true,
+                pageLength: 25,
+                lengthMenu: [25, 50, 100],
+                order: []
             });
         });
     </script>

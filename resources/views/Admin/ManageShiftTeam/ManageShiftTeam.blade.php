@@ -16,7 +16,7 @@
                                 <div>
                                     <div class="input-group">
                                         <input type="month" class="form-control" name="month" id="month"
-                                            value="{{ (new DateTime($ShiftFilterMonth->first()->date))->format('Y-m') ?? now()->format('Y-m') }}">
+                                            value="{{ $ShiftFilterMonth->first()?->date ? (new DateTime($ShiftFilterMonth->first()->date))->format('Y-m') : now()->format('Y-m') }}">
                                         <button type="button" class="btn btn-primary" id="btn-search-shift">ค้นหา</button>
                                     </div>
                                 </div>
@@ -33,6 +33,7 @@
                                             <select class="form-control" id="day-select" name="day">
                                                 <!-- Options will be dynamically added here -->
                                             </select>
+                                            <small class="form-text text-muted">**กรุณาเลือกวันที่ก่อนเลือกกะพนักงาน</small>
                                             @error('day')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
@@ -40,41 +41,19 @@
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label for="shift_name">ชื่อกะพนักงาน</label>
-                                            <select class="form-control" id="shift_name" name="shift_name">
-                                                <option selected value="">เลือกชื่อกะพนักงาน</option>
+                                            <label for="shift">กะพนักงาน</label>
+                                            <select class="form-control" id="shift" name="shift">
+                                                <option selected value="">เลือกกะพนักงาน</option>
                                             </select>
-                                            @error('shift_name')
+                                            @error('shift')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="start_shift">เวลาเริ่มกะ</label>
-                                            <input type="time" class="form-control" id="start_shift" name="start_shift"
-                                                placeholder="เวลาเริ่มกะ"
-                                                value="{{ now()->format('H:i') > '12:00' ? '19:00' : '07:00' }}">
-                                            @error('start_shift')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="end_shift">เวลาเลิกกะ</label>
-                                            <input type="time" class="form-control" id="end_shift" name="end_shift"
-                                                placeholder="เวลาเลิกกะ"
-                                                value="{{ now()->format('H:i') > '12:00' ? '07:00' : '19:00' }}">
-                                            @error('end_shift')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="col-lg-6 col-md-12 col-sm-12">
                                         <div class="form-group">
                                             <label for="note">หมายเหตุ</label>
-                                            <textarea type="text" class="form-control" id="note" name="note" placeholder="หมายเหตุ"></textarea>
+                                            <textarea type="text" class="form-control" id="note" name="note" rows="1" placeholder="หมายเหตุ"></textarea>
                                         </div>
                                         @error('note')
                                             <small class="text-danger">{{ $message }}</small>
@@ -86,7 +65,7 @@
                                 </div>
                             </form>
                             <hr>
-                            <table id="ShiftTable" class="table table-bordered table-striped">
+                            <table id="ShiftTable" class="table table-bordered table-striped nowrap">
                                 <thead>
                                     <tr>
                                         <th>วันที่</th>
@@ -133,10 +112,10 @@
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">คุณต้องการนำเข้ากะที่คุณเคยกรอกไหม</h5>
+                                <h5 class="modal-title">คุณต้องการคัดลอกกะที่คุณเคยกรอกไหม</h5>
                             </div>
                             <div class="modal-body">
-                                <h5>รายละเอียดของกะที่ซ้ำกัน</h5>
+                                <h5>รายละเอียดของกะที่จะคัดลอก</h5>
                                 <div class="mb-3">
                                     <strong>ชื่อกะ:</strong> {{ session('ShiftTeams')['shift_name'] ?? 'N/A' }} <br>
                                     <strong>เวลาเริ่ม:</strong>
@@ -165,18 +144,17 @@
                                                 <strong>ชื่อทีม:</strong> {{ $team['team_name'] ?? 'N/A' }}
                                             </div>
                                             <div class="card-body">
-                                                <p><strong>ลักษณะงาน:</strong> {{ $team['work'] ?? 'N/A' }}</p>
-                                                <p><strong>หมายเหตุทีม:</strong> {{ $team['note'] ?? 'ไม่มีหมายเหตุ' }}</p>
+                                                <p><strong>หมายเหตุ:</strong> {{ $team['note'] ?? 'N/A' }}</p>
 
                                                 @if (!empty($team['users']))
                                                     <h6>สมาชิกในทีม</h6>
-                                                    <table class="table table-bordered table-sm">
+                                                    <table class="table table-bordered table-striped">
                                                         <thead>
                                                             <tr>
                                                                 <th>รหัสพนักงาน</th>
                                                                 <th>ชื่อพนักงาน</th>
                                                                 <th>ตำแหน่งใน DMC</th>
-                                                                <th>หมายเหตุ</th>
+                                                                <th>รายละเอียดงาน</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -185,7 +163,7 @@
                                                                     <td>{{ $user['user_id'] ?? 'N/A' }}</td>
                                                                     <td>{{ $user['name'] ?? 'N/A' }}</td>
                                                                     <td>{{ $user['dmc_position'] ?? 'N/A' }}</td>
-                                                                    <td>{{ $user['note'] ?? 'ไม่มีหมายเหตุ' }}</td>
+                                                                    <td>{{ $user['work_description'] ?? 'N/A' }}</td>
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>
@@ -214,10 +192,7 @@
                                     @csrf
                                     <input type="hidden" name="shift_id"
                                         value="{{ session('duplicate_shift')->shift_id }}">
-                                    <input type="hidden" name="shift_name" value="{{ session('Data')['shift_name'] }}">
-                                    <input type="hidden" name="start_shift"
-                                        value="{{ session('Data')['start_shift'] }}">
-                                    <input type="hidden" name="end_shift" value="{{ session('Data')['end_shift'] }}">
+                                    <input type="hidden" name="shift" value="{{ session('Data')['shift'] }}">
                                     <input type="hidden" name="date" value="{{ session('Data')['date'] }}">
                                     <input type="hidden" name="note" value="{{ session('Data')['note'] }}">
                                     <button type="submit" class="btn btn-secondary">กรอกข้อมูลใหม่</button>
@@ -242,9 +217,15 @@
     <script>
         // กำหนด DataTable
         const shiftDataTable = $("#ShiftTable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: false,
+            // responsive: true,
+            // lengthChange: true,
+            // autoWidth: false,
+            info: false,
+            scrollX: true,
+            ordering: true,
+            paging: true,
+            pageLength: 40,
+            lengthMenu: [10, 20, 40],
             order: [
                 [0, 'desc']
             ]
@@ -371,9 +352,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const monthInput = document.getElementById('month'); // ตัวเลือกเดือน
-            const daySelect = document.getElementById('day-select'); // ตัวเลือกวันที่
-            const shiftSelect = document.getElementById('shift_name'); // ตัวเลือกกะพนักงาน
+            const monthInput = document.getElementById('month');
+            const daySelect = document.getElementById('day-select');
+            const shiftSelect = document.getElementById('shift');
 
             // ฟังก์ชันสำหรับส่งข้อมูลวันที่ไปที่เซิร์ฟเวอร์
             const fetchShifts = (date) => {
@@ -389,11 +370,12 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        shiftSelect.innerHTML = '<option selected value="">เลือกชื่อกะพนักงาน</option>';
+                        shiftSelect.innerHTML = '<option selected value="">เลือกกะพนักงาน</option>';
                         data.forEach(shift => {
                             const option = document.createElement('option');
-                            option.value = shift.select_name;
-                            option.textContent = shift.select_name;
+                            option.value = shift.shift_time_id;
+                            option.textContent =
+                                `${shift.shift_name} (${formatTime(shift.start_shift)} - ${formatTime(shift.end_shift)})`;
                             shiftSelect.appendChild(option);
                         });
                     })
@@ -409,6 +391,11 @@
                     fetchShifts(date);
                 }
             };
+
+            function formatTime(time) {
+                const [hour, minute] = time.split(':');
+                return `${hour}:${minute} น.`;
+            }
 
             monthInput.addEventListener('change', updateDate);
             daySelect.addEventListener('change', updateDate);

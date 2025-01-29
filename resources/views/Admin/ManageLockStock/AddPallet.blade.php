@@ -49,10 +49,12 @@
                                         <div class="form-group">
                                             <label for="note">หมายเหตุ</label>
                                             <select class="form-select" name="pallet_type_id" id="pallet_type">
-                                                @foreach ($pallet_type as $type )
-                                                    <option value="{{$type->id}}" {{$type->pallet_type === 'ทั่วไป' ? 'selected' : ''}}>{{$type->pallet_type}}</option>
+                                                @foreach ($pallet_type as $type)
+                                                    <option value="{{ $type->id }}"
+                                                        {{ $type->pallet_type === 'ทั่วไป' ? 'selected' : '' }}>
+                                                        {{ $type->pallet_type }}</option>
                                                 @endforeach
-                                               
+
                                             </select>
                                         </div>
                                     </div>
@@ -169,9 +171,10 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            @foreach (array_map(null, $pallet['quantity'],$pallet['quantityUm'], $pallet['quantity2'],$pallet['quantityUm2_']) as [$quantity,$quantityUm, $quantity2, $quantityUm2])
-                                                {{ $quantity }} {{ $quantityUm }} : {{ $quantity2 }} {{ $quantityUm2 }} <br>
-                                             @endforeach
+                                            @foreach (array_map(null, $pallet['quantity'], $pallet['quantityUm'], $pallet['quantity2'], $pallet['quantityUm2_']) as [$quantity, $quantityUm, $quantity2, $quantityUm2])
+                                                {{ $quantity }} {{ $quantityUm }} : {{ $quantity2 }}
+                                                {{ $quantityUm2 }} <br>
+                                            @endforeach
                                         </td>
                                         <td>{{ $pallet['pallet_type_id'] }}</td>
                                         <td>{{ $pallet['note'] ?? '' }}</td>
@@ -201,17 +204,45 @@
                 scrollX: true,
                 ordering: true,
                 paging: true,
-                columns: [
-                    {data: 'pallet_id',className: 'text-center'},
-                    {data: 'pallet_no', width: '15%',className: 'text-center'},
-                    {data: 'room',className: 'text-center'},
-                    {data: 'show_product_id',className: 'text-center'},
-                    {data: 'product_name',className: 'text-center'},
-                    {data: '',className: 'text-center'},
-                    {data: 'pallet_type_id',className: 'text-center'},
-                    {data: 'note'},
-                    {data: '#'},
-                ]
+                columns: [{
+                        data: 'pallet_id',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'pallet_no',
+                        width: '15%',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'room',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'show_product_id',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'product_name',
+                        className: 'text-center'
+                    },
+                    {
+                        data: '',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'pallet_type_id',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'note'
+                    },
+                    {
+                        data: '#'
+                    },
+                ],
+                pageLength: 25,
+                lengthMenu: [25, 50, 100],
+                order: []
             });
         })
     </script>
@@ -307,8 +338,8 @@
                     $.ajax({
                         url: "{{ route('AutoCompleteAddPallet', ['order_number' => $order_number]) }}",
                         data: {
-                            query: request.term ,
-                            type:  $("#pallet_type").val(),
+                            query: request.term,
+                            type: $("#pallet_type").val(),
                         },
                         success: function(data) {
                             // console.log(data);
@@ -322,7 +353,7 @@
                 },
                 minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
                 select: function(event, ui) {
-                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
+                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ product_id
                     $(product_idSelector).val(ui.item.product_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
                     $(show_product_idSelector).val(ui.item.product_no);
                     $(product_nameSelector).val(ui.item.product_name); // เติมชื่อสินค้าในช่องชื่อสินค้า
@@ -338,7 +369,7 @@
             $(product_nameSelector).focus(function() {
                 $(this).autocomplete('search', ''); // ส่งค่าว่างเพื่อแสดง autocomplete ทันที
             });
-            
+
         }
         initializePalletAutocomplete(`#product_name0`, `#product_id0`, `#ordered_quantity0`, `#ordered_quantity2_0`,
             `#bag_color0`, `#note0`,
@@ -352,7 +383,7 @@
                 changePalletType(type); // เรียกฟังก์ชันพร้อมส่งค่าประเภท
             }
         });
-    
+
         function changePalletType(type) {
             $.ajax({
                 url: "{{ route('AutoCompleteAddPallet', ['order_number' => $order_number]) }}", // ตรวจสอบว่า order_number มีค่าหรือส่งจาก Blade

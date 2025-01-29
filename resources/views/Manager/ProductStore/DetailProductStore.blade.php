@@ -39,14 +39,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($product_stores as $product_store)
+                                    @foreach ($product_stores as $receipt_product)
                                         <tr>
-                                            <td>{{ $product_store->product_id }}</td>
-                                            <td>{{ $product_store->department }}</td>
-                                            <td>{{ $product_store->weight }}</td>
-                                            <td>{{ $product_store->amount }}</td>
-                                            <td>{{ $product_store->status }}</td>
-                                            <td>{{ $product_store->comment }}</td>
+                                            <td>{{ $receipt_product->product_id }}</td>
+                                            <td>{{ $receipt_product->department }}</td>
+                                            <td>{{ $receipt_product->weight }}</td>
+                                            <td>{{ $receipt_product->amount }}</td>
+                                            <td>{{ $receipt_product->status }}</td>
+                                            <td>{{ $receipt_product->comment }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

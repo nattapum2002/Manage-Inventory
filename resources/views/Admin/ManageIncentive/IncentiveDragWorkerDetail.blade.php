@@ -25,12 +25,12 @@
                             @foreach ($Dragincentive as $item)
                                 <tr>
                                     <td>{{ intval($item->order_id) }}</td>
-                                    <td>{{ $item->item_no }}</td>
-                                    <td>{{ $item->item_desc1 }}</td>
+                                    <td>{{ $item->product_number }}</td>
+                                    <td>{{ $item->product_description }}</td>
                                     <td>{{ $item->quantity }}</td>
-                                    <td>{{ $item->item_um }}</td>
+                                    <td>{{ $item->product_um }}</td>
                                     <td>{{ $item->quantity2 }}</td>
-                                    <td>{{ $item->item_um2 }}</td>
+                                    <td>{{ $item->product_um2 }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

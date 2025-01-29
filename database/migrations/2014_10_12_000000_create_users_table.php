@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('user_id');
             $table->string('name');
             $table->string('surname');
-            $table->string('position');
-            $table->date('start_date');
+            $table->string('department');
             $table->string('password');
             $table->string('user_type');
             $table->string('note')->nullable();

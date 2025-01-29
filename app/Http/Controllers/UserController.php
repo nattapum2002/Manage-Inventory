@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
         $Users = DB::table('users')->get();
 
         return view('Admin.ManageUsers.manageuser', compact('Users'));
@@ -23,30 +23,59 @@ class UserController extends Controller
 
     public function profile()
     {
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
         $User = DB::table('users')->where('user_id', Auth::user()->user_id)->first();
 
         // dd($user);
-        return view('admin.profile', compact('User'));
+        if (Auth::user()->user_type == 'Admin') {
+            return view('Admin.profile', compact('User'));
+        } elseif (Auth::user()->user_type == 'Manager') {
+            return view('Manager.profile', compact('User'));
+        } elseif (Auth::user()->user_type == 'Employee') {
+            return view('Employee.profile', compact('User'));
+        }
+    }
+
+    public function syncUsers()
+    {
+        try {
+            // เรียก Stored Procedure
+            DB::statement('EXEC dbo.Add_users');
+
+            // ดึงข้อมูลจาก users_temporary
+            $temporaryUsers = DB::table('users_temporary')->get();
+
+            // เตรียมข้อมูลสำหรับการแทรก
+            $usersData = $temporaryUsers->map(function ($user) {
+                return [
+                    'user_id'    => $user->user_id,
+                    'prefix'     => $user->prefix,
+                    'name'       => $user->name,
+                    'surname'    => $user->surname,
+                    'department' => $user->department,
+                    'level'      => $user->level,
+                    'password'   => Hash::make($user->user_id),
+                ];
+            })->toArray();
+
+            // อัปเดตหรือแทรกข้อมูลแบบ Batch
+            foreach (array_chunk($usersData, 100) as $batch) {
+                DB::table('users')->upsert($batch, ['user_id'], ['prefix', 'name', 'surname', 'department', 'level', 'password']);
+            }
+
+            return redirect()->route('ManageUsers')->with('success', 'Sync ข้อมูลผู้ใช้งานเรียบร้อยแล้ว');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'เกิดข้อผิดพลาดขณะ Sync ข้อมูล : ' . $e->getMessage()]);
+        }
     }
 
     public function create(Request $request)
     {
-        // Check if the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
         // Validate the incoming request
         $request->validate([
             'user_id' => 'required',
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'start_date' => 'required|date',
+            'department' => 'required|string|max:255',
             'password' => 'required|min:6|confirmed',
             'user_type' => 'required',
             'note' => 'nullable|string|max:500',
@@ -59,8 +88,7 @@ class UserController extends Controller
                 'user_id' => $request->user_id,
                 'name' => $request->name,
                 'surname' => $request->surname,
-                'position' => $request->position,
-                'start_date' => $request->start_date,
+                'department' => $request->department,
                 'password' => Hash::make($request->password),
                 'user_type' => $request->user_type,
                 'note' => $request->note,
@@ -77,10 +105,6 @@ class UserController extends Controller
 
     public function edit($user_id)
     {
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
         $User = DB::table('users')->where('user_id', $user_id)->first();
 
         return view('Admin.ManageUsers.edituser', compact('User'));
@@ -88,15 +112,11 @@ class UserController extends Controller
 
     public function toggle($user_id, $status)
     {
-        // Ensure the user is authenticated (optional)
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
         // Attempt to update the user's status
         try {
             DB::table('users')->where('user_id', $user_id)->update([
                 'status' => $status,
+                'updated_at' => now(),
             ]);
 
             // Redirect with success message
@@ -109,46 +129,37 @@ class UserController extends Controller
 
     public function update($user_id, Request $request)
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
+        if (!Auth::check()) {
             return redirect()->route('Login.index');
         }
 
-        // Validate the incoming request data
-        $request->validate([
+        dd($request->all());
+
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'password' => 'nullable|min:6|confirmed', // Optional password
-            'user_type' => 'required',
+            'department' => 'required|string|max:255',
+            'user_type' => 'required|string',
             'note' => 'nullable|string|max:500',
-            'status' => 'required',
+            'status' => 'required|boolean',
         ]);
 
-        // Check if the user exists
         $user = DB::table('users')->where('user_id', $user_id)->first();
+
         if (!$user) {
             return redirect()->route('ManageUsers')->withErrors(['error' => 'ไม่พบผู้ใช้ที่ต้องการแก้ไข']);
         }
 
-        // Prepare data to update
         $updateData = [
-            'name' => $request->name,
-            'surname' => $request->surname,
-            'position' => $request->position,
-            'start_date' => $request->start_date,
-            'user_type' => $request->user_type,
-            'note' => $request->note,
-            'status' => $request->status,
+            'name' => $validatedData['name'],
+            'surname' => $validatedData['surname'],
+            'department' => $validatedData['department'],
+            'user_type' => $validatedData['user_type'],
+            'note' => $validatedData['note'],
+            'status' => $validatedData['status'],
+            'updated_at' => now(),
         ];
 
-        // Update password only if provided
-        if ($request->filled('password')) {
-            $updateData['password'] = Hash::make($request->password);
-        }
-
-        // Update the user data
         try {
             DB::table('users')->where('user_id', $user_id)->update($updateData);
             return redirect()->route('ManageUsers')->with('success', 'บันทึกข้อมูลเรียบร้อยแล้ว');
@@ -157,9 +168,49 @@ class UserController extends Controller
         }
     }
 
-
-    public function delete(Request $request)
+    public function SaveProfile(Request $request)
     {
-        //
+        if (!Auth::check()) {
+            return redirect()->route('Login.index');
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'surname' => 'required|string|max:255',
+            'department' => 'required|string|max:255',
+            'user_type' => 'required|string',
+            'old_password' => 'nullable|min:6',
+            'password' => 'nullable|min:6|confirmed',
+            'note' => 'nullable|string|max:500',
+            'status' => 'required|boolean',
+        ]);
+        dd($request->all());
+
+        $user = DB::table('users')->where('user_id', $validatedData['user_id'])->first();
+
+        if ($request->filled('old_password') && !Hash::check($request->old_password, $user->password)) {
+            return back()->withErrors(['old_password' => 'รหัสผ่านเดิมไม่ถูกต้อง']);
+        }
+
+        $updateData = [
+            'name' => $validatedData['name'],
+            'surname' => $validatedData['surname'],
+            'department' => $validatedData['department'],
+            'user_type' => $validatedData['user_type'],
+            'note' => $validatedData['note'],
+            'status' => $validatedData['status'],
+            'updated_at' => now(),
+        ];
+
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        try {
+            DB::table('users')->where('user_id', $validatedData['user_id'])->update($updateData);
+            return redirect()->route('Profile')->with('success', 'บันทึกข้อมูลเรียบร้อยแล้ว');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'เกิดข้อผิดพลาดขณะบันทึกข้อมูล: ' . $e->getMessage()]);
+        }
     }
 }

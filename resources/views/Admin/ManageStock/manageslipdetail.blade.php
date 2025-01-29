@@ -17,7 +17,7 @@
                             <th colspan="9">
                                 <div class="row">
                                     <div class="col-2">รหัสสลิป : {{ $slip_id }}</div>
-                                    <div class="col-2">ใบสลิปที่ : {{ $show_slip->product_slip_number }}</div>
+                                    <div class="col-2">ใบสลิปที่ : {{ $show_slip->receipt_slip_number }}</div>
                                     <div class="col-2">Date : {{ $show_detail[0]->store_date ?? 'N/A' }}</div>
                                     <time class="col-2">Time : {{ $show_detail[0]->store_time ?? 'N/A' }}</time>
                                     <div class="col-2">{!! $show_slip->status == 1 ? '<p class="text-success">ตรวจสอบแล้ว</p>' : '<p class="text-danger">รอตรวจสอบ</p>' !!}</div>
@@ -39,9 +39,9 @@
                     <tbody>
                         @foreach ($show_detail as $item)
                             <tr>
-                                <td>{{ $item->item_no }}</td>
+                                <td>{{ $item->product_number }}</td>
                                 <td>
-                                    <span id="product_name_{{ $item->id }}">{{ $item->item_desc1 }}</span>
+                                    <span id="product_name_{{ $item->id }}">{{ $item->product_description }}</span>
                                 </td>
                                 <td>
                                     <span id="department_{{ $item->id }}">{{ $item->department }}</span>
@@ -51,16 +51,16 @@
                                 <td>
                                     <span id="quantity_{{ $item->id }}">{{ $item->quantity }}</span>
                                     <input type="number" class="form-control" id="edit_quantity_{{ $item->id }}"
-                                        value="{{ $item->quantity  }}" style="display:none;">
+                                        value="{{ $item->quantity }}" style="display:none;">
                                 </td>
-                                <td><span id="unit_{{ $item->id }}">{{ $item->item_um }}</span></td>
+                                <td><span id="unit_{{ $item->id }}">{{ $item->product_um }}</span></td>
                                 <td>
-                                    <span id="quantity2_{{ $item->id }}">{{ $item->quantity2  }}</span>
+                                    <span id="quantity2_{{ $item->id }}">{{ $item->quantity2 }}</span>
                                     <input type="number" class="form-control" name=""
-                                        id="edit_quantity2_{{ $item->id }}" value="{{ $item->quantity2  }}"
+                                        id="edit_quantity2_{{ $item->id }}" value="{{ $item->quantity2 }}"
                                         style="display:none;">
                                 </td>
-                                <td><span id="unit_{{ $item->id }}">{{ $item->item_um2 }}</span></td>
+                                <td><span id="unit_{{ $item->id }}">{{ $item->product_um2 }}</span></td>
                                 <td>
                                     <span id="comment_{{ $item->id }}">{{ $item->note }}</span>
                                     <input type="text" class="form-control" name=""
@@ -68,8 +68,11 @@
                                         style="display:none;">
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-primary edit_slip" data-product-id="{{ $item->id }}" data-product-code="{{$item->product_id}}">แก้ไข</button>
-                                    <button type="button" class="btn btn-danger" id="cancel_edit_{{ $item->id }}" style="display:none;">ยกเลิก</button>
+                                    <button type="button" class="btn btn-primary edit_slip"
+                                        data-product-id="{{ $item->id }}"
+                                        data-product-code="{{ $item->product_id }}">แก้ไข</button>
+                                    <button type="button" class="btn btn-danger" id="cancel_edit_{{ $item->id }}"
+                                        style="display:none;">ยกเลิก</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -95,10 +98,12 @@
                                     <div class="col-2">
                                         Domestic Checker : {{ $show_detail[0]->domestic_checker ?? 'N/A' }}</div>
                                     <div class="col-2">
-                                        <a class="btn btn-success {{ $show_slip->status == 1 ? 'disabled' : ''}}" type="button" href="{{route('CheckSlip', $slip_id)}}">{{ $show_slip->status == 1 ? 'ตรวจสอบแล้ว' : 'ยืนยัน'}}</a>
+                                        <a class="btn btn-success {{ $show_slip->status == 1 ? 'disabled' : '' }}"
+                                            type="button"
+                                            href="{{ route('CheckSlip', $slip_id) }}">{{ $show_slip->status == 1 ? 'ตรวจสอบแล้ว' : 'ยืนยัน' }}</a>
                                     </div>
                                 </div>
-                               
+
                             </th>
                         </tr>
                     </tfoot>

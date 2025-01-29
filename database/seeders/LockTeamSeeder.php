@@ -15,7 +15,7 @@ class LockTeamSeeder extends Seeder
     {
         $team = ['A', 'B', 'C', 'D'];
         for ($i = 0; $i < 30; $i++) {
-            DB::table('lock_team')->insert([
+            DB::table('team')->insert([
                 'team_id' => $i,
                 'team_name' => $team[rand(0, 3)],
                 'date' => '2022-01-01',

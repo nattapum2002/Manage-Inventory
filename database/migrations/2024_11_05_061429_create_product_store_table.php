@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_store', function (Blueprint $table) {
+        Schema::create('receipt_product', function (Blueprint $table) {
             $table->id();
             $table->string('product_slip_id');
             $table->string('product_slip_number');
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_store');
+        Schema::dropIfExists('receipt_product');
     }
 };

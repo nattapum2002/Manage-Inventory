@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_receipt_plan_detail', function (Blueprint $table) {
+        Schema::create('receipt_plan_detail', function (Blueprint $table) {
             $table->id();
             $table->string('product_id');
             $table->float('product_quantity');
             $table->float('increase_quantity');
             $table->float('reduce_quantity');
             $table->float('total_quantity');
-            $table->string('product_receipt_plan_id');
+            $table->string('receipt_plan_id');
             $table->string('note')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_receipt_plan_detail');
+        Schema::dropIfExists('receipt_plan_detail');
     }
 };

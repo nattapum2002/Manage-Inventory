@@ -14,7 +14,7 @@ class StockSeeder extends Seeder
     public function run(): void
     {
         for ($i = 0; $i < 30; $i++) {
-            DB::table('stock')->insert([
+            DB::table('product_stock')->insert([
                 'product_id' => $i,
                 'product_name' => 'product' . $i,
                 'weight' => $i * 10,

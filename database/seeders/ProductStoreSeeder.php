@@ -14,7 +14,7 @@ class ProductStoreSeeder extends Seeder
     public function run(): void
     {
         for ($i = 0; $i < 30; $i++) {
-            DB::table('product_store')->insert([
+            DB::table('receipt_product')->insert([
                 'product_slip_id' => $i,
                 'product_slip_number' => $i,
                 'department' => 'department' . $i,

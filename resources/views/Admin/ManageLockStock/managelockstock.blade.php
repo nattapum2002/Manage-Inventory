@@ -15,6 +15,7 @@
                                 <thead>
                                     <tr>
                                         <th>วันที่สั่ง</th>
+                                        <th>วันที่รับสินค้า</th>
                                         <th>ลูกค้า</th>
                                         <th>เกรดลูกค้า</th>
                                         <th>รายละเอียด</th>
@@ -23,11 +24,12 @@
                                 <tbody>
                                     @foreach ($CustomerOrders as $CustomerOrder)
                                         <tr>
-                                            <td>{{ $CustomerOrder->ORDERED_DATE }}</td>
+                                            <td>{{ (new DateTime($CustomerOrder->order_date))->format('d/m/Y') }}</td>
+                                            <td>{{ (new DateTime($CustomerOrder->ship_datetime))->format('d/m/Y') }}</td>
                                             <td>{{ $CustomerOrder->customer_name }}</td>
                                             <td>{{ $CustomerOrder->customer_grade ?? 'ไม่มี' }}</td>
                                             <td>
-                                                <a href="{{ route('DetailLockStock',[$CustomerOrder->CUSTOMER_ID,$CustomerOrder->ORDERED_DATE] ) }}"
+                                                <a href="{{ route('DetailLockStock', [$CustomerOrder->customer_id, $CustomerOrder->order_date]) }}"
                                                     class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                             </td>
                                         </tr>
@@ -36,6 +38,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>วันที่สั่ง</th>
+                                        <th>วันที่รับสินค้า</th>
                                         <th>ลูกค้า</th>
                                         <th>เกรดลูกค้า</th>
                                         <th>รายละเอียด</th>

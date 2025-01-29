@@ -13,7 +13,7 @@ class ShiftUsersSeeder extends Seeder
      */
     public function run(): void
     {
-        $shift = DB::table('work_shift')->select('shift_id')->get();
+        $shift = DB::table('shift')->select('shift_id')->get();
         $user = DB::table('users')->select('user_id')->get();
         for ($i = 0; $i < 30; $i++) {
             DB::table('shift_users')->insert([

@@ -40,9 +40,16 @@
                 </div>
             </div> --}}
             <div class="card">
-                <article class="card-header">
+                <div class="card-header">
                     <div class="d-flex justify-content-between">
-                        <h5>รายชื่อคิวลูกค้า</h5>
+                        <div>
+                            <a href="{{ route('syncQueue') }}" class="btn btn-primary" id="syncQueue">
+                                <span id="syncQueueText">syncQueue</span>
+                                <div class="spinner-border spinner-border-sm text-light" id="loading"
+                                    style="display: none;" role="status">
+                                </div>
+                            </a>
+                        </div>
                         <div>
                             <div class="input-group">
                                 <input type="date" class="form-control" name="date" id="date"
@@ -51,9 +58,10 @@
                             </div>
                         </div>
                     </div>
-                </article>
-                <article class="card-body">
-                    <table id="CustomerQueueTable" class="table table-striped">
+                    <small class="form-text text-muted">**การ Sync ข้อมูลอาจใช้เวลามากกว่า 10 นาที</small>
+                </div>
+                <div class="card-body">
+                    <table id="CustomerQueueTable" class="table table-striped table-bordered nowrap">
                         <thead>
                             <th>ลำดับ</th>
                             <th>หมายเลขออเดอร์</th>
@@ -66,14 +74,15 @@
                         <tbody id="queueTableBody">
                             @foreach ($CustomerQueues as $queue)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $queue->ORDER_NUMBER }}</td>
-                                    <td>{{ $queue->CUSTOMER_NAME ?? 'ไม่มีชื่อ' }}</td>
-                                    <td>{{ $queue->CUST_GRADE ?? 'N/A' }}</td>
-                                    <td>{{ $queue->TIME_QUE ?? 'N/A' }}</td>
-                                    <td>{{ (new DateTime($queue->SCHEDULE_SHIP_DATE0))->format('d/m/Y') ?? 'N/A' }}</td>
+                                    <td>{{ $queue->queue_number }}</td>
+                                    <td>{{ $queue->order_number }}</td>
+                                    <td>{{ $queue->customer_name ?? 'ไม่มีชื่อ' }}</td>
+                                    <td>{{ $queue->customer_grade ?? 'N/A' }}</td>
+                                    {{-- <td>{{ $queue->TIME_QUE ?? 'N/A' }}</td> --}}
+                                    <td>{{ (new DateTime($queue->ship_datetime))->format('h:i') ?? 'N/A' }}</td>
+                                    <td>{{ (new DateTime($queue->ship_datetime))->format('d/m/Y') ?? 'N/A' }}</td>
                                     <td>
-                                        <a href="{{ route('DetailCustomerQueue', ['order_number' => $queue->ORDER_NUMBER]) }}"
+                                        <a href="{{ route('DetailCustomerQueue', ['order_number' => $queue->order_number]) }}"
                                             class="btn btn-primary"><i class="fas fa-info-circle"></i></a>
                                     </td>
                                 </tr>
@@ -89,7 +98,7 @@
                             <th></th>
                         </tfoot>
                     </table>
-                </article>
+                </div>
             </div>
         </div>
     </section>
@@ -99,9 +108,18 @@
     <script>
         // กำหนด DataTable
         const dataTable = $("#CustomerQueueTable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: false
+            // responsive: true,
+            // lengthChange: true,
+            // autoWidth: false
+            info: false,
+            scrollX: true,
+            ordering: true,
+            paging: true,
+            pageLength: 25,
+            lengthMenu: [25, 50, 100],
+            order: [
+                [0, 'asc']
+            ]
         });
 
         document.getElementById('btn-search-date').addEventListener('click', function() {
@@ -124,6 +142,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.log(data);
                     if (!data || !data.CustomerQueues || data.CustomerQueues.length === 0) {
                         alert('ไม่พบข้อมูล');
                         return;
@@ -133,14 +152,14 @@
                     dataTable.clear();
 
                     // เพิ่มข้อมูลใหม่ใน DataTable
-                    const newRows = data.CustomerQueues.map((queue, index) => [
-                        index + 1,
-                        queue.ORDER_NUMBER,
-                        queue.CUSTOMER_NAME || 'ไม่มีชื่อ',
-                        queue.CUST_GRADE || 'N/A',
-                        queue.TIME_QUE || 'N/A',
-                        formatDate(queue.SCHEDULE_SHIP_DATE) || 'N/A',
-                        `<a href="{{ url('ManageQueue/Detail') }}/${queue.ORDER_NUMBER}" class="btn btn-primary">
+                    const newRows = data.CustomerQueues.map((queue) => [
+                        queue.queue_number,
+                        queue.order_number,
+                        queue.customer_name || 'ไม่มีชื่อ',
+                        queue.customer_grade || 'N/A',
+                        formatTime(queue.ship_datetime) || 'N/A',
+                        formatDate(queue.ship_datetime) || 'N/A',
+                        `<a href="{{ url('ManageQueue/Detail') }}/${queue.order_number}" class="btn btn-primary">
                         <i class="fas fa-info-circle"></i>
                     </a>`
                     ]);
@@ -154,6 +173,34 @@
                 const d = new Date(date);
                 return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
             }
+
+            function formatTime(datetime) {
+                const d = new Date(datetime);
+                if (isNaN(d)) return "Invalid Date";
+                const hours = d.getHours().toString().padStart(2, '0');
+                const minutes = d.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
         });
+    </script>
+
+    <script>
+        document.getElementById('syncQueue').addEventListener('click', function() {
+            document.getElementById('loading').style.display = 'inline-block';
+            document.getElementById('syncQueueText').style.display = 'none';
+            document.getElementById('syncQueue').disabled = true;
+        });
+
+        window.onload = function() {
+            @if (session('success'))
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('syncQueueText').style.display = 'inline-block';
+                document.getElementById('syncQueue').disabled = false;
+            @elseif ($errors->any())
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('syncQueueText').style.display = 'inline-block';
+                document.getElementById('syncQueue').disabled = false;
+            @endif
+        }
     </script>
 @endsection

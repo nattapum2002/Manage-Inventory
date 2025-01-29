@@ -20,22 +20,27 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // $request->validate([
-        //     'user_id' => 'required',
-        //     'password' => 'required',
-        // ]);
+        $credentials = $request->only('user_id', 'password');
+        $remember = $request->has('remember');
 
-        if (Auth::attempt(['user_id' => $request->user_id, 'password' => $request->password])) {
-            if (Auth::user()->user_type == 'Admin') {
-                return redirect()->route('Dashboard.Admin');
-            } else if (Auth::user()->user_type == 'Manager') {
-                return redirect()->route('Dashboard.Manager');
-            } else if (Auth::user()->user_type == 'User') {
-                return redirect()->route('Dashboard.User');
-            } else {
-                Auth::logout();
-                return redirect()->back()->with('error', 'สิทธิ์ไม่เพียงพอ');
+        if (Auth::attempt($credentials, $remember)) {
+            $userType = Auth::user()->user_type;
+
+            // สร้าง mapping ระหว่าง user_type กับ route
+            $routes = [
+                'Admin' => 'Dashboard.Admin',
+                'Manager' => 'Dashboard.Manager',
+                'Employee' => 'Dashboard.Employee',
+            ];
+
+            // ตรวจสอบและเปลี่ยนเส้นทางตาม user_type
+            if (array_key_exists($userType, $routes)) {
+                return redirect()->route($routes[$userType]);
             }
+
+            // กรณี user_type ไม่มีใน mapping
+            Auth::logout();
+            return redirect()->back()->with('error', 'สิทธิ์ไม่เพียงพอ');
         }
 
         return redirect()->back()->with('error', 'ข้อมูลการเข้าสู่ระบบไม่ถูกต้อง');

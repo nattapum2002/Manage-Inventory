@@ -24,9 +24,9 @@
                         <tbody>
                             @foreach ($arrangeincentive as $item)
                                 <tr>
-                                    <td>{{ $item->order_date}}</td>
-                                    <td>{{ $item->item_no }}</td>
-                                    <td>{{ $item->item_desc1 }}</td>
+                                    <td>{{ $item->order_date }}</td>
+                                    <td>{{ $item->product_number }}</td>
+                                    <td>{{ $item->product_description }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>Kg.</td>
                                     <td>{{ $item->product_work_desc }}</td>

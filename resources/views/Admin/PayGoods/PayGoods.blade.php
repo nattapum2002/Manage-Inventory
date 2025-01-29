@@ -7,7 +7,6 @@
 @section('content')
     <div class="content">
         <div class="container-fluid">
-            <!-- Row for Employee and Date-Time Cards -->
             <div class="row mb-1">
                 <div class="col-lg-6 col-md-6 col-sm-12 mb-1">
                     <div class="card">
@@ -32,165 +31,135 @@
                 </div>
             </div>
 
-            <!-- Row for Customer Queue and Order Details -->
-            <div class="row">
-                <!-- Queue List -->
-                <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
-                    <div class="queue-list">
-                        @if ($customer_queues->isNotEmpty())
+            @if ($customer_queues->isNotEmpty())
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
+                        <div class="queue-list">
                             @foreach ($customer_queues as $queue)
                                 <button class="btn btn-primary mb-2 load-queue-detail"
-                                    data-queue-id="{{ $queue['order_number'] }}">
-                                    {{ $queue['customer_name'] }}
-                                    ({{ (new DateTime($queue['queue_time']))->format('H:i') }})
+                                    data-queue-id="{{ $queue->order_number }}">
+                                    {{ $queue->customer_name }}
+                                    ({{ $queue->queue_time }})
                                 </button>
-                                {{-- <a href="{{ route('SelectPayGoods', ['order_number' => $queue->order_number]) }}"
-                                    class="text-decoration-none">
-                                    <div class="card mb-2">
-                                        <div class="card-body text-center">
-                                            <div class="text-primary font-weight-bold">
-                                                {{ (new DateTime($queue->queue_time))->format('H:i') }}
-                                            </div>
-                                            <div>{{ $queue->customer_name }}</div>
-                                        </div>
-                                    </div>
-                                </a> --}}
-                            @endforeach
-                        @else
-                            <div class="card mb-2">
-                                <div class="card-body text-center">
-                                    <div class="text-primary font-weight-bold">
-                                        <div>ไม่มีคิว</div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                    </div>
-                </div>
-
-                <!-- Order Details and Pallet Info -->
-                <div class="col-lg-9 col-md-8 col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <!-- Order Details -->
-                            <div id="order-details">
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-3 mb-2">
-                                        <fieldset>
-                                            <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
-                                            <h5>
-                                                {{ optional($select_queue)->order_number ? number_format(optional($select_queue)->order_number, 0, '.', '') : (optional($auto_select_queue)->order_number ? number_format(optional($auto_select_queue)->order_number, 0, '.', '') : 'N/A') }}
-                                            </h5>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-6 col-lg-5 mb-2">
-                                        <fieldset>
-                                            <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
-                                            <h5>
-                                                {{ optional($select_queue)->customer_name ?? (optional($auto_select_queue)->customer_name ?? 'N/A') }}
-                                            </h5>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-6 col-lg-2 mb-2">
-                                        <fieldset>
-                                            <label class="text-primary font-weight-bold">เวลานัด</label>
-                                            <h5>
-                                                {{ optional($select_queue)->queue_time ? \Carbon\Carbon::parse(optional($select_queue)->queue_time)->format('H:i') : (optional($auto_select_queue)->queue_time ? \Carbon\Carbon::parse(optional($auto_select_queue)->queue_time)->format('H:i') : 'N/A') }}
-                                            </h5>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-6 col-lg-2 mb-2">
-                                        <fieldset>
-                                            <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
-                                            <h5>
-                                                {{ $total_pallets ?? 'N/A' }}</h5>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <div class="tab">
-                                @foreach ($pallets_with_products as $pallet_no => $pallet)
-                                    <button class="tablinks btn btn-outline-primary"
-                                        onclick="openTab(event, '{{ $pallet_no }}')">
-                                        พาเลท {{ $pallet_no }}
-                                    </button>
-                                @endforeach
-                            </div>
-
-                            @foreach ($pallets_with_products as $pallet_no => $pallet)
-                                <div id="{{ $pallet_no }}" class="tabcontent" style="display: none;">
-                                    <table class="table table-bordered table-striped pallet">
-                                        <thead>
-                                            <tr>
-                                                <th>รหัสสินค้า</th>
-                                                <th>รายละเอียดสินค้า</th>
-                                                <th>จำนวน</th>
-                                                <th>จำนวน 2</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($pallet['products'] as $product)
-                                                <tr>
-                                                    <td>{{ $product['item_id'] }}</td>
-                                                    <td>{{ $product['item_desc1'] }}</td>
-                                                    <td>{{ $product['quantity'] . ' ' . $product['item_um'] }}</td>
-                                                    <td>{{ $product['quantity2'] . ' ' . $product['item_um2'] }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    <div class="row">
-                                        @foreach ($teams as $member)
-                                            <div class="col">
-                                                <button class="btn btn-success btn-block" disabled>
-                                                    {{-- {{ $member->where('user_id', $pallet['towing_staff_id'])->first()->name ?? 'ไม่มีชื่อ' }} --}}
-                                                </button>
-                                                @if ($member->incentive_id && !$member->end_time)
-                                                    <!-- ปุ่มสิ้นสุดงาน (เมื่อเริ่มงานแล้ว) -->
-                                                    <form action="{{ route('EndWork') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="products"
-                                                            value="{{ $pallet['products'] }}">
-                                                        <input type="hidden" name="incentive_id"
-                                                            value="{{ session('incentive_id') }}">
-                                                        <input type="hidden" name="order_number"
-                                                            value="{{ $select_queue->order_number ?? $auto_select_queue->order_number }}">
-                                                        <button
-                                                            class="btn btn-warning btn-block">{{ $member->name }}</button>
-                                                    </form>
-                                                @elseif (!$member->incentive_id)
-                                                    <!-- ปุ่มเริ่มงาน (เมื่อยังไม่เริ่มงาน) -->
-                                                    <form action="{{ route('StartWork') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="user_id"
-                                                            value="{{ $member->user_id }}">
-                                                        <input type="hidden" name="order_number"
-                                                            value="{{ $select_queue->order_number ?? ($auto_select_queue->order_number ?? '') }}">
-                                                        <button
-                                                            class="btn btn-primary btn-block">{{ $member->name }}</button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
                             @endforeach
                         </div>
                     </div>
+                    <div class="col-lg-9 col-md-8 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="order-details">
+                                    {{-- <div class="row">
+                                        <div class="col-md-6 col-lg-3 mb-2">
+                                            <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
+                                            <h5>{{ $auto_select_queue['order_number'] ?? 'N/A' }}</h5>
+                                        </div>
+                                        <div class="col-md-6 col-lg-5 mb-2">
+                                            <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
+                                            <h5>{{ $auto_select_queue['customer_name'] ?? 'N/A' }}</h5>
+                                        </div>
+                                        <div class="col-md-6 col-lg-2 mb-2">
+                                            <label class="text-primary font-weight-bold">เวลานัด</label>
+                                            <h5>{{ $auto_select_queue['queue_time'] ?? 'N/A' }}</h5>
+                                        </div>
+                                        <div class="col-md-6 col-lg-2 mb-2">
+                                            <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
+                                            <h5>{{ $total_pallets ?? 'N/A' }}</h5>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    @if ($pallets_with_products->isNotEmpty())
+                                        <div class="tab">
+                                            @foreach ($pallets_with_products as $index => $pallet)
+                                                <button class="tabLinks btn btn-outline-primary"
+                                                    onclick="openTab(event, 'pallet-{{ $index }}')">
+                                                    พาเลท {{ $index }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                        @foreach ($pallets_with_products as $index => $pallet)
+                                            <div id="pallet-{{ $index }}" class="tabContent" style="display: none;">
+                                                <table class="table table-bordered table-striped pallet nowrap">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>รหัสสินค้า</th>
+                                                            <th>รายละเอียดสินค้า</th>
+                                                            <th>จำนวน</th>
+                                                            <th>จำนวน 2</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($pallet['products'] as $product)
+                                                            <tr>
+                                                                <td>{{ $product['product_id'] }}</td>
+                                                                <td>{{ $product['product_description'] }}</td>
+                                                                <td>{{ $product['quantity'] }}
+                                                                    {{ $product['product_um'] }}
+                                                                </td>
+                                                                <td>{{ $product['quantity2'] }}
+                                                                    {{ $product['product_um2'] }}
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                                <div class="row">
+                                                    @foreach ($teams as $member)
+                                                        @if ($member['incentive_id'] && !$member['end_time'])
+                                                            <div class="col">
+                                                                <form action="{{ route('EndWork') }}" method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="products"
+                                                                        value="{{ json_encode($pallet['products']) }}">
+                                                                    <input type="hidden" name="incentive_id"
+                                                                        value="{{ $member['incentive_id'] }}">
+                                                                    <input type="hidden" name="order_number"
+                                                                        value="{{ $auto_select_queue['order_number'] }}">
+                                                                    <button
+                                                                        class="btn btn-warning btn-block">{{ $member['name'] }}</button>
+                                                                </form>
+                                                            </div>
+                                                        @elseif (!$member['incentive_id'])
+                                                            <div class="col">
+                                                                <form action="{{ route('StartWork') }}" method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="user_id"
+                                                                        value="{{ $member['user_id'] }}">
+                                                                    <input type="hidden" name="order_number"
+                                                                        value="{{ $auto_select_queue['order_number'] }}">
+                                                                    <button
+                                                                        class="btn btn-primary btn-block">{{ $member['name'] }}</button>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="alert alert-info" role="alert">
+                                            ยังไม่จัดสินค้าในคิวนี้
+                                        </div>
+                                    @endif --}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @else
+                <div class="alert alert-info" role="alert">
+                    ไม่มีคิวที่ต้องจ่ายสินค้า
+                </div>
+            @endif
         </div>
     </div>
 @endsection
 
 @section('script')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
+            // Load queue details when clicking the button
             $('.load-queue-detail').on('click', function() {
+                $('#order-details').html(' '); // Clear previous details
                 let queueId = $(this).data('queue-id');
 
                 $.ajax({
@@ -200,9 +169,9 @@
                         id: queueId
                     },
                     success: function(response) {
+                        console.log(response);
                         if (response.select_queue) {
-
-                            const orderDetails = `
+                            let orderDetails = `
                             <div class="row">
                                 <div class="col-md-6 col-lg-3 mb-2">
                                     <fieldset>
@@ -229,9 +198,106 @@
                                     </fieldset>
                                 </div>
                             </div>
+                            <hr>
                         `;
 
+                            if (response.pallets_with_products.length > 0) {
+                                orderDetails += `<div class="tab">`;
+
+                                // Generate pallet tabs dynamically
+                                response.pallets_with_products.forEach((pallet, index) => {
+                                    orderDetails += `
+                                    <button class="tabLinks btn btn-outline-primary"
+                                            onclick="openTab(event, 'pallet-${index}')">
+                                            พาเลท ${index + 1}
+                                    </button>
+                                `;
+                                });
+
+                                orderDetails += `</div>`;
+
+                                // Generate tab contents
+                                response.pallets_with_products.forEach((pallet, index) => {
+                                    orderDetails += `
+                                    <div id="pallet-${index}" class="tabContent" style="display: none;">
+                                        <table class="table table-bordered table-striped pallet">
+                                            <thead>
+                                                <tr>
+                                                    <th>รหัสสินค้า</th>
+                                                    <th>รายละเอียดสินค้า</th>
+                                                    <th>จำนวน</th>
+                                                    <th>จำนวน 2</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                `;
+
+                                    pallet.products.forEach(product => {
+                                        orderDetails += `
+                                        <tr>
+                                            <td>${product.product_id}</td>
+                                            <td>${product.product_description}</td>
+                                            <td>${product.quantity} ${product.product_um}</td>
+                                            <td>${product.quantity2} ${product.product_um2}</td>
+                                        </tr>
+                                    `;
+                                    });
+
+                                    orderDetails += `
+                                            </tbody>
+                                        </table>
+                                        <div class="row">
+                                `;
+
+                                    // Generate team buttons
+                                    response.teams.forEach(member => {
+                                        if (member.incentive_id && !member
+                                            .end_time) {
+                                            orderDetails += `
+                                            <div class="col">
+                                                <form action="{{ route('EndWork') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="products" value='${JSON.stringify(pallet.products)}'>
+                                                    <input type="hidden" name="incentive_id" value="${member.incentive_id}">
+                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
+                                                    <button class="btn btn-warning btn-block">${member.name}</button>
+                                                </form>
+                                            </div>
+                                        `;
+                                        } else if (!member.incentive_id) {
+                                            orderDetails += `
+                                            <div class="col">
+                                                <form action="{{ route('StartWork') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="user_id" value="${member.user_id}">
+                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
+                                                    <button class="btn btn-primary btn-block">${member.name}</button>
+                                                </form>
+                                            </div>
+                                        `;
+                                        }
+                                    });
+
+                                    orderDetails += `
+                                        </div>
+                                    </div>
+                                `;
+                                });
+                            } else {
+                                orderDetails += `
+                                        <div class="alert alert-info" role="alert">
+                                            ยังไม่จัดสินค้าในคิวนี้
+                                        </div>
+                                `;
+                            }
+
                             $('#order-details').html(orderDetails);
+
+                            // Automatically activate the first tab
+                            const firstTab = document.querySelector(".tabLinks");
+                            if (firstTab) {
+                                firstTab.click();
+                            }
                         } else {
                             alert('ไม่พบข้อมูล');
                         }
@@ -241,38 +307,212 @@
                     }
                 });
             });
+
+            // Tab switching functionality
+            window.openTab = function(evt, palletNo) {
+                const tabContent = document.getElementsByClassName("tabContent");
+                for (let i = 0; i < tabContent.length; i++) {
+                    tabContent[i].style.display = "none";
+                }
+
+                const tabLinks = document.getElementsByClassName("tabLinks");
+                for (let i = 0; i < tabLinks.length; i++) {
+                    tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+                }
+
+                document.getElementById(palletNo).style.display = "block";
+                evt.currentTarget.className += " active";
+            };
         });
-    </script>
+    </script> --}}
 
     <script>
-        function openTab(evt, palletNo) {
-            // ซ่อน tabcontent ทั้งหมด
-            const tabcontent = document.getElementsByClassName("tabcontent");
-            for (let i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
+        document.addEventListener("DOMContentLoaded", function() {
+            // Load queue details when clicking the button
+            document.querySelectorAll('.load-queue-detail').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.getElementById('order-details').innerHTML =
+                        ''; // Clear previous details
+                    let queueId = $(this).data('queue-id');
 
-            // เอา class 'active' ออกจาก tablinks ทั้งหมด
-            const tablinks = document.getElementsByClassName("tablinks");
-            for (let i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
+                    fetch('{{ route('SelectPayGoods') }}', {
+                            method: 'POST', // เปลี่ยนเป็น POST
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}' // CSRF Token
+                            },
+                            body: JSON.stringify({
+                                queueId: queueId // ส่งข้อมูลในรูป JSON
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(response => {
+                            console.log(response);
+                            if (response.select_queue) {
+                                let orderDetails = `
+                            <div class="row">
+                                <div class="col-md-6 col-lg-3 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
+                                        <h5>${response.select_queue.order_number}</h5>
+                                    </fieldset>
+                                </div>
+                                <div class="col-md-6 col-lg-5 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
+                                        <h5>${response.select_queue.customer_name}</h5>
+                                    </fieldset>
+                                </div>
+                                <div class="col-md-6 col-lg-2 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">เวลานัด</label>
+                                        <h5>${response.select_queue.queue_time}</h5>
+                                    </fieldset>
+                                </div>
+                                <div class="col-md-6 col-lg-2 mb-2">
+                                    <fieldset>
+                                        <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
+                                        <h5>${response.select_queue.total_pallets}</h5>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <hr>
+                            `;
 
-            // แสดง tab ที่ถูกเลือก
-            document.getElementById(palletNo).style.display = "block";
+                                if (response.pallets_with_products.length > 0) {
+                                    orderDetails += `<div class="tab">`;
 
-            // เพิ่ม class 'active' ให้ปุ่มที่ถูกคลิก
-            evt.currentTarget.className += " active";
-        }
+                                    // Generate pallet tabs dynamically
+                                    response.pallets_with_products.forEach((pallet, index) => {
+                                        orderDetails += `
+                                    <button class="tabLinks btn btn-outline-primary"
+                                            onclick="openTab(event, 'pallet-${index}')">
+                                            พาเลท ${index + 1}
+                                    </button>
+                                `;
+                                    });
 
-        // เปิดแท็บแรกโดยอัตโนมัติ
-        document.addEventListener('DOMContentLoaded', function() {
-            const firstTab = document.querySelector(".tablinks");
-            if (firstTab) {
-                firstTab.click();
-            }
+                                    orderDetails += `</div>`;
+
+                                    // Generate tab contents
+                                    response.pallets_with_products.forEach((pallet, index) => {
+                                        orderDetails += `
+                                    <div id="pallet-${index}" class="tabContent" style="display: none;">
+                                        <table class="table table-bordered table-striped pallet">
+                                            <thead>
+                                                <tr>
+                                                    <th>รหัสสินค้า</th>
+                                                    <th>รายละเอียดสินค้า</th>
+                                                    <th>จำนวน</th>
+                                                    <th>จำนวน 2</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                    `;
+
+                                        pallet.products.forEach(product => {
+                                            orderDetails += `
+                                        <tr>
+                                            <td>${product.product_id}</td>
+                                            <td>${product.product_description}</td>
+                                            <td>${product.quantity} ${product.product_um}</td>
+                                            <td>${product.quantity2} ${product.product_um2}</td>
+                                        </tr>
+                                    `;
+                                        });
+
+                                        orderDetails += `
+                                            </tbody>
+                                        </table>
+                                        <div class="row">
+                                    `;
+
+                                        // Generate team buttons
+                                        response.teams.forEach(member => {
+                                            if (member.incentive_id && !member
+                                                .end_time) {
+                                                orderDetails += `
+                                            <div class="col">
+                                                <form action="{{ route('EndWork') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="products" value='${JSON.stringify(pallet.products)}'>
+                                                    <input type="hidden" name="incentive_id" value="${member.incentive_id}">
+                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
+                                                    <button class="btn btn-warning btn-block">${member.name}</button>
+                                                </form>
+                                            </div>
+                                        `;
+                                            } else if (!member.incentive_id) {
+                                                orderDetails += `
+                                            <div class="col">
+                                                <form action="{{ route('StartWork') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="user_id" value="${member.user_id}">
+                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
+                                                    <button class="btn btn-primary btn-block">${member.name}</button>
+                                                </form>
+                                            </div>
+                                        `;
+                                            }
+                                        });
+
+                                        orderDetails += `
+                                        </div>
+                                    </div>
+                                `;
+                                    });
+                                } else {
+                                    orderDetails += `
+                                        <div class="alert alert-info" role="alert">
+                                            ยังไม่จัดสินค้าในคิวนี้
+                                        </div>
+                                `;
+                                }
+
+                                document.getElementById('order-details').innerHTML =
+                                    orderDetails;
+
+                                // Automatically activate the first tab
+                                const firstTab = document.querySelector(".tabLinks");
+                                if (firstTab) {
+                                    firstTab.click();
+                                }
+                            } else {
+                                alert('ไม่พบข้อมูล');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                            alert('ไม่สามารถโหลดข้อมูลได้');
+                        });
+                });
+            });
+
+            // Tab switching functionality
+            window.openTab = function(evt, palletNo) {
+                const tabContent = document.getElementsByClassName("tabContent");
+                for (let i = 0; i < tabContent.length; i++) {
+                    tabContent[i].style.display = "none";
+                }
+
+                const tabLinks = document.getElementsByClassName("tabLinks");
+                for (let i = 0; i < tabLinks.length; i++) {
+                    tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+                }
+
+                document.getElementById(palletNo).style.display = "block";
+                evt.currentTarget.className += " active";
+            };
         });
     </script>
+
+
+
     <script>
         function updateDateTime() {
             const now = new Date();
@@ -302,9 +542,13 @@
             ordering: false,
             paging: false,
             searching: false,
-            responsive: true,
-            lengthChange: true,
-            autoWidth: true,
+            // responsive: true,
+            // lengthChange: true,
+            // autoWidth: true,
+            ordering: true,
+            pageLength: 25,
+            lengthMenu: [25, 50, 100],
+            order: []
         })
     </script>
 @endsection
@@ -345,7 +589,7 @@
             }
         }
 
-        .tabcontent {
+        .tabContent {
             display: none;
         }
     </style>

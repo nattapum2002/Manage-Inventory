@@ -21,7 +21,7 @@
                 </ul>
             </div>
         @endif
-        <form class="add-stock" method="POST" action="{{ route('AddSlip') }}">
+        <form class="add-product_stock" method="POST" action="{{ route('AddSlip') }}">
             @csrf
             <div class="card">
                 <div class="card-header">
@@ -97,7 +97,7 @@
                             <div class="col-lg-2 col-md-3 col-sm-12">
                                 <div class="form-group">
                                     <label for="item_id_1" class="form-label">รหัสสินค้า</label>
-                                    <input type="text" class="form-control" id="item_id_1" name="item_id[1]"
+                                    <input type="text" class="form-control" id="item_id_1" name="product_id[1]"
                                         readonly="">
                                     <input type="hidden" class="form-control" id="save_item_id_1" name="save_item_id[1]"
                                         readonly="">
@@ -127,7 +127,7 @@
                             <div class="col-lg-3 col-md-3 col-sm-12">
                                 <div class="form-group">
                                     <label for="item_um_1" class="form-label">หน่วย</label>
-                                    <input type="text" class="form-control" id="item_um_1" name="item_um[1]"
+                                    <input type="text" class="form-control" id="item_um_1" name="product_um[1]"
                                         disabled>
                                 </div>
                             </div>
@@ -141,7 +141,7 @@
                             <div class="col-lg-3 col-md-3 col-sm-12">
                                 <div class="form-group">
                                     <label for="item_um2_1" class="form-label">หน่วย</label>
-                                    <input type="text" class="form-control" id="item_um2_1" name="item_um2[1]"
+                                    <input type="text" class="form-control" id="item_um2_1" name="product_um2[1]"
                                         disabled>
                                 </div>
                             </div>

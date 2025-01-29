@@ -15,7 +15,7 @@ class WorkShiftSeeder extends Seeder
     {
         $shift_name = ['A', 'B', 'C', 'D'];
         for ($i = 0; $i < 30; $i++) {
-            DB::table('work_shift')->insert([
+            DB::table('shift')->insert([
                 'shift_id' => $i,
                 'shift_name' => $shift_name[rand(0, 3)],
                 'start_shift' => '00:00:00',

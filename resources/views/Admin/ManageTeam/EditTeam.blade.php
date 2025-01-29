@@ -205,7 +205,7 @@
                 },
                 minLength: 0, // เริ่มค้นหาหลังจากพิมพ์ไป 2 ตัวอักษร
                 select: function(event, ui) {
-                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ item_id
+                    // เมื่อเลือกสินค้า ให้เติมรหัสสินค้าในฟิลด์ product_id
                     $(idSelector).val(ui.item.user_id); // เติมรหัสสินค้าในช่องรหัสสินค้า
                     $(nameSelector).val(ui.item.name); // เติมชื่อสินค้าในช่องชื่อสินค้า
                     $(surnameSelector).val(ui.item.surname);

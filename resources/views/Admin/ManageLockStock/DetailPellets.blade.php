@@ -20,10 +20,10 @@
                                                     {{ $Pallets[0]->pallet_id ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-2 col-md-6 col-sm-12">ห้อง :
-                                                    {{ $Pallets[0]->whs_name }}
+                                                    {{ $Pallets[0]->warehouse ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">ลักษณะงาน :
-                                                    {{ $Pallets[0]->product_work_desc}}
+                                                    {{ $Pallets[0]->product_work_desc ?? 'N/A' }}
                                                 </div>
                                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                                     สถานะ : {!! $Pallets[0]->status == 0
@@ -32,14 +32,16 @@
                                                 </div>
 
                                                 <form class="row"
-                                                    action="{{ route('UpdateLockTeam', [$Pallets[0]->id]) }}" method="POST">
+                                                    action="{{ route('UpdateLockTeam', [$Pallets[0]->pallet_id]) }}"
+                                                    method="POST">
                                                     @csrf
                                                     <div class="col-lg-1 col-md-2 col-sm-3">
                                                         <label for="room">ทีมจัดพาเลท</label>
                                                     </div>
                                                     <div class="col-lg-1 col-md-2 col-sm-7">
                                                         <input type="text" class="form-control" id="team"
-                                                            name="" value="{{$Pallets[0]->team_name ?? ''}}" placholder="ค้นหาทีม">
+                                                            name="" value="{{ $Pallets[0]->team_name ?? '' }}"
+                                                            placholder="ค้นหาทีม">
                                                         <input type="hidden" class="form-control" id="team-id"
                                                             name="team_id">
                                                     </div>
@@ -62,12 +64,12 @@
                                 <tbody>
                                     @foreach ($Pallets as $CustomerOrder)
                                         <tr>
-                                            <td>{{ $CustomerOrder->item_no }}</td>
-                                            <td>{{ $CustomerOrder->item_desc1 }}</td>
-                                            <td>{{ $CustomerOrder->ORDERED_QUANTITY ?? 0 }}</td>
-                                            <td>{{ $CustomerOrder->UOM1 }}</td>
-                                            <td>{{ $CustomerOrder->ORDERED_QUANTITY2 ?? 0 }}</td>
-                                            <td>{{ $CustomerOrder->UOM2 }}</td>
+                                            <td>{{ $CustomerOrder->product_number }}</td>
+                                            <td>{{ $CustomerOrder->product_description }}</td>
+                                            <td>{{ $CustomerOrder->quantity ?? 0 }}</td>
+                                            <td>{{ $CustomerOrder->product_um }}</td>
+                                            <td>{{ $CustomerOrder->quantity2 ?? 0 }}</td>
+                                            <td>{{ $CustomerOrder->product_um2 }}</td>
                                             <td>{{ $CustomerOrder->quantity }}</td>
                                             <td>Kg</td>
                                             <td>{{ $CustomerOrder->status }}</td>
@@ -111,14 +113,15 @@
                                         </th>
                                     </tr>
                                 </tfoot>
-                        </table>
-                        
+                            </table>
+
+                        </div>
+
                     </div>
-                    
+                    <a type="button" class="btn btn-warning"
+                        href="{{ route('DetailLockStock', [$CUS_ID, $ORDER_DATE]) }}">ย้อนกลับ</a>
                 </div>
-                <a type="button" class="btn btn-warning" href="{{route('DetailLockStock',[$CUS_ID , $ORDER_DATE])}}">ย้อนกลับ</a>
             </div>
-        </div>
         </div>
     </section>
 @endsection

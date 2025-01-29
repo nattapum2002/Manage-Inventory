@@ -8,103 +8,123 @@ use Illuminate\Support\Facades\DB;
 
 class ShowStock extends Controller
 {
-    //
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    private function GetProducts($product_id = null)
+    {
+        $query = DB::table('product')
+            ->select(
+                'product_id',
+                'product_number',
+                'product_description',
+                'product_um',
+                'product_um2',
+                'warehouse',
+                'note',
+                'status'
+            );
+
+        if ($product_id) {
+            $query->where('product_number', $product_id);
+        }
+
+        return $product_id ? $query->first() : $query->get();
+    }
+
+    private function GetProductStock($Warehouse, $showAll = false)
+    {
+        return DB::table('product_stock')
+            ->join('product', 'product.product_id', '=', 'product_stock.product_id')
+            ->select(
+                'product.product_id',
+                'product.product_number',
+                'product.product_description',
+                'product_stock.quantity',
+                'product.product_um',
+                'product_stock.quantity2',
+                'product.product_um2',
+                'product.warehouse',
+                'product.note',
+                'product.status'
+            )
+            ->when($Warehouse !== 'All', function ($query) use ($Warehouse) {
+                $query->where('product.warehouse', $Warehouse);
+            })
+            ->when($showAll == false, function ($query) {
+                $query->whereNotNull('product.warehouse');
+            })
+            ->get();
+    }
+
     public function index()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
-        $data = DB::table('stock')
-            ->join('warehouse', 'warehouse.id', '=', 'product.warehouse')
-            ->get();
-        dd($data);
+        $data = $this->GetProductStock('All');
         return view('showstock', compact('data'));
     }
-    public function stock_coldA()
-    {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
 
-        $data = DB::table('stock')
-            ->Join('product', 'product.item_id', '=', 'stock.product_id')
-            ->where('warehouse', 'Cold-A')
-            ->get();
-        return view('stockcold_A', compact('data'));
-    }
-    public function stock_coldC()
+    public function StockFilter(Request $request)
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
+        $ProductStock = $this->GetProductStock($request->input('warehouse'), $request->input('ShowAll'));
 
-        $data = DB::table('stock')
-            ->Join('product', 'product.item_id', '=', 'stock.product_id')
-            ->where('warehouse', 'Cold-C')
-            ->get();
-        return view('stockcold_C', compact('data'));
+        return response()->json([
+            'status' => 'success',
+            'ProductStock' => $ProductStock,
+        ]);
     }
+
     public function Admin_index()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
+        $data = $this->GetProductStock('All');
 
-        $data = DB::table('stock')
-            ->Join('product', 'product.item_id', '=', 'stock.product_id')
-            ->leftJoin('warehouse', 'warehouse.id', '=', 'product.warehouse')
-            ->get();
         return view('Admin.Stock.showstock', compact('data'));
     }
 
-    public function Detail($item_id)
+    public function SyncProduct()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
+        try {
+            DB::statement('EXEC dbo.Add_product');
+
+            return redirect()->route('AdminShowStock')->with('success', 'เพิ่มข้อมูลสินค้าเรียบร้อยแล้ว');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'เกิดข้อผิดพลาดขณะบันทึกข้อมูล : ' . $e->getMessage()]);
         }
-
-        $data = DB::table('product')
-            ->Join('stock', 'product.item_id', '=', 'stock.product_id')
-            ->where('product.item_no', $item_id)->get();
-
-        $Warehouse = DB::table('warehouse')->get();
-
-        return view(
-            'Admin.Stock.edititem',
-            compact(
-                'data',
-                'Warehouse'
-            )
-        );
     }
 
-    public function edit_name(Request $request)
+    public function ProductDetail($product_id)
+    {
+        $data = $this->GetProducts($product_id);
+
+        return view('Admin.Stock.edititem', compact('data'));
+    }
+
+    public function SaveEditProduct(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required',
-            'product_name' => 'required|string|max:255',
+            'product_id' => 'required|string|max:255',
+            'product_name' => 'nullable|string|max:255',
             'room' => 'required|string|max:255',
         ]);
 
-        $data = $request->all();
         try {
-            DB::table('product')
-                ->where('item_no', $data['product_id'])
-                ->update([
-                    // 'item_desc1' => $data['product_name'],
-                    'warehouse' => $data['room'],
-                    'item_work_desc' => $data['product_work_desc']
-                ]);
+            DB::transaction(function () use ($validated) {
+                DB::table('product')
+                    ->where('product_number', $validated['product_id'])
+                    ->update([
+                        'product_description' => $validated['product_name'],
+                        'warehouse' => $validated['room'],
+                    ]);
+            });
 
-            return redirect()->route("Edit name", $data['product_id'])->with('success', 'Updated successfully.');
+            return redirect()
+                ->route("Edit name", ['product_id' => $validated['product_id']])
+                ->with('success', 'บันทึกข้อมูลเรียบร้อยแล้ว');
         } catch (\Exception $e) {
-            return redirect()->route("Edit name", $data['product_id'])->with('error', 'An error occurred: ' . $e->getMessage());
+            return redirect()
+                ->route("Edit name", ['product_id' => $validated['product_id']])
+                ->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
         }
     }
 }

@@ -9,6 +9,11 @@ use Carbon\Carbon;
 
 class ShiftController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public $select_shifts = [
         ['select_name' => 'A'],
         ['select_name' => 'B'],
@@ -20,33 +25,23 @@ class ShiftController extends Controller
 
     public function index()
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
-        $shifts = DB::table('work_shift')->get();
+        $shifts = DB::table('shift')->get();
         $usersCounts = DB::table('shift_users')->get();
         return view('Admin.ManageShift.manageshift', compact('shifts', 'usersCounts'));
     }
 
     public function EditShift($shift_id)
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
-        $work_shifts = DB::table('work_shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
+        $work_shifts = DB::table('shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
 
         $filtered_shifts = array_filter($this->select_shifts, function ($team) use ($work_shifts) {
             return !in_array($team['select_name'], $work_shifts);
         });
 
-        $shifts = DB::table('work_shift')
-            ->join('shift_users', 'work_shift.shift_id', '=', 'shift_users.shift_id')
+        $shifts = DB::table('shift')
+            ->join('shift_users', 'shift.shift_id', '=', 'shift_users.shift_id')
             ->join('users', 'shift_users.user_id', '=', 'users.user_id')
-            ->where('work_shift.shift_id', $shift_id)->get();
+            ->where('shift.shift_id', $shift_id)->get();
         return view('Admin.ManageShift.EditShift', compact('shifts', 'filtered_shifts'));
     }
 
@@ -105,7 +100,7 @@ class ShiftController extends Controller
 
     public function Toggle($shift_id, $status)
     {
-        DB::table('work_shift')->where('shift_id', $shift_id)->update([
+        DB::table('shift')->where('shift_id', $shift_id)->update([
             'status' => $status,
         ]);
 
@@ -114,12 +109,7 @@ class ShiftController extends Controller
 
     public function AddShift(Request $request)
     {
-        // Ensure the user is authenticated
-        if (!Auth::user()) {
-            return redirect()->route('Login.index');
-        }
-
-        $work_shifts = DB::table('work_shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
+        $work_shifts = DB::table('shift')->select('shift_name')->distinct()->pluck('shift_name')->toArray();
 
         $filtered_shifts = array_filter($this->select_shifts, function ($team) use ($work_shifts) {
             return !in_array($team['select_name'], $work_shifts);
@@ -132,7 +122,7 @@ class ShiftController extends Controller
     {
         $data = $request->all();
         DB::transaction(function () use ($data) {
-            DB::table('work_shift')->updateOrInsert(
+            DB::table('shift')->updateOrInsert(
                 ['shift_id' => $data['shift_id']], // Condition to check for existing record
                 [
                     'shift_name' => $data['shift_name'], // Data to update/insert
@@ -163,7 +153,7 @@ class ShiftController extends Controller
         $query = $request->get('query');
         // ดึงข้อมูลเฉพาะฟิลด์ที่ต้องการ เช่น product_name และ product_id
         $data = DB::table('users')
-            ->select('user_id', 'name', 'surname', 'position') // เลือกเฉพาะฟิลด์ product_name และ product_id
+            ->select('user_id', 'name', 'surname', 'department') // เลือกเฉพาะฟิลด์ product_name และ product_id
             ->where('name', 'like', '%' . $query . '%')
             ->limit(10) // จำกัดผลลัพธ์ 10 รายการ
             ->get();
@@ -176,7 +166,7 @@ class ShiftController extends Controller
                 'value' => $item->name,  // ใช้ 'value' สำหรับการเติมในช่อง input
                 'user_id' => $item->user_id,     // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
                 'surname' => $item->surname,      // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
-                'position' => $item->position       // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
+                'department' => $item->department       // ส่ง 'id' สำหรับการใช้รหัสสินค้าเพิ่มเติม
             ];
         }
 
@@ -187,7 +177,7 @@ class ShiftController extends Controller
     {
         $datetime = Carbon::parse("$date $time");
 
-        $shifts = DB::table('work_shift')->get();
+        $shifts = DB::table('shift')->get();
 
         foreach ($shifts as $shift) {
             $shiftStart = Carbon::parse("$date $shift->start_shift");

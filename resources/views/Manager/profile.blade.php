@@ -13,64 +13,133 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <h3 class="card-title"></h3>
-                                <a href="{{ route('Dashboard.' . Auth::user()->user_type) }}"
-                                    class="btn btn-primary">ย้อนกลับ</a>
+                                <a href="{{ route('Dashboard.' . $User->user_type) }}" class="btn btn-primary">ย้อนกลับ</a>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <form action="{{ route('Edituser.update', Auth::user()->user_id) }}" method="POST">
+                        <form action="{{ route('SaveProfile') }}" method="POST">
+                            <div class="card-body">
                                 @csrf
-                                <div class="form-group">
-                                    <label for="name">ชื่อ</label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ Auth::user()->name }}" required>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="user_id">รหัสพนักงาน</label>
+                                            <input type="text" class="form-control" id="user_id" name="user_id"
+                                                value="{{ $User->user_id }}" readonly>
+                                            @error('user_id')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="name">ชื่อ</label>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                value="{{ $User->name }}" placeholder="ชื่อ" required>
+                                            @error('name')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="surname">นามสกุล</label>
+                                            <input type="text" class="form-control" id="surname" name="surname"
+                                                value="{{ $User->surname }}" placeholder="นามสกุล" required>
+                                            @error('surname')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="department">แผนก</label>
+                                            <input type="text" class="form-control" id="department" name="department"
+                                                value="{{ $User->department }}" placeholder="ตำแหน่ง" readonly>
+                                            @error('department')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="user_type">ประเภทผู้ใช้</label>
+                                            <select name="user_type" class="form-control" id="user_type"
+                                                {{ $User->user_type == 'Admin' ? '' : 'disabled' }}>
+                                                <option value="Admin" {{ $User->user_type == 'Admin' ? 'selected' : '' }}>
+                                                    ผู้ดูแลระบบ</option>
+                                                <option value="Employee"
+                                                    {{ $User->user_type == 'Employee' ? 'selected' : '' }}>
+                                                    พนักงาน</option>
+                                                <option value="Manager"
+                                                    {{ $User->user_type == 'Manager' ? 'selected' : '' }}>ผู้จัดการ
+                                                </option>
+                                            </select>
+                                            @error('user_type')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="old_password">รหัสผ่านเดิม</label>
+                                            <input type="password" class="form-control" id="old_password"
+                                                name="old_password" placeholder="รหัสผ่านเดิม">
+                                            @error('old_password')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="password">รหัสผ่านใหม่</label>
+                                            <input type="password" class="form-control" id="password" name="password"
+                                                placeholder="รหัสผ่านใหม่">
+                                            @error('password')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="password_confirmation">ยืนยันรหัสผ่านใหม่</label>
+                                            <input type="password" class="form-control" id="password_confirmation"
+                                                name="password_confirmation" placeholder="ยืนยันรหัสผ่าน">
+                                            @error('password_confirmation')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9 col-md-8 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="note">หมายเหตุ</label>
+                                            <textarea type="text" class="form-control" id="note" name="note" placeholder="หมายเหตุ"
+                                                {{ $User->user_type == 'Admin' ? '' : 'disabled' }}>{{ $User->note }}</textarea>
+                                            @error('note')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
+                                        <div class="form-group">
+                                            <label for="status">สถานะ</label>
+                                            <select name="status" class="form-control" id="status"
+                                                {{ $User->user_type == 'Admin' ? '' : 'disabled' }}>
+                                                <option value="0" {{ $User->status == '0' ? 'selected' : '' }}>
+                                                    ไม่ใช้งาน</option>
+                                                <option value="1" {{ $User->status == '1' ? 'selected' : '' }}>ใช้งาน
+                                                </option>
+                                            </select>
+                                            @error('status')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="surname">นามสกุล</label>
-                                    <input type="text" class="form-control" id="surname" name="surname"
-                                        value="{{ Auth::user()->surname }}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="position">ตำแหน่ง</label>
-                                    <input type="text" class="form-control" id="position" name="position"
-                                        value="{{ Auth::user()->position }}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="user_type">ประเภทผู้ใช้</label>
-                                    <select name="user_type" class="form-control" id="user_type"
-                                        value="{{ Auth::user()->user_type }}" required>
-                                        <option value="Admin">Admin</option>
-                                        <option value="User">User</option>
-                                        <option value="Manager">Manager</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">อีเมล</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        value="{{ Auth::user()->email }}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="status">สถานะ</label>
-                                    <select name="status" class="form-control" id="status"
-                                        value="{{ Auth::user()->status }}" required>
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">รหัสผ่าน</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="password-confirm">ยืนยันรหัสผ่าน</label>
-                                    <input type="password" class="form-control" id="password-confirm"
-                                        name="password_confirmation" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">บันทึก</button>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success float-right">บันทึก</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

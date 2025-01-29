@@ -16,7 +16,7 @@
                                 <a href="{{ route('ManageUsers') }}" class="btn btn-primary">ย้อนกลับ</a>
                             </div>
                         </div>
-                        <form action="{{ route('ManageUsers.Createuser') }}" method="post">
+                        <form action="{{ route('CreateUser') }}" method="post">
                             @csrf
                             <div class="card-body">
                                 <div class="row">
