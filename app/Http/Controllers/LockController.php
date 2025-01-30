@@ -424,6 +424,7 @@ class LockController extends Controller
         $CustomerOrders = DB::table('orders')
             ->join('order_detail', 'orders.order_number', '=', 'order_detail.order_number')
             ->join('product', 'order_detail.product_id', '=', 'product.product_id')
+            ->join('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->join('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
             ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
             ->select(
@@ -436,6 +437,7 @@ class LockController extends Controller
                 'product.product_um as product_um',
                 'product.product_um2 as product_um2',
                 'product_work_desc.product_work_desc as item_work_desc',
+                'warehouse.warehouse_name as warehouse',
                 'product.*',
                 'customer.*'
             )
