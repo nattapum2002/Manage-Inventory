@@ -60,13 +60,16 @@ class LockController extends Controller
         $Pallets = DB::table('pallet')
             ->join('orders', 'pallet.order_number', '=', 'orders.order_number')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
+            ->join('warehouse','warehouse.id','=','pallet.warehouse_id')
             ->leftJoin('pallet_team', 'pallet.pallet_id', '=', 'pallet_team.pallet_id')
             ->leftJoin('team', 'pallet_team.team_id', '=', 'team.id')
             ->select(
                 'pallet.*',
                 'team.team_name',
                 'pallet_team.team_id',
-                'pallet_type.pallet_type'
+                'pallet_type.pallet_type',
+                'warehouse.id as ware_house_id'
+
             )
             ->whereDate('orders.order_date', $ORDER_DATE)
             ->where('orders.customer_id', $CUS_ID)
@@ -206,7 +209,7 @@ class LockController extends Controller
     public function insert_pallet($CUS_ID, $ORDER_DATE)
     {
         $data = session()->get('lock' . $CUS_ID);
-
+        //dd($data);
         DB::table('pallet')->truncate();
         DB::table('pallet_detail')->truncate();
         DB::table('confirmOrder')->truncate();
@@ -221,7 +224,7 @@ class LockController extends Controller
                         'pallet_id' => $palletId,
                         'order_number' => str_replace(" ", "", $data['order_no']),
                         'pallet_name' => $counter,
-                        'pallet_type' => '1',
+                        'pallet_type_id' => '1',
                         'warehouse_id' => $data['warehouse'],
                         'note' => null,
                         'arrange_pallet_status' => false,
@@ -424,9 +427,9 @@ class LockController extends Controller
         $CustomerOrders = DB::table('orders')
             ->join('order_detail', 'orders.order_number', '=', 'order_detail.order_number')
             ->join('product', 'order_detail.product_id', '=', 'product.product_id')
-            ->join('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->join('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
             ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
+            ->join('warehouse','warehouse.id','=','product.warehouse_id')
             ->select(
                 'orders.order_number as ORDER_NUMBER',
                 'orders.customer_id as customer_id',
@@ -437,9 +440,9 @@ class LockController extends Controller
                 'product.product_um as product_um',
                 'product.product_um2 as product_um2',
                 'product_work_desc.product_work_desc as item_work_desc',
-                'warehouse.warehouse_name as warehouse',
                 'product.*',
-                'customer.*'
+                'customer.*',
+                'warehouse.id as warehouse_id'
             )
             ->whereDate('orders.order_date', $ORDER_DATE)
             ->where('orders.customer_id', $CUS_ID)
@@ -458,7 +461,7 @@ class LockController extends Controller
         $current_weight = []; // น้ำหนักสะสมของแต่ละ warehouse และแต่ละลักษณะงาน
 
         foreach ($CustomerOrders as $itemOrder) {
-            $warehouse = $itemOrder->warehouse;
+            $warehouse = $itemOrder->warehouse_id;
             $work_type = $itemOrder->item_work_desc;
 
             // ถ้ายังไม่มีข้อมูล warehouse นี้ใน lock_items และ current_weight ให้เริ่มต้น
@@ -563,7 +566,7 @@ class LockController extends Controller
         if ($current_weight + $quantity > 850) {
             // เก็บกลุ่มปัจจุบันลงใน lock_items และรีเซ็ต
             $lock_items[] = [
-                'warehouse' => $itemOrder->warehouse,
+                'warehouse' => $itemOrder->warehouse_id,
                 'items' => $current_group
             ];
             $current_group = [];
@@ -586,7 +589,7 @@ class LockController extends Controller
             'product_um2' => $itemOrder->product_um2,
             'quantity' => $quantity,
             'quantity_um' => 'Kg',
-            'warehouse' => $itemOrder->warehouse,
+            'warehouse' => $itemOrder->warehouse_id,
             'work_type' => $itemOrder->item_work_desc,
         ];
         $current_weight += $quantity;
@@ -640,7 +643,7 @@ class LockController extends Controller
     function LargeOrderAddData($itemOrder, $quantity, &$lock_items)
     {
         $lock_items[] = [
-            'warehouse' => $itemOrder->warehouse,
+            'warehouse' => $itemOrder->warehouse_id,
             'work_type' => null,
             'order_id' => $itemOrder->id,
             'order_no' => $itemOrder->ORDER_NUMBER,
@@ -659,7 +662,7 @@ class LockController extends Controller
                     'product_um2' => $itemOrder->product_um2,
                     'quantity' => $quantity,
                     'quantity_um' => 'Kg',
-                    'warehouse' => $itemOrder->warehouse,
+                    'warehouse' => $itemOrder->warehouse_id,
                     'work_type' => $itemOrder->item_work_desc,
                 ]
             ]

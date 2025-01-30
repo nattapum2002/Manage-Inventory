@@ -132,7 +132,7 @@
                                     @foreach ($Pallets as $Pallet)
                                         <tr>
                                             <td>{{ $Pallet->pallet_name }}</td>
-                                            <td id="warehouse-name">{{ $Pallet->warehouse }}</td>
+                                            <td id="warehouse-name">{{ $Pallet->ware_house_id }}</td>
                                             <td>{{ $Pallet->team_name ?? 'ไม่มี' }}</td>
                                             <td>{{ $Pallet->pallet_type }}</td>
                                             <td>
