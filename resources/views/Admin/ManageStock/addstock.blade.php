@@ -88,7 +88,7 @@
                                 <div class="form-group">
                                     <label for="room_id_1" class="form-label">ห้องเก็บ</label>
                                     <select name="room[1]" class="form-control" id="room_id_1">
-                                        <option value="" selected>เลือกห้องเก็บ</option>
+                                        <option selected>เลือกห้องเก็บ</option>
                                         <option value="Cold-A">Cold-A</option>
                                         <option value="Cold-C">Cold-C</option>
                                     </select>

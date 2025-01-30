@@ -347,7 +347,7 @@ class ReceiptPlanController extends Controller
         }
     }
 
-    public function SaveEditProduct(Request $request)
+    public function SaveEditProductPlan(Request $request)
     {
         // Validate incoming data
         $validated = $request->validate([

@@ -17,6 +17,7 @@ class ShowStock extends Controller
     {
         $query = DB::table('product')
             ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
+            ->leftJoin('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
             ->select(
                 'product_id',
                 'product_number',
@@ -25,6 +26,8 @@ class ShowStock extends Controller
                 'product_um2',
                 'warehouse.id as warehouse_id',
                 'warehouse_name as warehouse',
+                'product_work_desc.id as product_work_desc_id',
+                'product_work_desc.product_work_desc',
                 'note',
                 'status'
             );
@@ -41,6 +44,7 @@ class ShowStock extends Controller
         return DB::table('product_stock')
             ->join('product', 'product.product_id', '=', 'product_stock.product_id')
             ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
+            ->leftJoin('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
             ->select(
                 'product.product_id',
                 'product.product_number',
@@ -50,6 +54,8 @@ class ShowStock extends Controller
                 'product_stock.quantity2',
                 'product.product_um2',
                 'warehouse.warehouse_name as warehouse',
+                'product_work_desc.id as product_work_desc_id',
+                'product_work_desc.product_work_desc',
                 'product.note',
                 'product.status'
             )
@@ -60,6 +66,20 @@ class ShowStock extends Controller
                 $query->whereNotNull('warehouse.warehouse_name');
             })
             ->get();
+    }
+
+    private function GetWarehouse()
+    {
+        $warehouse = DB::table('warehouse')->get();
+
+        return $warehouse;
+    }
+
+    private function GetProductWorkDesc()
+    {
+        $productWorkDesc = DB::table('product_work_desc')->get();
+
+        return $productWorkDesc;
     }
 
     public function index()
@@ -81,8 +101,9 @@ class ShowStock extends Controller
     public function Admin_index()
     {
         $data = $this->GetProductStock('All');
+        $warehouses = $this->GetWarehouse();
 
-        return view('Admin.Stock.showstock', compact('data'));
+        return view('Admin.Stock.showstock', compact('data', 'warehouses'));
     }
 
     public function SyncProduct()
@@ -99,10 +120,10 @@ class ShowStock extends Controller
     public function ProductDetail($product_id)
     {
         $data = $this->GetProducts($product_id);
+        $warehouse = $this->GetWarehouse();
+        $product_work_desc = $this->GetProductWorkDesc();
 
-        $warehouse = DB::table('warehouse')->get();
-
-        return view('Admin.Stock.edititem', compact('data', 'warehouse'));
+        return view('Admin.Stock.edititem', compact('data', 'warehouse', 'product_work_desc'));
     }
 
     public function SaveEditProduct(Request $request)
@@ -111,6 +132,7 @@ class ShowStock extends Controller
             'product_id' => 'required|string|max:255',
             'product_name' => 'nullable|string|max:255',
             'room' => 'required|string|max:255',
+            'product_work_desc' => 'nullable|string|max:255',
         ]);
 
         try {
@@ -120,6 +142,7 @@ class ShowStock extends Controller
                     ->update([
                         'product_description' => $validated['product_name'],
                         'warehouse_id' => $validated['room'],
+                        'product_work_desc_id' => $validated['product_work_desc'],
                     ]);
             });
 

@@ -76,6 +76,10 @@ class ReceiptProductController extends Controller
             ->first();
     }
 
+    private function GetWarehouse()
+    {
+        return DB::table('warehouse')->get();
+    }
 
     public function ReceiptPlanFilter(Request $request)
     {
@@ -101,13 +105,15 @@ class ReceiptProductController extends Controller
             return $receiptPlan->remaining_quantity != 0; // กรองเฉพาะข้อมูลที่ remaining_quantity ไม่เท่ากับ 0
         });
 
-        $productTransactions = $this->GetProductTransaction($request->input('date'), 'IN', '10900', 1);
+        // $productTransactions = $this->GetProductTransaction($request->input('date'), 'IN', '10900', 1);
+
+        $Warehouses = $this->GetWarehouse();
 
         return response()->json([
             'status' => 'success',
             'ReceiptPlanFilter' => $ReceiptPlanFilter->isEmpty() ? [] : $ReceiptPlanFilter->values(),
-            'productTransactions' => $productTransactions,
             'ShowAll' => $request->input('ShowAll'),
+            'Warehouses' => $Warehouses,
         ]);
     }
 

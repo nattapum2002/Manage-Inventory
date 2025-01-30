@@ -19,6 +19,7 @@ use App\Http\Controllers\SlipController;
 use App\Http\Controllers\CustomerQueueController;
 use App\Http\Controllers\PayGoodsController;
 use App\Http\Controllers\IncentiveController;
+use App\Http\Controllers\SetDataController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -134,7 +135,7 @@ Route::prefix('ReceiptPlan')->group(function () {
     Route::get('/Edit/{receipt_plan_id}', [ReceiptPlanController::class, 'EditReceiptPlan'])->name('EditReceiptPlan');
     Route::post('/Edit/AddProduct', [ReceiptPlanController::class, 'AddProduct'])->name('AddProduct');
     Route::post('/Edit/SaveEditDetail', [ReceiptPlanController::class, 'SaveEditDetail'])->name('SaveEditDetail');
-    Route::post('/Edit/SaveEditProduct', [ReceiptPlanController::class, 'SaveEditProduct'])->name('SaveEditProduct');
+    Route::post('/Edit/SaveEditProductPlan', [ReceiptPlanController::class, 'SaveEditProductPlan'])->name('SaveEditProductPlan');
     Route::get('/Edit/{receipt_plan_id}/DeleteProduct/{product_id}', [ReceiptPlanController::class, 'DeleteProduct'])->name('DeleteProduct');
     Route::post('/AutocompleteProduct', [ReceiptPlanController::class, 'AutocompleteProduct'])->name('AutocompleteProduct');
 });
@@ -194,6 +195,14 @@ Route::prefix('ManageUsers')->group(function () {
     Route::get('/Toggle/{user_id}/{status}', [UserController::class, 'toggle'])->name('ManageUsers.Toggle');
     Route::get('/Edituser/{user_id}', [UserController::class, 'edit'])->name('Edituser');
     Route::post('/Edituser/{user_id}', [UserController::class, 'update'])->name('Edituser.update');
+});
+
+Route::prefix('SetData')->group(function () {
+    Route::get('/', [SetDataController::class, 'index'])->name('SetData');
+    Route::post('/getSetData', [SetDataController::class, 'getSetData'])->name('getSetData');
+    Route::post('/SaveAddSetData', [SetDataController::class, 'SaveAddSetData'])->name('SaveAddSetData');
+    Route::post('/SaveUpdateSetData', [SetDataController::class, 'SaveUpdateSetData'])->name('SaveUpdateSetData');
+    Route::post('/DeleteSetData', [SetDataController::class, 'DeleteSetData'])->name('DeleteSetData');
 });
 
 //Manager Routes

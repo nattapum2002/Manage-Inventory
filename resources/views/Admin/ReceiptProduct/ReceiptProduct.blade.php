@@ -293,14 +293,14 @@
                             `
                             <select class="form-control" id="warehouse_${item.product_id}" required>
                                 <option>เลือกห้องเก็บ</option>
-                                <option ${item.warehouse === 'Cold-A' ? 'selected' : ''} value="Cold-A">Cold-A</option>
-                                <option ${item.warehouse === 'Cold-C' ? 'selected' : ''} value="Cold-C">Cold-C</option>
-                                <option ${item.warehouse === 'Blood' ? 'selected' : ''} value="Blood">Blood</option>
+                                ${data.Warehouses.map(warehouse =>
+                                    `<option ${item.warehouse == warehouse.warehouse_name ? 'selected' : ''} value="${warehouse.id}">${warehouse.warehouse_name}</option>`
+                                ).join('')}
                             </select>
                             `,
                             `<textarea class="form-control" id="note_${item.product_id}" rows="1">${item.note || ''}</textarea>`,
                             `<button type="button" class="btn btn-warning btn-confirm" id="btn-confirm_${item.product_id}" data-product_id="${item.product_id}">ยืนยัน</button>
-                    <button type="button" class="btn btn-danger btn-cancel" id="btn-cancel_${item.product_id}" data-product_id="${item.product_id}" style="display: none;">ยกเลิก</button>`
+                                <button type="button" class="btn btn-danger btn-cancel" id="btn-cancel_${item.product_id}" data-product_id="${item.product_id}" style="display: none;">ยกเลิก</button>`
                         ]);
                         ReceiptProductDataTable.rows.add(newRows).draw();
                     }

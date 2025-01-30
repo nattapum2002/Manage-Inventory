@@ -18,20 +18,19 @@ class PayGoodsController extends Controller
 
     private function getCustomerQueues($date, $order_number = null)
     {
-        $queue = DB::table('queue')
-            ->join('orders', 'queue.order_number', '=', 'orders.order_number')
+        $queue = DB::table('orders')
             ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
-            ->whereDate('queue.queue_datetime', $date)
+            ->whereDate('orders.ship_datetime', $date)
             ->when($order_number, fn($query, $order_number) => $query->where('queue.order_number', $order_number))
             ->select(
-                'queue.order_number',
+                'orders.order_number',
                 'customer.customer_name',
                 'customer.customer_grade',
-                'queue.queue_datetime',
-                DB::raw("FORMAT(queue.queue_datetime, 'HH:mm') as queue_time") // ใช้ FORMAT()
+                'orders.ship_datetime',
+                DB::raw("FORMAT(orders.ship_datetime, 'HH:mm') as queue_time") // ใช้ FORMAT()
             )
             ->distinct()
-            ->orderBy('queue.queue_datetime');
+            ->orderBy('orders.ship_datetime');
 
         if ($order_number) {
             return $queue->first();

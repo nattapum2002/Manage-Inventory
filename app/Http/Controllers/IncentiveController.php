@@ -109,7 +109,7 @@ class IncentiveController extends Controller
                 'pallet_detail.quantity2',
                 'customer.customer_name',
                 'warehouse.warehouse_name as warehouse',
-                'product.product_work_desc',
+                'product_work_desc.product_work_desc',
                 'order_date.order_date',
             )
             ->join('users', 'users.user_id', '=', 'team_user.user_id')
@@ -119,6 +119,7 @@ class IncentiveController extends Controller
             ->join('pallet_detail', 'pallet_detail.pallet_id', '=', 'pallet.pallet_id')
             ->join('orders', 'pallet.order_number', '=', 'orders.order_number')
             ->join('product', 'orders.product_id', '=', 'product.product_id')
+            ->join('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
             ->join('customer', 'pallet.customer_id', '=', 'customer.customer_id')
             ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->whereDate('pallet.created_at', '=', $date)

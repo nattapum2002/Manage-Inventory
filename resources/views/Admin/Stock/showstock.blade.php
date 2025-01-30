@@ -23,10 +23,10 @@
                             </div>
                             <div class="input-group">
                                 <select name="warehouse" class="form-control" id="warehouse">
-                                    <option value="Cold-A">Cold-A</option>
-                                    <option value="Cold-C">Cold-C</option>
-                                    <option value="Blood">เลือด</option>
                                     <option selected value="All">ทั้งหมด</option>
+                                    @foreach ($warehouses as $item)
+                                        <option value="{{ $item->warehouse_name }}">{{ $item->warehouse_name }}</option>
+                                    @endforeach
                                 </select>
                                 <button type="button" class="btn btn-primary" id="btn-search-product">
                                     <i class="fas fa-search" id="icon-search"></i>

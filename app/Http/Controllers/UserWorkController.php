@@ -59,7 +59,7 @@ class UserWorkController extends Controller
             ->join('product', 'confirmOrder.product_id', '=', 'product.product_id')
             ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->join('customer', 'pallet.customer_id', '=', 'customer.customer_id')
-            ->join('product_work_desc', 'confirmOrder.product_work_desc', '=', 'product_work_desc.id')
+            ->join('product_work_desc', 'confirmOrder.product_work_desc_id', '=', 'product_work_desc.id')
             ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->where('confirmOrder.pallet_id', '=', $pallet_id)
             ->get();

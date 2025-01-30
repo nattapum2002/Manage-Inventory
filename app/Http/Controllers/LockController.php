@@ -59,13 +59,14 @@ class LockController extends Controller
 
         $Pallets = DB::table('pallet')
             ->join('orders', 'pallet.order_number', '=', 'orders.order_number')
+            ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->leftJoin('pallet_team', 'pallet.pallet_id', '=', 'pallet_team.pallet_id')
             ->leftJoin('team', 'pallet_team.team_id', '=', 'team.id')
             ->select(
                 'pallet.*',
                 'team.team_name',
                 'pallet_team.team_id',
-                'pallet.pallet_type'
+                'pallet_type.pallet_type'
             )
             ->whereDate('orders.order_date', $ORDER_DATE)
             ->where('orders.customer_id', $CUS_ID)
@@ -220,7 +221,7 @@ class LockController extends Controller
                         'pallet_id' => $palletId,
                         'order_number' => str_replace(" ", "", $data['order_no']),
                         'pallet_name' => $counter,
-                        'pallet_type' => 'ทั่วไป',
+                        'pallet_type' => '1',
                         'warehouse_id' => $data['warehouse'],
                         'note' => null,
                         'arrange_pallet_status' => false,
@@ -245,7 +246,7 @@ class LockController extends Controller
                             'product_id' => $item['product_id'],
                             'quantity' => $item['quantity'],
                             'quantity2' => null,
-                            'product_work_desc' => $data['work_type'],
+                            'product_work_desc_id' => $data['work_type'],
                             'confirm_order_status' => false,
                             'confirm_at' => null,
                             'created_at' => now()
@@ -315,6 +316,8 @@ class LockController extends Controller
             // ->join('customer', 'customer.customer_id', '=', 'orders.customer_id')
             ->join('pallet_detail', 'pallet.pallet_id', '=', 'pallet_detail.pallet_id')
             ->join('product', 'pallet_detail.product_id', '=', 'product.product_id')
+            ->join('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
+            ->join('pallet_type', 'pallet.pallet_type_id', '=', 'pallet_type.id')
             ->leftJoin('warehouse', 'product.warehouse_id', '=', 'warehouse.id')
             ->leftJoin('pallet_team', 'pallet.pallet_id', '=', 'pallet_team.pallet_id')
             ->leftJoin('team', 'pallet_team.team_id', '=', 'team.team_id')
@@ -328,10 +331,10 @@ class LockController extends Controller
                 'product.product_um',
                 'product.product_um2',
                 // 'confirmOrder.quantity',
-                'pallet.pallet_type',
+                'pallet_type.pallet_type',
                 'product.product_number',
                 'product.product_description',
-                'product.product_work_desc',
+                'product_work_desc.product_work_desc',
                 'team.team_name'
             )
             ->where('pallet.pallet_id', $pallet_id)
@@ -421,6 +424,7 @@ class LockController extends Controller
         $CustomerOrders = DB::table('orders')
             ->join('order_detail', 'orders.order_number', '=', 'order_detail.order_number')
             ->join('product', 'order_detail.product_id', '=', 'product.product_id')
+            ->join('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
             ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
             ->select(
                 'orders.order_number as ORDER_NUMBER',
@@ -431,7 +435,7 @@ class LockController extends Controller
                 'order_detail.quantity2 as quantity2',
                 'product.product_um as product_um',
                 'product.product_um2 as product_um2',
-                'product.product_work_desc as item_work_desc',
+                'product_work_desc.product_work_desc as item_work_desc',
                 'product.*',
                 'customer.*'
             )

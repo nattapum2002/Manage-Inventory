@@ -290,7 +290,7 @@
                 });
 
                 // ส่งข้อมูลด้วย fetch
-                fetch("{{ route('SaveEditProduct') }}", {
+                fetch("{{ route('SaveEditProductPlan') }}", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

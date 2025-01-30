@@ -35,7 +35,7 @@
                                                 @foreach ($warehouse as $room)
                                                     <option {{ $data->warehouse_id == $room->id ? 'selected' : '' }}
                                                         value="{{ $room->id }}">
-                                                        {{ $room->warehouse_name == 'Blood' ? 'เลือด' : $room->warehouse_name }}
+                                                        {{ $room->warehouse_name }}
                                                     </option>
                                                 @endforeach
                                             </select>
