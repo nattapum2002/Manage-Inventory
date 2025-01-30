@@ -147,11 +147,11 @@ class ShowStock extends Controller
             });
 
             return redirect()
-                ->route("Edit name", ['product_id' => $validated['product_id']])
+                ->route('ProductDetail', ['product_id' => $validated['product_id']])
                 ->with('success', 'บันทึกข้อมูลเรียบร้อยแล้ว');
         } catch (\Exception $e) {
             return redirect()
-                ->route("Edit name", ['product_id' => $validated['product_id']])
+                ->route('ProductDetail', ['product_id' => $validated['product_id']])
                 ->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
         }
     }
