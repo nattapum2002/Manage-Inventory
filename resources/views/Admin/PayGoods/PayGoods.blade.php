@@ -352,7 +352,6 @@
                             return response.json();
                         })
                         .then(response => {
-                            console.log(response);
                             if (response.select_queue) {
                                 let orderDetails = `
                             <div class="row">

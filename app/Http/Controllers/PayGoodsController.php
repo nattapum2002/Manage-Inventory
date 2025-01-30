@@ -21,13 +21,13 @@ class PayGoodsController extends Controller
         $queue = DB::table('orders')
             ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
             ->whereDate('orders.ship_datetime', $date)
-            ->when($order_number, fn($query, $order_number) => $query->where('queue.order_number', $order_number))
+            ->when($order_number, fn($query, $order_number) => $query->where('orders.order_number', $order_number))
             ->select(
                 'orders.order_number',
                 'customer.customer_name',
                 'customer.customer_grade',
                 'orders.ship_datetime',
-                DB::raw("FORMAT(orders.ship_datetime, 'HH:mm') as queue_time") // ใช้ FORMAT()
+                DB::raw("FORMAT(orders.ship_datetime, 'HH:mm') as queue_time")
             )
             ->distinct()
             ->orderBy('orders.ship_datetime');
@@ -126,6 +126,7 @@ class PayGoodsController extends Controller
 
     public function SelectPayGoods(Request $request)
     {
+        // return response()->json($request->all());
         $queueId = $request->queueId;
         $today = now()->format('Y-m-d');
         $currentTime = now()->toTimeString();
