@@ -159,7 +159,7 @@ class ShowStat extends Controller
                 'product.product_um',
                 'product_stock.quantity2',
                 'product.product_um2',
-                'warehouse.warehouse_name as warehouse',
+                'warehouse.warehouse_name',
             )
             ->get();
 
