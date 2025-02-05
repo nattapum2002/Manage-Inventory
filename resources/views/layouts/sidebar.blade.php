@@ -96,7 +96,7 @@
                         <a href="{{ route('ReceiptPlan') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                1. แพลนรับสินค้ารายกะ
+                                แพลนรับสินค้ารายกะ
                             </p>
                         </a>
                     </li>
@@ -104,7 +104,7 @@
                         <a href="{{ route('ReceiptProduct') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                2. รับใบ Tranfer slip
+                                รับใบ Tranfer slip
                             </p>
                         </a>
                     </li>
@@ -112,7 +112,7 @@
                         <a href="{{ route('PayGoods') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                10. จ่ายสินค้า
+                                จ่ายสินค้า
                             </p>
                         </a>
                     </li>
@@ -149,6 +149,14 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('Employee') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                รายชื่อพนักงาน
+                            </p>
+                        </a>
+                    </li>
                 @elseif (Auth::user()->user_type == 'Employee')
                     <li class="nav-item">
                         <a href="{{ route('ManageStock') }}" class="nav-link has-dropdown">
@@ -163,6 +171,14 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 งานพาเลท
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('EmployeeIncentive') }}" class="nav-link has-dropdown">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                ค่า Incentive
                             </p>
                         </a>
                     </li>

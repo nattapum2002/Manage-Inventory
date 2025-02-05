@@ -44,6 +44,12 @@ class StatisticsController extends Controller
             ->get();
     }
 
+    private function GetEmployee()
+    {
+        return DB::table('users')
+            ->get();
+    }
+
     public function index()
     {
         $ProductTransactions = $this->GetProductTransactions();
@@ -145,15 +151,9 @@ class StatisticsController extends Controller
         return view('Manager.CustomerOrder.detailcustomerorder', compact('customer_orders'));
     }
 
-    public function Pallet()
+    public function Employee()
     {
-        $pallets = DB::table('pallet')->distinct()->get();
-        return view('Manager.Pallet.Pallet', compact('pallets'));
-    }
-
-    public function DetailPallet($pallet_id)
-    {
-        $pallets = DB::table('pallet')->where('pallet_id', $pallet_id)->get();
-        return view('Manager.Pallet.DetailPallet', compact('pallets'));
+        $users = $this->GetEmployee();
+        return view('Manager.Employee.Employee', compact('users'));
     }
 }

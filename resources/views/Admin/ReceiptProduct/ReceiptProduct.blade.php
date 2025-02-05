@@ -460,10 +460,8 @@
                     return response.json();
                 })
                 .then((data) => {
-                    console.log(data);
                     alert(data.message);
-                    // location.reload();
-
+                    location.reload();
                 })
                 .catch((error) => {
                     console.error('Error:', error);
