@@ -54,7 +54,11 @@
                             <div class="input-group">
                                 <input type="date" class="form-control" name="date" id="date"
                                     value="{{ now()->format('Y-m-d') }}">
-                                <button id="btn-search-date" type="button" class="btn btn-primary">ค้นหา</button>
+                                <button id="btn-search-date" type="button" class="btn btn-primary">
+                                    <i class="fas fa-search" id="icon-search"></i>
+                                    <div class="spinner-border spinner-border-sm text-light" id="icon-loading"
+                                        role="status" style="display: none;"></div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -72,21 +76,6 @@
                             <th></th>
                         </thead>
                         <tbody id="queueTableBody">
-                            @foreach ($CustomerQueues as $queue)
-                                <tr>
-                                    <td>{{ $queue->queue_number }}</td>
-                                    <td>{{ $queue->order_number }}</td>
-                                    <td>{{ $queue->customer_name ?? 'ไม่มีชื่อ' }}</td>
-                                    <td>{{ $queue->customer_grade ?? 'N/A' }}</td>
-                                    {{-- <td>{{ $queue->TIME_QUE ?? 'N/A' }}</td> --}}
-                                    <td>{{ (new DateTime($queue->ship_datetime))->format('h:i') ?? 'N/A' }}</td>
-                                    <td>{{ (new DateTime($queue->ship_datetime))->format('d/m/Y') ?? 'N/A' }}</td>
-                                    <td>
-                                        <a href="{{ route('DetailCustomerQueue', ['order_number' => $queue->order_number]) }}"
-                                            class="btn btn-primary"><i class="fas fa-info-circle"></i></a>
-                                    </td>
-                                </tr>
-                            @endforeach
                         </tbody>
                         <tfoot>
                             <th>ลำดับ</th>
@@ -122,9 +111,7 @@
             ]
         });
 
-        document.getElementById('btn-search-date').addEventListener('click', function() {
-            const date = document.getElementById('date').value;
-
+        function loadManageQueueData(date) {
             fetch(`{{ route('ManageQueueFilterDate') }}`, {
                     method: 'POST',
                     headers: {
@@ -142,7 +129,8 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
+                    document.getElementById('icon-loading').style.display = 'none';
+                    document.getElementById('icon-search').style.display = 'inline-block';
                     if (!data || !data.CustomerQueues || data.CustomerQueues.length === 0) {
                         alert('ไม่พบข้อมูล');
                         return;
@@ -167,20 +155,40 @@
                     // อัปเดต DataTable
                     dataTable.rows.add(newRows).draw();
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    document.getElementById('icon-loading').style.display = 'none';
+                    document.getElementById('icon-search').style.display = 'inline-block';
+                    console.error('Error:', error)
+                });
+        }
 
-            function formatDate(date) {
-                const d = new Date(date);
-                return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-            }
+        function formatDate(date) {
+            const d = new Date(date);
+            return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+        }
 
-            function formatTime(datetime) {
-                const d = new Date(datetime);
-                if (isNaN(d)) return "Invalid Date";
-                const hours = d.getHours().toString().padStart(2, '0');
-                const minutes = d.getMinutes().toString().padStart(2, '0');
-                return `${hours}:${minutes}`;
-            }
+        function formatTime(datetime) {
+            const d = new Date(datetime);
+            if (isNaN(d)) return "Invalid Date";
+            const hours = d.getHours().toString().padStart(2, '0');
+            const minutes = d.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        document.getElementById('btn-search-date').addEventListener('click', function() {
+            document.getElementById('icon-loading').style.display = 'inline-block';
+            document.getElementById('icon-search').style.display = 'none';
+            const date = document.getElementById('date').value;
+
+            loadManageQueueData(date);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('icon-loading').style.display = 'inline-block';
+            document.getElementById('icon-search').style.display = 'none';
+            const date = document.getElementById('date').value;
+
+            loadManageQueueData(date);
         });
     </script>
 

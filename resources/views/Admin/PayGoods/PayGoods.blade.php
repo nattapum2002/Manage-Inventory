@@ -30,8 +30,80 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <ol id="queue-list" class="list-group list-group-numbered">
+                        @foreach ($queue as $queue)
+                            <li class="list-group-item d-flex justify-content-between align-items-start list-group-item-action"
+                                value="{{ $queue->customer_id }}"
+                                data-time="{{ (new DateTime($queue->ship_datetime))->format('H:i') }}"
+                                style="cursor: pointer;">
+                                <div class="ms-2 me-auto">
+                                    {{-- <div class="fw-bold">{{ $queue->customer_name }}</div> --}}
+                                    {{ $queue->customer_name }}
+                                </div>
+                                <span
+                                    class="badge bg-primary rounded-pill">{{ (new DateTime($queue->ship_datetime))->format('H:i') }}</span>
+                            </li>
+                        @endforeach
+                    </ol>
+                </div>
+                <div class="col-lg-9 col-md-8 col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-lg-6 mb-2">
+                                    <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
+                                    <h5 id="text_customer_name"></h5>
+                                </div>
+                                <div class="col-md-6 col-lg-3 mb-2">
+                                    <label class="text-primary font-weight-bold">เวลานัด</label>
+                                    <h5 id="text_queue_time"></h5>
+                                </div>
+                                <div class="col-md-6 col-lg-3 mb-2">
+                                    <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
+                                    <h5 id="text_total_pallets"></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="PalletTabsTable" class="card text-center">
+                        {{-- <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1">พาเลท
+                                        1</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab2-tab" data-bs-toggle="tab" href="#tab2">พาเลท 2</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab3-tab" data-bs-toggle="tab" href="#tab3">พาเลท 3</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body tab-content">
+                            <div class="tab-pane fade show active" id="tab1">
+                                <table id="PalletTable" class="table table-bordered table-striped nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>รหัสสินค้า</th>
+                                            <th>รายละเอียดสินค้า</th>
+                                            <th>จำนวน</th>
+                                            <th>จำนวน 2</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-            @if ($customer_queues->isNotEmpty())
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+
+            {{-- @if ($customer_queues->isNotEmpty())
                 <div class="row">
                     <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
                         <div class="queue-list">
@@ -48,7 +120,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div id="order-details">
-                                    {{-- <div class="row">
+                                    <div class="row">
                                         <div class="col-md-6 col-lg-3 mb-2">
                                             <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
                                             <h5>{{ $auto_select_queue['order_number'] ?? 'N/A' }}</h5>
@@ -139,7 +211,7 @@
                                         <div class="alert alert-info" role="alert">
                                             ยังไม่จัดสินค้าในคิวนี้
                                         </div>
-                                    @endif --}}
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -149,370 +221,197 @@
                 <div class="alert alert-info" role="alert">
                     ไม่มีคิวที่ต้องจ่ายสินค้า
                 </div>
-            @endif
+            @endif --}}
         </div>
     </div>
 @endsection
 
 @section('script')
-    {{-- <script>
-        $(document).ready(function() {
-            // Load queue details when clicking the button
-            $('.load-queue-detail').on('click', function() {
-                $('#order-details').html(' '); // Clear previous details
-                let queueId = $(this).data('queue-id');
+    <script>
+        const PalletTable = $("#PalletTable").DataTable({
+            // responsive: true,
+            // lengthChange: true,
+            // autoWidth: true,
+            info: false,
+            scrollX: true,
+            ordering: true,
+            paging: true,
+            pageLength: 10,
+            lengthMenu: [10, 25, 50],
+            order: []
+        });
 
-                $.ajax({
-                    url: '{{ route('SelectPayGoods') }}',
-                    method: 'GET',
-                    data: {
-                        id: queueId
+        function loadPayGoodsData(customer_id) {
+            const CustomerNameElement = document.getElementById('text_customer_name');
+            const QueueTimeElement = document.getElementById('text_queue_time');
+            const TotalPalletsElement = document.getElementById('text_total_pallets');
+
+            const PalletTabsTable = document.getElementById('PalletTabsTable');
+
+            fetch(`{{ route('PayGoodsData') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
-                    success: function(response) {
-                        console.log(response);
-                        if (response.select_queue) {
-                            let orderDetails = `
-                            <div class="row">
-                                <div class="col-md-6 col-lg-3 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
-                                        <h5>${response.select_queue.order_number}</h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-5 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
-                                        <h5>${response.select_queue.customer_name}</h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-2 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">เวลานัด</label>
-                                        <h5>${response.select_queue.queue_time}</h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-2 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
-                                        <h5>${response.select_queue.total_pallets}</h5>
-                                    </fieldset>
-                                </div>
-                            </div>
-                            <hr>
+                    body: JSON.stringify({
+                        customer_id: customer_id,
+                    }),
+                })
+                .then((response) => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                    CustomerNameElement.textContent = data.queue.customer_name;
+                    QueueTimeElement.textContent = formatTime(data.queue.ship_datetime);
+
+                    if (data.pallet.length > 0) {
+                        TotalPalletsElement.textContent = data.pallet.length;
+
+                        PalletTabsTable.innerHTML = '';
+
+                        PalletTabsTable.innerHTML += `
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                    `;
+
+                        data.pallet.forEach((pallet, index) => {
+                            PalletTabsTable.innerHTML += `
+                            <li class="nav-item">
+                                <a class="nav-link ${index === 0 ? 'active' : ''}" id="tab${index + 1}-tab" data-bs-toggle="tab" href="#tab${index + 1}">พาเลท ${index + 1}</a>
+                            </li>
+                        `;
+                        });
+
+                        PalletTabsTable.innerHTML += `
+                            </ul>
+                        </div>
+                        <div class="card-body tab-content">
+                    `;
+
+                        data.pallet.forEach((pallet, index) => {
+                            PalletTabsTable.innerHTML += `
+                            <div class="tab-pane fade show ${index === 0 ? 'active' : ''}" id="tab${index + 1}" role="tabpanel" aria-labelledby="tab${index + 1}-tab">
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-12">
+                                        <table id="PalletTable" class="table table-bordered table-striped nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>รหัสสินค้า</th>
+                                                    <th>รายละเอียดสินค้า</th>
+                                                    <th>จำนวน</th>
+                                                    <th>จำนวน 2</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                         `;
 
-                            if (response.pallets_with_products.length > 0) {
-                                orderDetails += `<div class="tab">`;
+                            pallet.products.forEach((product) => {
+                                PalletTabsTable.innerHTML += `
+                                            <tr>
+                                                <td>${product.product_code}</td>
+                                                <td>${product.name}</td>
+                                                <td>${product.quantity}</td>
+                                                <td>${product.quantity_2}</td>
+                                            </tr>
+                                        `;
+                            });
 
-                                // Generate pallet tabs dynamically
-                                response.pallets_with_products.forEach((pallet, index) => {
-                                    orderDetails += `
-                                    <button class="tabLinks btn btn-outline-primary"
-                                            onclick="openTab(event, 'pallet-${index}')">
-                                            พาเลท ${index + 1}
-                                    </button>
-                                `;
-                                });
-
-                                orderDetails += `</div>`;
-
-                                // Generate tab contents
-                                response.pallets_with_products.forEach((pallet, index) => {
-                                    orderDetails += `
-                                    <div id="pallet-${index}" class="tabContent" style="display: none;">
-                                        <table class="table table-bordered table-striped pallet">
-                                            <thead>
-                                                <tr>
-                                                    <th>รหัสสินค้า</th>
-                                                    <th>รายละเอียดสินค้า</th>
-                                                    <th>จำนวน</th>
-                                                    <th>จำนวน 2</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                `;
-
-                                    pallet.products.forEach(product => {
-                                        orderDetails += `
-                                        <tr>
-                                            <td>${product.product_id}</td>
-                                            <td>${product.product_description}</td>
-                                            <td>${product.quantity} ${product.product_um}</td>
-                                            <td>${product.quantity2} ${product.product_um2}</td>
-                                        </tr>
-                                    `;
-                                    });
-
-                                    orderDetails += `
+                            PalletTabsTable.innerHTML += `
                                             </tbody>
                                         </table>
-                                        <div class="row">
-                                `;
-
-                                    // Generate team buttons
-                                    response.teams.forEach(member => {
-                                        if (member.incentive_id && !member
-                                            .end_time) {
-                                            orderDetails += `
-                                            <div class="col">
-                                                <form action="{{ route('EndWork') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="products" value='${JSON.stringify(pallet.products)}'>
-                                                    <input type="hidden" name="incentive_id" value="${member.incentive_id}">
-                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
-                                                    <button class="btn btn-warning btn-block">${member.name}</button>
-                                                </form>
-                                            </div>
-                                        `;
-                                        } else if (!member.incentive_id) {
-                                            orderDetails += `
-                                            <div class="col">
-                                                <form action="{{ route('StartWork') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="user_id" value="${member.user_id}">
-                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
-                                                    <button class="btn btn-primary btn-block">${member.name}</button>
-                                                </form>
-                                            </div>
-                                        `;
-                                        }
-                                    });
-
-                                    orderDetails += `
-                                        </div>
                                     </div>
-                                `;
-                                });
-                            } else {
-                                orderDetails += `
-                                        <div class="alert alert-info" role="alert">
-                                            ยังไม่จัดสินค้าในคิวนี้
-                                        </div>
-                                `;
-                            }
-
-                            $('#order-details').html(orderDetails);
-
-                            // Automatically activate the first tab
-                            const firstTab = document.querySelector(".tabLinks");
-                            if (firstTab) {
-                                firstTab.click();
-                            }
-                        } else {
-                            alert('ไม่พบข้อมูล');
-                        }
-                    },
-                    error: function() {
-                        alert('ไม่สามารถโหลดข้อมูลได้');
-                    }
-                });
-            });
-
-            // Tab switching functionality
-            window.openTab = function(evt, palletNo) {
-                const tabContent = document.getElementsByClassName("tabContent");
-                for (let i = 0; i < tabContent.length; i++) {
-                    tabContent[i].style.display = "none";
-                }
-
-                const tabLinks = document.getElementsByClassName("tabLinks");
-                for (let i = 0; i < tabLinks.length; i++) {
-                    tabLinks[i].className = tabLinks[i].className.replace(" active", "");
-                }
-
-                document.getElementById(palletNo).style.display = "block";
-                evt.currentTarget.className += " active";
-            };
-        });
-    </script> --}}
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Load queue details when clicking the button
-            document.querySelectorAll('.load-queue-detail').forEach(button => {
-                button.addEventListener('click', function() {
-                    document.getElementById('order-details').innerHTML =
-                        ''; // Clear previous details
-                    let queueId = $(this).data('queue-id');
-
-                    fetch('{{ route('SelectPayGoods') }}', {
-                            method: 'POST', // เปลี่ยนเป็น POST
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}' // CSRF Token
-                            },
-                            body: JSON.stringify({
-                                queueId: queueId // ส่งข้อมูลในรูป JSON
-                            })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(response => {
-                            if (response.select_queue) {
-                                let orderDetails = `
-                            <div class="row">
-                                <div class="col-md-6 col-lg-3 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
-                                        <h5>${response.select_queue.order_number}</h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-5 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
-                                        <h5>${response.select_queue.customer_name}</h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-2 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">เวลานัด</label>
-                                        <h5>${response.select_queue.queue_time}</h5>
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-lg-2 mb-2">
-                                    <fieldset>
-                                        <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
-                                        <h5>${response.select_queue.total_pallets}</h5>
-                                    </fieldset>
                                 </div>
                             </div>
-                            <hr>
-                            `;
-
-                                if (response.pallets_with_products.length > 0) {
-                                    orderDetails += `<div class="tab">`;
-
-                                    // Generate pallet tabs dynamically
-                                    response.pallets_with_products.forEach((pallet, index) => {
-                                        orderDetails += `
-                                    <button class="tabLinks btn btn-outline-primary"
-                                            onclick="openTab(event, 'pallet-${index}')">
-                                            พาเลท ${index + 1}
-                                    </button>
-                                `;
-                                    });
-
-                                    orderDetails += `</div>`;
-
-                                    // Generate tab contents
-                                    response.pallets_with_products.forEach((pallet, index) => {
-                                        orderDetails += `
-                                    <div id="pallet-${index}" class="tabContent" style="display: none;">
-                                        <table class="table table-bordered table-striped pallet">
-                                            <thead>
-                                                <tr>
-                                                    <th>รหัสสินค้า</th>
-                                                    <th>รายละเอียดสินค้า</th>
-                                                    <th>จำนวน</th>
-                                                    <th>จำนวน 2</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                    `;
-
-                                        pallet.products.forEach(product => {
-                                            orderDetails += `
-                                        <tr>
-                                            <td>${product.product_id}</td>
-                                            <td>${product.product_description}</td>
-                                            <td>${product.quantity} ${product.product_um}</td>
-                                            <td>${product.quantity2} ${product.product_um2}</td>
-                                        </tr>
-                                    `;
-                                        });
-
-                                        orderDetails += `
-                                            </tbody>
-                                        </table>
-                                        <div class="row">
-                                    `;
-
-                                        // Generate team buttons
-                                        response.teams.forEach(member => {
-                                            if (member.incentive_id && !member
-                                                .end_time) {
-                                                orderDetails += `
-                                            <div class="col">
-                                                <form action="{{ route('EndWork') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="products" value='${JSON.stringify(pallet.products)}'>
-                                                    <input type="hidden" name="incentive_id" value="${member.incentive_id}">
-                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
-                                                    <button class="btn btn-warning btn-block">${member.name}</button>
-                                                </form>
-                                            </div>
-                                        `;
-                                            } else if (!member.incentive_id) {
-                                                orderDetails += `
-                                            <div class="col">
-                                                <form action="{{ route('StartWork') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="user_id" value="${member.user_id}">
-                                                    <input type="hidden" name="order_number" value="${response.select_queue.order_number}">
-                                                    <button class="btn btn-primary btn-block">${member.name}</button>
-                                                </form>
-                                            </div>
-                                        `;
-                                            }
-                                        });
-
-                                        orderDetails += `
-                                        </div>
-                                    </div>
-                                `;
-                                    });
-                                } else {
-                                    orderDetails += `
-                                        <div class="alert alert-info" role="alert">
-                                            ยังไม่จัดสินค้าในคิวนี้
-                                        </div>
-                                `;
-                                }
-
-                                document.getElementById('order-details').innerHTML =
-                                    orderDetails;
-
-                                // Automatically activate the first tab
-                                const firstTab = document.querySelector(".tabLinks");
-                                if (firstTab) {
-                                    firstTab.click();
-                                }
-                            } else {
-                                alert('ไม่พบข้อมูล');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching data:', error);
-                            alert('ไม่สามารถโหลดข้อมูลได้');
+                        `;
                         });
+
+                        PalletTabsTable.innerHTML += `
+                        </div>
+                    `;
+                    } else {
+                        TotalPalletsElement.textContent = '0';
+
+                        PalletTabsTable.innerHTML = `
+                        <div class="mt-3 mb-3">
+                            ยังไม่จัดสินค้าในคิวนี้
+                        </div>
+                    `;
+                    }
+
+
+
+                    // document.getElementById('loading').style.display = 'none';
+                    // document.getElementById('icon-search').style.display = 'inline-block';
+                })
+                .catch(error => {
+                    // document.getElementById('loading').style.display = 'none';
+                    // document.getElementById('icon-search').style.display = 'inline-block';
+                    console.error('Error:', error);
                 });
+        }
+
+        function selectClosestQueue() {
+            let queueItems = document.querySelectorAll("#queue-list li");
+            let now = new Date();
+            let closestItem = null;
+            let minDiff = Infinity;
+
+            queueItems.forEach((item) => {
+                let timeString = item.getAttribute("data-time");
+                let [hours, minutes] = timeString.split(":").map(Number);
+                let itemTime = new Date();
+                itemTime.setHours(hours, minutes, 0, 0);
+
+                let diff = itemTime - now;
+
+                if (diff > 0 && diff < minDiff) {
+                    minDiff = diff;
+                    closestItem = item;
+                }
             });
 
-            // Tab switching functionality
-            window.openTab = function(evt, palletNo) {
-                const tabContent = document.getElementsByClassName("tabContent");
-                for (let i = 0; i < tabContent.length; i++) {
-                    tabContent[i].style.display = "none";
-                }
+            if (closestItem) {
+                closestItem.classList.add("active");
+                let customer_id = closestItem.getAttribute("value");
+                loadPayGoodsData(customer_id);
+            }
+        }
 
-                const tabLinks = document.getElementsByClassName("tabLinks");
-                for (let i = 0; i < tabLinks.length; i++) {
-                    tabLinks[i].className = tabLinks[i].className.replace(" active", "");
-                }
+        function setupQueueClickEvents() {
+            let queueItems = document.querySelectorAll("#queue-list li");
 
-                document.getElementById(palletNo).style.display = "block";
-                evt.currentTarget.className += " active";
-            };
+            queueItems.forEach((item) => {
+                item.addEventListener("click", function() {
+                    queueItems.forEach((item) => item.classList.remove("active"));
+                    item.classList.add("active");
+
+                    let customer_id = item.getAttribute("value");
+                    loadPayGoodsData(customer_id);
+                });
+            });
+        }
+
+        function formatDate(date) {
+            const d = new Date(date);
+            return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+        }
+
+        function formatTime(datetime) {
+            const d = new Date(datetime);
+            if (isNaN(d)) return "Invalid Date";
+            const hours = d.getHours().toString().padStart(2, '0');
+            const minutes = d.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            selectClosestQueue();
+            setupQueueClickEvents();
         });
-    </script>
 
-
-
-    <script>
         function updateDateTime() {
             const now = new Date();
             const optionsDate = {
@@ -533,63 +432,7 @@
         }
 
         setInterval(updateDateTime, 1000);
-        updateDateTime(); // Run on page load
-    </script>
-    <script>
-        $('table.pallet').DataTable({
-            info: false,
-            ordering: false,
-            paging: false,
-            searching: false,
-            // responsive: true,
-            // lengthChange: true,
-            // autoWidth: true,
-            ordering: true,
-            pageLength: 25,
-            lengthMenu: [25, 50, 100],
-            order: []
-        })
+        updateDateTime();
     </script>
 @endsection
-
-@section('style')
-    <style>
-        .queue-list {
-            overflow-y: scroll;
-            max-height: calc(100vh - 270px);
-
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-
-            .card:hover {
-                cursor: pointer;
-                background-color: #f5f5f5;
-            }
-        }
-
-        .queue-list::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab {
-            display: flex;
-            border-bottom: 1px none;
-
-            button {
-                background-color: inherit;
-                border: none;
-                padding: 10px 20px;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-
-            button.active {
-                background-color: #ddd;
-            }
-        }
-
-        .tabContent {
-            display: none;
-        }
-    </style>
-@endsection
+ํ

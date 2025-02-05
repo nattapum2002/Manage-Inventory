@@ -84,30 +84,6 @@
                             </p>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a href="{{ route('ManageShift') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Manage Shift
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('ManageTeam') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Manage Team
-                            </p>
-                        </a>
-                    </li> --}}
-                    {{-- <li class="nav-item">
-                        <a href="{{ route('ManageStock') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Manage Stock
-                            </p>
-                        </a>
-                    </li> --}}
                     <li class="nav-item">
                         <a href="{{ route('ManageUsers') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
@@ -136,7 +112,7 @@
                         <a href="{{ route('PayGoods') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                10. Pay Goods
+                                10. จ่ายสินค้า
                             </p>
                         </a>
                     </li>
@@ -158,18 +134,10 @@
                     </li>
                 @elseif (Auth::user()->user_type == 'Manager')
                     <li class="nav-item">
-                        <a href="{{ route('ProductStore') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Product Store
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="{{ route('ProductStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Product Stock
+                                สินค้าคงคลัง
                             </p>
                         </a>
                     </li>
@@ -177,19 +145,11 @@
                         <a href="{{ route('CustomerOrder') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Customer Order
+                                คำสั่งซื้อ
                             </p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('Pallet') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Pallet
-                            </p>
-                        </a>
-                    </li>
-                @elseif (Auth::user()->user_type == 'User')
+                @elseif (Auth::user()->user_type == 'Employee')
                     <li class="nav-item">
                         <a href="{{ route('ManageStock') }}" class="nav-link has-dropdown">
                             <i class="far fa-circle nav-icon"></i>

@@ -57,32 +57,39 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="col-lg col-md col-sm-12">
                                     <div class="form-group">
                                         <label for="receipt_slip_number" class="form-label">Slip ใบที่</label>
                                         <input type="text" class="form-control" id="receipt_slip_number"
                                             name="receipt_slip_number" required>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="col-lg col-md col-sm-12">
                                     <div class="form-group">
                                         <label for="department" class="form-label">หน่วยงาน</label>
-                                        <input type="text" class="form-control" id="department" name="department"
+                                        <input type="text" class="form-control" id="SelectorDepartment" name="department"
                                             required>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="col-lg col-md col-sm-12">
+                                    <div class="form-group">
+                                        <label for="team_receive_product" class="form-label">ทีมรับ</label>
+                                        <select class="form-control" name="team_receive_product"
+                                            id="team_receive_product"></select>
+                                    </div>
+                                </div>
+                                <div class="col-lg col-md col-sm-12">
                                     <div class="form-group">
                                         <label for="product_checker_id" class="form-label">Product Checker</label>
-                                        <input type="text" class="form-control" id="product_checker_id"
+                                        <input type="text" class="form-control" id="SelectorProductChecker"
                                             name="product_checker_id" required>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                <div class="col-lg col-md col-sm-12">
                                     <div class="form-group">
                                         <label for="domestic_checker_id" class="form-label">Domestic Checker</label>
                                         <input type="text" class="form-control" id="domestic_checker_id"
-                                            name="domestic_checker_id" readonly>
+                                            name="domestic_checker_id" value="{{ auth()->user()->user_id }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -253,6 +260,61 @@
             });
         }
 
+        function initializeAutocompleteDepartment(Selector) {
+            $(Selector).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{{ route('AutoCompleteDepartment') }}",
+                        data: {
+                            query: request.term,
+                        },
+                        success: function(data) {
+                            response(data);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                },
+                minLength: 0,
+                select: function(event, ui, response) {
+                    $(Selector).val(ui.item.department);
+                }
+            });
+
+            $(Selector).focus(function() {
+                $(this).autocomplete('search', '');
+            });
+        }
+        initializeAutocompleteDepartment('#SelectorDepartment');
+
+        function initializeAutocompleteProductChecker(Selector) {
+            $(Selector).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{{ route('AutoCompleteProductChecker') }}",
+                        data: {
+                            query: request.term,
+                        },
+                        success: function(data) {
+                            response(data);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                },
+                minLength: 0,
+                select: function(event, ui, response) {
+                    $(Selector).val(ui.item.ProductChecker);
+                }
+            });
+
+            $(Selector).focus(function() {
+                $(this).autocomplete('search', '');
+            });
+        }
+        initializeAutocompleteProductChecker('#SelectorProductChecker');
 
         function loadReceiptPlanData(date, shift, showAll) {
             document.getElementById('loading').style.display = 'inline-block';
@@ -287,7 +349,7 @@
                             <span class="text-danger">Kg</span>
                             `,
                             `
-                            <input type="number" class="form-control mb-1" id="receipt_quantity_${item.product_id}" placeholder="Kg">
+                            <input type="number" class="form-control mb-1" id="receipt_quantity_${item.product_id}" placeholder="Kg" min="0" max="${item.remaining_quantity}">
                             <input type="number" class="form-control" id="receipt_quantity2_${item.product_id}" placeholder="BAG">
                             `,
                             `
@@ -303,6 +365,25 @@
                                 <button type="button" class="btn btn-danger btn-cancel" id="btn-cancel_${item.product_id}" data-product_id="${item.product_id}" style="display: none;">ยกเลิก</button>`
                         ]);
                         ReceiptProductDataTable.rows.add(newRows).draw();
+                    } else {
+                        alert('ไม่พบข้อมูล');
+                    }
+
+                    let select = document.getElementById('team_receive_product');
+                    select.innerHTML = ''; // ล้าง option เก่าทั้งหมด
+
+                    if (data.Team) {
+                        let newOption = document.createElement('option');
+                        data.Team.forEach(team => {
+                            let newOption = document.createElement('option');
+                            newOption.value = team.team_id;
+                            newOption.text = team.team_name;
+                            select.appendChild(newOption);
+                        });
+                    } else {
+                        let newOption = document.createElement('option');
+                        newOption.text = 'ไม่มีทีม';
+                        select.appendChild(newOption);
                     }
 
                     document.getElementById('loading').style.display = 'none';
@@ -345,6 +426,7 @@
             const department = document.getElementById('department').value;
             const productCheckerId = document.getElementById('product_checker_id').value;
             const domesticCheckerId = document.getElementById('domestic_checker_id').value;
+            const teamReceiveProduct = document.getElementById('team_receive_product').value;
 
             // ตรวจสอบว่าข้อมูลฟอร์มครบถ้วน
             if (!receiptSlipNumber || !department || !productCheckerId) {
@@ -367,17 +449,21 @@
                         productCheckerId: productCheckerId,
                         domesticCheckerId: domesticCheckerId,
                         receiptData: receiptData,
+                        teamReceiveProduct: teamReceiveProduct,
                     }),
                 })
                 .then((response) => {
+                    // console.log(data);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
                 .then((data) => {
+                    console.log(data);
                     alert(data.message);
-                    location.reload();
+                    // location.reload();
+
                 })
                 .catch((error) => {
                     console.error('Error:', error);

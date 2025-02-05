@@ -144,6 +144,8 @@ Route::prefix('ReceiptProduct')->group(function () {
     Route::get('/', [ReceiptProductController::class, 'index'])->name('ReceiptProduct');
     Route::post('/ReceiptPlanFilter', [ReceiptProductController::class, 'ReceiptPlanFilter'])->name('ReceiptPlanFilter');
     Route::post('/SaveReceiptProduct', [ReceiptProductController::class, 'SaveReceiptProduct'])->name('SaveReceiptProduct');
+    Route::get('/AutoCompleteDepartment', [ReceiptProductController::class, 'AutoCompleteDepartment'])->name('AutoCompleteDepartment');
+    Route::get('/AutoCompleteProductChecker', [ReceiptProductController::class, 'AutoCompleteProductChecker'])->name('AutoCompleteProductChecker');
 });
 
 Route::prefix('ManageShiftAndTeam')->group(function () {
@@ -172,6 +174,7 @@ Route::prefix('PayGoods')->group(function () {
     Route::post('/SelectPayGoods', [PayGoodsController::class, 'SelectPayGoods'])->name('SelectPayGoods');
     Route::post('/Incentive/StartWork', [PayGoodsController::class, 'StartWork'])->name('StartWork');
     Route::post('/Incentive/EndWork', [PayGoodsController::class, 'EndWork'])->name('EndWork');
+    Route::post('/PayGoodsData', [PayGoodsController::class, 'PayGoodsData'])->name('PayGoodsData');
 });
 
 Route::get('AddItem', function () {
@@ -207,24 +210,22 @@ Route::prefix('SetData')->group(function () {
 
 //Manager Routes
 
-Route::get('/Manager/Dashboard', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
+Route::prefix('Manager')->group(function () {
+    Route::prefix('Dashboard')->group(function () {
+        Route::get('/', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
+    });
 
-Route::get('/Manager/ProductStore', [StatisticsController::class, 'ProductStore'])->name('ProductStore');
-Route::get('/Manager/ProductStore/{slip_id}', [StatisticsController::class, 'DetailProductStore'])->name('DetailProductStore');
+    Route::prefix('ProductStock')->group(function () {
+        Route::get('/', [StatisticsController::class, 'ProductStock'])->name('ProductStock');
+    });
 
-Route::get('/Manager/ProductStock', [StatisticsController::class, 'ProductStock'])->name('ProductStock');
+    Route::prefix('CustomerOrder')->group(function () {
+        Route::get('/', [StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
+        Route::get('/{order_id}', [StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
+    });
+});
 
-Route::get('/Manager/CustomerOrder', [StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
-Route::get('/Manager/CustomerOrder/{order_id}', [StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
-
-Route::get('/Manager/Pallet', [StatisticsController::class, 'Pallet'])->name('Pallet');
-Route::get('/Manager/Pallet/{pallet_id}', [StatisticsController::class, 'DetailPallet'])->name('DetailPallet');
-
-// Route::get('/Manager/Profile', function () {
-//     return view('Manager.profile');
-// })->name('Profile');
-
-//User Routes
+//Employee Routes
 
 Route::get('/Employee/Dashboard', function () {
     return view('Admin.Dashboard.index');

@@ -26,6 +26,7 @@ class ReceiptProductController extends Controller
             ->select(
                 'receipt_plan.receipt_plan_id',
                 'receipt_plan.date',
+                'shift.shift_id',
                 'shift_time.shift_name',
                 'product.product_id',
                 'product.product_number',
@@ -37,21 +38,6 @@ class ReceiptProductController extends Controller
             ->where('shift.shift_time_id', $shift_id)
             ->get();
     }
-
-    // private function GetProductTransaction($date, $transaction_type, $product_id)
-    // {
-    //     return DB::table('product_transactions')
-    //         ->join('product', 'product_transactions.product_id', '=', 'product.product_id')
-    //         ->selectRaw('
-    //         product_transactions.product_id,
-    //         SUM(product_transactions.quantity) as quantity
-    //         ')
-    //         ->whereDate('product_transactions.datetime', $date)
-    //         ->where('product_transactions.transaction_type', $transaction_type)
-    //         ->where('product_transactions.product_id', $product_id)
-    //         ->groupBy('product_transactions.product_id')
-    //         ->first();
-    // }
 
     private function GetProductTransaction($date, $transaction_type, $product_id, $shift_time_id)
     {
@@ -76,9 +62,75 @@ class ReceiptProductController extends Controller
             ->first();
     }
 
+    private function GetTeam($shift_id)
+    {
+        return DB::table('team')
+            ->join('shift', 'team.shift_id', '=', 'shift.shift_id')
+            ->select(
+                'team.team_id',
+                'team.team_name'
+            )
+            ->where('shift.shift_id', $shift_id)
+            ->get();
+    }
+
+    private function GetTeamUserId($team_id)
+    {
+        return DB::table('team_user')
+            ->select(
+                'team_user.user_id',
+            )
+            ->where('team_user.team_id', $team_id)
+            ->get();
+    }
+
     private function GetWarehouse()
     {
         return DB::table('warehouse')->get();
+    }
+
+    public function AutoCompleteDepartment(Request $request)
+    {
+        $query = $request->get('query');
+        $data = DB::table('receipt_product')
+            ->select('department')
+            ->where('department', 'like', '%' . $query . '%')
+            ->distinct()
+            ->limit(10)
+            ->get();
+
+        $results = [];
+        foreach ($data as $item) {
+            $results[] = [
+                'label' => $item->department,
+                'value' => $item->department,
+                'department' => $item->department
+            ];
+        }
+
+        return response()->json($results);
+    }
+
+    public function AutoCompleteProductChecker(Request $request)
+    {
+        $query = $request->get('query');
+        $data = DB::table('receipt_product')
+            ->select('product_checker_id')
+            ->where('product_checker_id', 'like', '%' . $query . '%')
+            ->distinct()
+            ->limit(10)
+            ->get();
+
+        $results = [];
+        foreach ($data as $item) {
+            $results[] = [
+                'label' => $item->product_checker_id,
+                'value' => $item->product_checker_id,
+                'ProductChecker' => $item->product_checker_id
+            ];
+        }
+
+        return response()->json($results);
     }
 
     public function ReceiptPlanFilter(Request $request)
@@ -105,18 +157,18 @@ class ReceiptProductController extends Controller
             return $receiptPlan->remaining_quantity != 0; // กรองเฉพาะข้อมูลที่ remaining_quantity ไม่เท่ากับ 0
         });
 
-        // $productTransactions = $this->GetProductTransaction($request->input('date'), 'IN', '10900', 1);
-
         $Warehouses = $this->GetWarehouse();
+        $ShiftId = $ReceiptPlanFilter->pluck('shift_id')->first();
+        $Team = $this->GetTeam($ShiftId);
 
         return response()->json([
             'status' => 'success',
             'ReceiptPlanFilter' => $ReceiptPlanFilter->isEmpty() ? [] : $ReceiptPlanFilter->values(),
             'ShowAll' => $request->input('ShowAll'),
             'Warehouses' => $Warehouses,
+            'Team' => $Team
         ]);
     }
-
 
     public function index(Request $request)
     {
@@ -142,15 +194,22 @@ class ReceiptProductController extends Controller
             'receiptData.*.product_id' => 'required|distinct',
             'receiptData.*.note' => 'nullable|string',
             'receiptData.*.warehouse' => 'nullable|string',
+            'teamReceiveProduct' => 'nullable|string',
         ]);
 
         try {
             $receiptProductId = Str::uuid();
+            $timestamp = now();
+            $endTimestamp = $timestamp->copy()->addMinute();
 
-            DB::transaction(function () use ($validated, $receiptProductId) {
-                $timestamp = now();
+            $sumReceiptQuantity = collect($validated['receiptData'])->sum('receipt_quantity');
+            $teamUserIds = $this->GetTeamUserId($validated['teamReceiveProduct']);
+            $countUsers = count($teamUserIds);
+            $weightPerUser = $countUsers ? $sumReceiptQuantity / $countUsers : 0;
 
-                // บันทึกข้อมูล receipt_product
+            DB::transaction(function () use ($validated, $receiptProductId, $teamUserIds, $timestamp, $endTimestamp, $weightPerUser) {
+
+                // ✅ บันทึกข้อมูล receipt_product
                 DB::table('receipt_product')->insert([
                     'receipt_product_id' => $receiptProductId,
                     'receipt_slip_number' => $validated['receiptSlipNumber'],
@@ -163,23 +222,21 @@ class ReceiptProductController extends Controller
                     'updated_at' => $timestamp,
                 ]);
 
-                // เตรียมข้อมูล receipt_product_detail
-                $insertData = collect($validated['receiptData'])->map(function ($item) use ($receiptProductId) {
-                    return [
+                // ✅ เตรียมข้อมูล receipt_product_detail
+                $receiptDetails = [];
+                $productTransactions = [];
+                $productStocks = [];
+
+                foreach ($validated['receiptData'] as $item) {
+                    $receiptDetails[] = [
                         'receipt_product_id' => $receiptProductId,
                         'product_id' => $item['product_id'],
                         'quantity' => $item['receipt_quantity'],
                         'quantity2' => $item['receipt_quantity2'],
                         'note' => $item['note'] ?? null,
                     ];
-                })->toArray();
 
-                foreach (array_chunk($insertData, 100) as $chunk) {
-                    DB::table('receipt_product_detail')->insert($chunk);
-                }
-
-                $insertTransactions = collect($validated['receiptData'])->map(function ($item) use ($timestamp, $validated) {
-                    return [
+                    $productTransactions[] = [
                         'transaction_id' => Str::uuid(),
                         'product_id' => $item['product_id'],
                         'quantity' => $item['receipt_quantity'],
@@ -189,44 +246,51 @@ class ReceiptProductController extends Controller
                         'department' => $validated['department'],
                         'datetime' => $timestamp,
                     ];
-                })->toArray();
 
-                foreach (array_chunk($insertTransactions, 100) as $chunk) {
-                    DB::table('product_transactions')->insert($chunk);
-                }
-
-                $insertStock = collect($validated['receiptData'])->map(function ($item) use ($timestamp) {
-                    return [
+                    $productStocks[] = [
                         'product_id' => $item['product_id'],
                         'quantity' => $item['receipt_quantity'],
                         'quantity2' => $item['receipt_quantity2'],
                         'updated_at' => $timestamp,
                     ];
-                })->toArray();
+                }
 
-                foreach ($insertStock as $product_stock) {
-                    $exists = DB::table('product_stock')
-                        ->where('product_id', $product_stock['product_id'])
-                        ->exists();
+                // ✅ Insert ข้อมูลโดยใช้ array_chunk (ช่วยลด memory usage)
+                foreach (array_chunk($receiptDetails, 100) as $chunk) {
+                    DB::table('receipt_product_detail')->insert($chunk);
+                }
+                foreach (array_chunk($productTransactions, 100) as $chunk) {
+                    DB::table('product_transactions')->insert($chunk);
+                }
 
-                    if ($exists) {
-                        // อัปเดตข้อมูลโดยเพิ่มค่า
-                        DB::table('product_stock')
-                            ->where('product_id', $product_stock['product_id'])
-                            ->update([
-                                'quantity' => DB::raw("quantity + {$product_stock['quantity']}"),
-                                'quantity2' => DB::raw("quantity2 + {$product_stock['quantity2']}"),
-                                'updated_at' => $product_stock['updated_at'],
-                            ]);
-                    } else {
-                        // เพิ่มข้อมูลใหม่
-                        DB::table('product_stock')->insert([
-                            'product_id' => $product_stock['product_id'],
-                            'quantity' => $product_stock['quantity'],
-                            'quantity2' => $product_stock['quantity2'],
-                            'updated_at' => $product_stock['updated_at'],
-                        ]);
-                    }
+                // ✅ อัปเดตหรือเพิ่ม stock
+                foreach ($productStocks as $stock) {
+                    DB::table('product_stock')->updateOrInsert(
+                        ['product_id' => $stock['product_id']],
+                        [
+                            'quantity' => DB::raw("quantity + {$stock['quantity']}"),
+                            'quantity2' => DB::raw("quantity2 + {$stock['quantity2']}"),
+                            'updated_at' => $stock['updated_at'],
+                        ]
+                    );
+                }
+
+                // ✅ บันทึก incentive_transactions
+                $incentiveTransactions = [];
+                foreach ($teamUserIds as $userId) {
+                    $incentiveTransactions[] = [
+                        'incentive_id' => Str::uuid(),
+                        'user_id' => $userId->user_id,
+                        'order_number' => null,
+                        'incentive_type' => 'Receipt',
+                        'weight' => $weightPerUser,
+                        'start_time' => $timestamp,
+                        'end_time' => $endTimestamp,
+                    ];
+                }
+
+                foreach (array_chunk($incentiveTransactions, 100) as $chunk) {
+                    DB::table('incentive_transactions')->insert($chunk);
                 }
             });
 
@@ -237,7 +301,7 @@ class ReceiptProductController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' . $e->getMessage(),
+                'message' => 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' . $e->getMessage(),
             ]);
         }
     }

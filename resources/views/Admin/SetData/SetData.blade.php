@@ -133,6 +133,63 @@
                             </div>
                         </div>
                     </div>
+
+                    {{-- กะ --}}
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">ประเภทกะ</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <table id="ShiftTypeTable"
+                                        class="table table-bordered table-striped table-sm table-hover text-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">รหัส</th>
+                                                <th class="text-center">ประเภทกะ</th>
+                                                <th class="text-center">เวลาเริ่มงาน</th>
+                                                <th class="text-center">เวลาเลิกงาน</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div id="shiftTypeEdit">
+                                        <div class="row">
+                                            <h3 class="card-title">เพิ่มประเภทกะ</h3>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label for="shift_type_add_name">ประเภทกะ</label>
+                                                    <input type="text" class="form-control" id="shift_type_add_name"
+                                                        placeholder="กรุณากรอกประกะ">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label for="shift_type_add_start_time">เวลาเริ่มงาน</label>
+                                                    <input type="time" class="form-control"
+                                                        id="shift_type_add_start_time" placeholder="กรุณากรอกเวลาเริ่ม">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label for="shift_type_add_end_time">เวลาเลิกงาน</label>
+                                                    <input type="time" class="form-control"
+                                                        id="shift_type_add_end_time" placeholder="กรุณากรอกเวลาเลิก">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary"
+                                                    id="shift_type_add">บันทึก</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,6 +239,7 @@
             const warehouseTable = initDataTable("#WarehouseTable");
             const productWorkDescTable = initDataTable("#ProductWorkDescTable");
             const palletTypeTable = initDataTable("#PalletTypeTable");
+            const shiftTypeTable = initDataTable("#ShiftTypeTable");
 
             // โหลดข้อมูล
             function loadWarehouse() {
@@ -226,11 +284,36 @@
                     });
             }
 
+            function loadShiftType() {
+                fetchData("{{ route('getSetData') }}")
+                    .then(data => {
+                        shiftTypeTable.clear();
+                        if (data.shift && data.shift.length > 0) {
+                            const newRows = data.shift.map(item => [
+                                item.shift_time_id,
+                                item.shift_name,
+                                formatTime(item.start_shift),
+                                formatTime(item.end_shift),
+                            ]);
+                            shiftTypeTable.rows.add(newRows).draw();
+                        }
+                    });
+            }
+
+            function formatTime(time) {
+                const parts = time.split(':');
+                if (parts.length < 2) return "Invalid Time";
+                const hours = parts[0].padStart(2, '0');
+                const minutes = parts[1].padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+
             // โหลดข้อมูลทั้งหมด
             function loadAllData() {
                 loadWarehouse();
                 loadProductWorkDesc();
                 loadPalletType();
+                loadShiftType();
             }
 
             function warehouseEditDefault() {
@@ -518,6 +601,141 @@
                     .then(data => {
                         loadPalletType();
                         palletTypeEditDefault();
+                    });
+            });
+            //----------------------------------------------------------------------------------
+            // ฟังก์ชันสำหรับฟอร์มเริ่มต้นของ ShiftType
+            function shiftTypeEditDefault() {
+                $("#shiftTypeEdit").html(`
+                    <div class="row">
+                        <h3 class="card-title">เพิ่มประเภทกะ</h3>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="shift_type_add_name">ประเภทกะ</label>
+                                <input type="text" class="form-control" id="shift_type_add_name"
+                                    placeholder="กรุณากรอกประกะ">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="shift_type_add_start_time">เวลาเริ่มงาน</label>
+                                <input type="time" class="form-control"
+                                    id="shift_type_add_start_time" placeholder="กรุณากรอกเวลาเริ่ม">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="shift_type_add_end_time">เวลาเลิกงาน</label>
+                                <input type="time" class="form-control"
+                                    id="shift_type_add_end_time" placeholder="กรุณากรอกเวลาเลิก">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary"
+                                id="shift_type_add">บันทึก</button>
+                        </div>
+                    </div>
+                `);
+            }
+
+            // คลิกเพื่อแก้ไข ShiftType
+            $("#ShiftTypeTable tbody").on("click", "tr", function() {
+                var data = shiftTypeTable.row(this).data();
+                var shift_type_id = data[0];
+                var shift_type_name = data[1];
+                var shift_type_start_time = data[2];
+                var shift_type_end_time = data[3];
+
+                $("#shiftTypeEdit").html(`
+                    <div class="row">
+                        <h3 class="card-title">แก้ไขประเภทกะ</h3>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="shift_type_edit_id">รหัส</label>
+                                <input type="text" class="form-control" id="shift_type_edit_id" value="${shift_type_id}" readonly>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="shift_type_edit_name">ประเภทกะ</label>
+                                <input type="text" class="form-control" id="shift_type_edit_name" value="${shift_type_name}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="shift_type_edit_start_time">เวลาเริ่มงาน</label>
+                                <input type="time" class="form-control" id="shift_type_edit_start_time" value="${shift_type_start_time}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="shift_type_edit_end_time">เวลาเลิกงาน</label>
+                                <input type="time" class="form-control" id="shift_type_edit_end_time" value="${shift_type_end_time}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <button class="btn btn-primary" id="shift_type_save">บันทึก</button>
+                                    <button class="btn btn-danger" id="shift_type_cancel">ยกเลิก</button>
+                                </div>
+                                <div>
+                                    <button class="btn btn-warning align-right" id="shift_type_delete">ลบ</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            });
+
+            // กดปุ่มยกเลิก กลับไปหน้าเพิ่มข้อมูล
+            $(document).on("click", "#shift_type_cancel", function() {
+                shiftTypeEditDefault();
+            });
+
+            // เพิ่มข้อมูล ShiftType
+            $(document).on("click", "#shift_type_add", function() {
+                var shift_type_name = $("#shift_type_add_name").val();
+                var shift_type_start_time = $("#shift_type_add_start_time").val();
+                var shift_type_end_time = $("#shift_type_add_end_time").val();
+                fetchData("{{ route('SaveAddSetData') }}", {
+                        shift_type_name: shift_type_name,
+                        shift_type_start_time: shift_type_start_time,
+                        shift_type_end_time: shift_type_end_time,
+                    })
+                    .then(data => {
+                        loadShiftType();
+                        shiftTypeEditDefault();
+                    });
+            });
+
+            // แก้ไขข้อมูล ShiftType
+            $(document).on("click", "#shift_type_save", function() {
+                var shift_type_id = $("#shift_type_edit_id").val();
+                var shift_type_name = $("#shift_type_edit_name").val();
+                var shift_type_start_time = $("#shift_type_edit_start_time").val();
+                var shift_type_end_time = $("#shift_type_edit_end_time").val();
+                fetchData("{{ route('SaveUpdateSetData') }}", {
+                        shift_type_id: shift_type_id,
+                        shift_type_name: shift_type_name,
+                        shift_type_start_time: shift_type_start_time,
+                        shift_type_end_time: shift_type_end_time,
+                    })
+                    .then(data => {
+                        loadShiftType();
+                        shiftTypeEditDefault();
+                    });
+            });
+
+            // ลบข้อมูล ShiftType
+            $(document).on("click", "#shift_type_delete", function() {
+                var shift_type_id = $("#shift_type_edit_id").val();
+                fetchData("{{ route('DeleteSetData') }}", {
+                        shift_type_id: shift_type_id
+                    })
+                    .then(data => {
+                        loadShiftType();
+                        shiftTypeEditDefault();
                     });
             });
 
