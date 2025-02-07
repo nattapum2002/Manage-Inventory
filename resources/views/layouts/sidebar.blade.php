@@ -175,6 +175,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('ReceiptProduct') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                รับใบ Tranfer slip
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('EmployeeIncentive') }}" class="nav-link has-dropdown">
                             <i class="far fa-circle nav-icon"></i>
                             <p>

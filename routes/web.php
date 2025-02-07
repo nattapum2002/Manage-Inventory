@@ -210,44 +210,40 @@ Route::prefix('SetData')->group(function () {
 
 //Manager Routes
 
-Route::prefix('Manager')->group(function () {
-    Route::prefix('Dashboard')->group(function () {
-        Route::get('/', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
-    });
+Route::prefix('Dashboard')->group(function () {
+    Route::get('/', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
+});
 
-    Route::prefix('ProductStock')->group(function () {
-        Route::get('/', [StatisticsController::class, 'ProductStock'])->name('ProductStock');
-    });
+Route::prefix('ProductStock')->group(function () {
+    Route::get('/', [StatisticsController::class, 'ProductStock'])->name('ProductStock');
+});
 
-    Route::prefix('CustomerOrder')->group(function () {
-        Route::get('/', [StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
-        Route::get('/{order_id}', [StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
-    });
+Route::prefix('CustomerOrder')->group(function () {
+    Route::get('/', [StatisticsController::class, 'CustomerOrder'])->name('CustomerOrder');
+    Route::get('/{order_id}', [StatisticsController::class, 'DetailCustomerOrder'])->name('DetailCustomerOrder');
+});
 
-    Route::prefix('Employee')->group(function () {
-        Route::get('/', [StatisticsController::class, 'Employee'])->name('Employee');
-    });
+Route::prefix('Employee')->group(function () {
+    Route::get('/', [StatisticsController::class, 'Employee'])->name('Employee');
 });
 
 //Employee Routes
 
-Route::prefix('Employee')->group(function () {
-    Route::prefix('Dashboard')->group(function () {
-        Route::get('/', function () {
-            return view('Admin.Dashboard.index');
-        })->name('Dashboard.Employee');
-    });
+Route::prefix('Dashboard')->group(function () {
+    Route::get('/', function () {
+        return view('Admin.Dashboard.index');
+    })->name('Dashboard.Employee');
+});
 
-    Route::prefix('Pallet')->group(function () {
-        Route::get('/Work/pallet', [UserWorkController::class, 'index'])->name('Em.Work.pallet');
-        Route::get('/Work/pallet/detail/{pallet_id}', [UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
-        Route::get('/{pallet_id}', [UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
-    });
+Route::prefix('Pallet')->group(function () {
+    Route::get('/Work/pallet', [UserWorkController::class, 'index'])->name('Em.Work.pallet');
+    Route::get('/Work/pallet/detail/{pallet_id}', [UserWorkController::class, 'showPalletDetail'])->name('Em.Work.palletDetail');
+    Route::get('/{pallet_id}', [UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
+});
 
-    Route::prefix('EmployeeIncentive')->group(function () {
-        Route::get('/', [IncentiveController::class, 'EmployeeIncentive'])->name('EmployeeIncentive');
-        Route::post('/EmployeeIncentiveData', [IncentiveController::class, 'EmployeeIncentiveData'])->name('EmployeeIncentiveData');
-    });
+Route::prefix('EmployeeIncentive')->group(function () {
+    Route::get('/', [IncentiveController::class, 'EmployeeIncentive'])->name('EmployeeIncentive');
+    Route::post('/EmployeeIncentiveData', [IncentiveController::class, 'EmployeeIncentiveData'])->name('EmployeeIncentiveData');
 });
 
 //employee Routes
