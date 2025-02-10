@@ -15,7 +15,8 @@
                                 <thead>
                                     <tr>
                                         <th>วันที่สั่ง</th>
-                                        <th>วันที่รับสินค้า</th>
+                                        <th>จัดส่ง(ออเดอร์)</th>
+                                        <th>ยังไม่จัดส่ง(ออเดอร์)</th>
                                         <th>ลูกค้า</th>
                                         <th>เกรดลูกค้า</th>
                                         <th>รายละเอียด</th>
@@ -25,7 +26,8 @@
                                     @foreach ($CustomerOrders as $CustomerOrder)
                                         <tr>
                                             <td>{{ (new DateTime($CustomerOrder->order_date))->format('d/m/Y') }}</td>
-                                            <td>{{ (new DateTime($CustomerOrder->ship_datetime))->format('d/m/Y') }}</td>
+                                            <td class="text-success">{{ $CustomerOrder->complete_order }}</td>
+                                            <td class="text-danger">{{ $CustomerOrder->not_complete_order }}</td>
                                             <td>{{ $CustomerOrder->customer_name }}</td>
                                             <td>{{ $CustomerOrder->customer_grade ?? 'ไม่มี' }}</td>
                                             <td>

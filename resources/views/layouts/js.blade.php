@@ -78,6 +78,39 @@
 {{-- <script src="//cdn.datatables.net/plug-ins/2.1.8/i18n/th.json"></script> --}}
 <script>
     $(document).ready(function() {
+        $('#edit-pallet-type').on('click', function() {
+            
+            if ($(this).hasClass('btn-primary')) {
+                // เปลี่ยนจากสถานะเริ่มต้นเป็นสถานะ "บันทึก"
+                showEditPalletType($(this));
+            } else {
+                // เปลี่ยนกลับไปสถานะเริ่มต้น
+                hideEditPalletType($(this));
+            }
+
+        });
+
+        $('#cancel-edit-pallet-type').on('click', function() {
+            $('#edit-pallet-type').removeClass('btn-success').addClass('btn-primary').attr('type',
+                'button').text('ปรับเปลี่ยน');
+            $('#edit-pallet-type-select').attr('disabled', true);
+            $(this).attr('hidden', true);
+        })
+
+        function showEditPalletType(btn) {
+            $('#edit-pallet-type-select').removeAttr('disabled');
+            $('#cancel-edit-pallet-type').removeAttr('hidden');
+            $(btn).removeClass('btn-primary').addClass('btn-success').attr('type','button').text('บันทึก');
+        };
+
+        function hideEditPalletType(btn) {
+            $('#cancel-edit-pallet-type').attr('hidden', true);
+            $(btn).removeClass('btn-success').addClass('btn-primary').attr('type', 'submit').text('ปรับเปลี่ยน');
+        };
+    });
+</script>
+<script>
+    $(document).ready(function() {
         $('[id^="warehouse-name"]').each(function() {
             let warehouse = $(this).text().trim(); // ดึงค่าจาก td (ลบช่องว่าง)
 
@@ -545,32 +578,8 @@
             //     }
             // }
         });
-        $("#locktable").DataTable({
-            responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
-        });
-        $("#pallate").DataTable({
-            //responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            scrollX: true,
-            // layout: {
-            //     topStart: {
-            //         buttons: [
-            //             'copy', 'excel', 'pdf'
-            //         ]
-            //     }
-            // }
-        });
+        $("#locktable").DataTable();
+        
         $("#arrange-lock-table").DataTable({
             responsive: true,
             lengthChange: true,

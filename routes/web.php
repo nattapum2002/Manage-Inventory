@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AutoCreateLockController;
 use App\Http\Controllers\ExcelImportController;
 use App\Http\Controllers\LockController;
 use App\Http\Controllers\LoginController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\SlipController;
 use App\Http\Controllers\CustomerQueueController;
 use App\Http\Controllers\PayGoodsController;
 use App\Http\Controllers\IncentiveController;
+use App\Http\Controllers\LogPdfController;
 use App\Http\Controllers\SetDataController;
 use Illuminate\Support\Facades\Route;
 
@@ -111,18 +113,19 @@ Route::prefix('ManageQueue')->group(function () {
 
 Route::prefix('ManageLockStock')->group(function () {
     Route::get('/', [LockController::class, 'index'])->name('ManageLockStock');
-    Route::get('/{CUS_id}/{order_date}', [LockController::class, 'DetailLockStock'])->name('DetailLockStock');
+    Route::get('Order-detail/{CUS_ID}/{order_date}', [LockController::class, 'DetailLockStock'])->name('DetailLockStock');
     Route::get('/Detail/{order_number}/', [LockController::class, 'AddPallet'])->name('AddPallet');
-    Route::get('/Detail/AddPallet/AutoCompleteAddPallet', [LockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
-    Route::post('/Detail/{order_number}/Save', [LockController::class, 'SavePallet'])->name('SavePallet');
+    Route::get('/Detail/AddPallet/AutoCompleteAddPallet', [AutoCreateLockController::class, 'AutoCompleteAddPallet'])->name('AutoCompleteAddPallet');
     Route::get('/Detail/{ORDER_DATE}/{CUS_ID}/Pallet/{pallet_id}', [LockController::class, 'DetailPallets'])->name('DetailPallets');
-    Route::get('/forgetSession/{CUS_ID}/{Ordered_date}', [LockController::class, 'forgetSession'])->name('forgetSession');
-    Route::get('/Detail/removePallet/{key}', [LockController::class, 'Remove_Pallet'])->name('Remove_Pallet');
-    Route::get('/Detail/insertPallet/{CUS_ID}/{ORDER_DATE}', [LockController::class, 'insert_pallet'])->name('Insert_Pallet');
+    Route::get('/forgetSession/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'forgetSession'])->name('forgetSession');
+    Route::get('/Detail/insertPallet/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'insert_pallet'])->name('Insert_Pallet');
     Route::get('/Detail/editPalletOrde/{order_id}/{product_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
-    Route::get('/Arrange/{CUS_id}/{order_date}', [LockController::class, 'ShowPreLock'])->name('PreLock');
-    Route::get('/AUTO/{CUS_id}/{order_date}', [LockController::class, 'AutoLock'])->name('AutoLock');
+    Route::get('/Arrange/{CUS_id}/{order_date}', [AutoCreateLockController::class, 'ShowPreLock'])->name('PreLock');
+   
     Route::post('/UPDATE/{id}', [LockController::class, 'update_lock_team'])->name('UpdateLockTeam');
+    Route::post('/UpSell/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'addUpSellPallet'])->name('addUpSellPallet');
+    Route::get('/Detail/PalletType/UPDATE/{pallet_id}', [LockController::class, 'updatePalletType'])->name('updatePalletType');
+    Route::get('/AUTO/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'autoCreateLock'])->name('AutoLock');
 });
 
 Route::prefix('ReceiptPlan')->group(function () {
@@ -236,4 +239,4 @@ Route::get('/Pallet/Work/pallet/detail/{pallet_id}', [UserWorkController::class,
 Route::get('/submit/{pallet_id}', [UserWorkController::class, 'submitPallet'])->name('Em.Work.palletSubmit');
 //employee Routes
 
-Route::get('/test/auto', [LockController::class, 'autoArrange'])->name('auto');
+Route::get('/test/pdf', [LogPdfController::class, 'LogPdfDownload'])->name('LoadLog');
