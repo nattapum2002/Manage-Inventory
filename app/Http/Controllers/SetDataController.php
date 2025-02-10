@@ -28,12 +28,20 @@ class SetDataController extends Controller
         return $palletType;
     }
 
+    private function getShift()
+    {
+        $shift = DB::table('shift_time')->get();
+
+        return $shift;
+    }
+
     public function index()
     {
         $warehouse = $this->getWarehouse();
         $productWorkDesc = $this->getProductWorkDesc();
         $palletType = $this->getPalletType();
-        return view('Admin.SetData.SetData', compact('warehouse', 'productWorkDesc', 'palletType'));
+        $shift = $this->getShift();
+        return view('Admin.SetData.SetData', compact('warehouse', 'productWorkDesc', 'palletType', 'shift'));
     }
 
     public function getSetData()
@@ -41,11 +49,13 @@ class SetDataController extends Controller
         $warehouse = $this->getWarehouse();
         $productWorkDesc = $this->getProductWorkDesc();
         $palletType = $this->getPalletType();
+        $shift = $this->getShift();
 
         return response()->json([
             'warehouse' => $warehouse,
             'productWorkDesc' => $productWorkDesc,
-            'palletType' => $palletType
+            'palletType' => $palletType,
+            'shift' => $shift
         ]);
     }
 
@@ -87,6 +97,24 @@ class SetDataController extends Controller
                         'status' => 'success',
                         'pallet_type_id' => $request->input('pallet_type_id'),
                         'pallet_type' => $request->input('pallet_type_name')
+                    ];
+                }
+
+                if ($request->input('shift_type_id') && $request->input('shift_type_name') && $request->input('shift_type_start_time') && $request->input('shift_type_end_time')) {
+                    DB::table('shift_time')
+                        ->where('shift_time_id', $request->input('shift_type_id'))
+                        ->update([
+                            'shift_name' => $request->input('shift_type_name'),
+                            'start_shift' => $request->input('shift_type_start_time'),
+                            'end_shift' => $request->input('shift_type_end_time'),
+                        ]);
+
+                    $response = [
+                        'status' => 'success',
+                        'shift_id' => $request->input('shift_type_id'),
+                        'shift_name' => $request->input('shift_type_name'),
+                        'shift_type_start_time' => $request->input('shift_type_start_time'),
+                        'shift_type_end_time' => $request->input('shift_type_end_time')
                     ];
                 }
             });
@@ -141,6 +169,22 @@ class SetDataController extends Controller
                         'pallet_type' => $request->input('pallet_type_name')
                     ];
                 }
+
+                if ($request->input('shift_type_name') && $request->input('shift_type_start_time') && $request->input('shift_type_end_time')) {
+                    $id = DB::table('shift_time')->insertGetId([
+                        'shift_name' => $request->input('shift_type_name'),
+                        'start_shift' => $request->input('shift_type_start_time'),
+                        'end_shift' => $request->input('shift_type_end_time')
+                    ]);
+
+                    $response = [
+                        'status' => 'success',
+                        'shift_id' => $id,
+                        'shift_name' => $request->input('shift_type_name'),
+                        'shift_type_start_time' => $request->input('shift_type_start_time'),
+                        'shift_type_end_time' => $request->input('shift_type_end_time')
+                    ];
+                }
             });
 
             return response()->json($response ?: ['status' => 'error', 'message' => 'No data inserted'], 200);
@@ -176,6 +220,14 @@ class SetDataController extends Controller
 
                 if ($request->input('pallet_type_id')) {
                     DB::table('pallet_type')->where('id', $request->input('pallet_type_id'))->delete();
+
+                    $response = [
+                        'status' => 'success'
+                    ];
+                }
+
+                if ($request->input('shift_type_id')) {
+                    DB::table('shift_time')->where('shift_time_id', $request->input('shift_type_id'))->delete();
 
                     $response = [
                         'status' => 'success'

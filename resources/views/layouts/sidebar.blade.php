@@ -84,30 +84,6 @@
                             </p>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a href="{{ route('ManageShift') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Manage Shift
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('ManageTeam') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Manage Team
-                            </p>
-                        </a>
-                    </li> --}}
-                    {{-- <li class="nav-item">
-                        <a href="{{ route('ManageStock') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Manage Stock
-                            </p>
-                        </a>
-                    </li> --}}
                     <li class="nav-item">
                         <a href="{{ route('ManageUsers') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
@@ -120,7 +96,7 @@
                         <a href="{{ route('ReceiptPlan') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                1. แพลนรับสินค้ารายกะ
+                                แพลนรับสินค้ารายกะ
                             </p>
                         </a>
                     </li>
@@ -128,7 +104,7 @@
                         <a href="{{ route('ReceiptProduct') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                2. รับใบ Tranfer slip
+                                รับใบ Tranfer slip
                             </p>
                         </a>
                     </li>
@@ -136,7 +112,7 @@
                         <a href="{{ route('PayGoods') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                10. Pay Goods
+                                จ่ายสินค้า
                             </p>
                         </a>
                     </li>
@@ -158,18 +134,10 @@
                     </li>
                 @elseif (Auth::user()->user_type == 'Manager')
                     <li class="nav-item">
-                        <a href="{{ route('ProductStore') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                Product Store
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="{{ route('ProductStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Product Stock
+                                สินค้าคงคลัง
                             </p>
                         </a>
                     </li>
@@ -177,19 +145,19 @@
                         <a href="{{ route('CustomerOrder') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Customer Order
+                                คำสั่งซื้อ
                             </p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('Pallet') }}" class="nav-link">
+                        <a href="{{ route('Employee') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Pallet
+                                รายชื่อพนักงาน
                             </p>
                         </a>
                     </li>
-                @elseif (Auth::user()->user_type == 'User')
+                @elseif (Auth::user()->user_type == 'Employee')
                     <li class="nav-item">
                         <a href="{{ route('ManageStock') }}" class="nav-link has-dropdown">
                             <i class="far fa-circle nav-icon"></i>
@@ -203,6 +171,22 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 งานพาเลท
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ReceiptProduct') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                รับใบ Tranfer slip
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('EmployeeIncentive') }}" class="nav-link has-dropdown">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                ค่า Incentive
                             </p>
                         </a>
                     </li>

@@ -17,7 +17,12 @@
                                     <div class="input-group">
                                         <input type="month" class="form-control" name="month" id="month"
                                             value="{{ $ShiftFilterMonth->first()?->date ? (new DateTime($ShiftFilterMonth->first()->date))->format('Y-m') : now()->format('Y-m') }}">
-                                        <button type="button" class="btn btn-primary" id="btn-search-shift">ค้นหา</button>
+                                        <button type="button" class="btn btn-primary" id="btn-search-shift">
+                                            <i class="fas fa-search" id="icon-search"></i>
+                                            <div class="spinner-border spinner-border-sm text-light" id="icon-loading"
+                                                style="display: none;" role="status">
+                                            </div>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -232,6 +237,8 @@
         });
 
         document.getElementById('btn-search-shift').addEventListener('click', function() {
+            document.getElementById('icon-loading').style.display = 'inline-block';
+            document.getElementById('icon-search').style.display = 'none';
             const month = document.getElementById('month').value;
 
             fetch(`{{ route('ShiftFilterMonth') }}`, {
@@ -253,6 +260,8 @@
                 .then((data) => {
                     if (!data || !data.ShiftFilterMonth || data.ShiftFilterMonth.length === 0) {
                         alert('ไม่พบข้อมูล');
+                        document.getElementById('icon-loading').style.display = 'none';
+                        document.getElementById('icon-search').style.display = 'inline-block';
                         return;
                     }
 
@@ -283,8 +292,14 @@
 
                     // เพิ่มข้อมูลใหม่และรีเฟรช DataTable
                     shiftDataTable.rows.add(newRows).draw();
+                    document.getElementById('icon-loading').style.display = 'none';
+                    document.getElementById('icon-search').style.display = 'inline-block';
                 })
-                .catch((error) => console.error('Error:', error));
+                .catch((error) => {
+                    console.error('Error:', error);
+                    document.getElementById('icon-loading').style.display = 'none';
+                    document.getElementById('icon-search').style.display = 'inline-block';
+                });
 
             // ฟังก์ชันสำหรับจัดรูปแบบวันที่
             function formatDate(date) {

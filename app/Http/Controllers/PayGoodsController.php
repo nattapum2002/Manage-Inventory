@@ -16,6 +16,29 @@ class PayGoodsController extends Controller
         $this->middleware('auth');
     }
 
+    private function GetQueues()
+    {
+        return DB::table('orders')
+            ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
+            ->select(
+                'orders.ship_datetime',
+                'orders.customer_id',
+                'customer.customer_name',
+                'customer.customer_grade'
+            )
+            ->whereDate('orders.ship_datetime', now()->format('Y-m-d'))
+            ->distinct()
+            ->orderBy('orders.ship_datetime', 'asc');
+    }
+
+    private function GetPallet()
+    {
+        return DB::table('pallet')
+            // ->join('pallet_detail', 'pallet.pallet_id', '=', 'pallet_detail.pallet_id')
+            // ->join('product', 'pallet_detail.product_id', '=', 'product.product_id')
+            ->get();
+    }
+
     private function getCustomerQueues($date, $order_number = null)
     {
         $queue = DB::table('orders')
@@ -38,7 +61,6 @@ class PayGoodsController extends Controller
             return $queue->get();
         }
     }
-
 
     private function getSelectedQueue($customer_queues, $order_number)
     {
@@ -117,10 +139,30 @@ class PayGoodsController extends Controller
         // dd($select_queue);
         $teams = $this->getTeams();
 
+        $queue = $this->GetQueues()->get();
+        // dd($queue);
+
         return view('Admin.PayGoods.PayGoods', [
             'customer_queues' => $customer_queues,
             'select_queue' => null,
             'teams' => $teams,
+            'queue' => $queue,
+        ]);
+    }
+
+    public function PayGoodsData(Request $request)
+    {
+        $queue = $this->GetQueues()
+            ->where('orders.customer_id', $request->customer_id)
+            // ->groupBy('customer_id')
+            ->first();
+
+        $pallet = $this->GetPallet();
+
+        return response()->json([
+            'queue' => $queue,
+            'pallet' => $pallet,
+            'all' => $request->all(),
         ]);
     }
 

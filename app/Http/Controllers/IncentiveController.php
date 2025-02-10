@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class IncentiveController extends Controller
@@ -362,5 +363,43 @@ class IncentiveController extends Controller
         }
         // dd($Dragincentive);
         return view('Admin.ManageIncentive.IncentiveDragWorkerDetail', compact('Dragincentive', 'total_incentive_Kg', 'year'));
+    }
+
+    //EmployeeIncentive
+    private function GetIncentiveByUserID($user_id, $month)
+    {
+        $year = substr($month, 0, 4);
+        $monthOnly = substr($month, 5, 2);
+
+        return DB::table('incentive_transactions')
+            ->where('user_id', $user_id)
+            ->whereYear('start_time', $year)
+            ->whereMonth('start_time', $monthOnly);
+    }
+
+    public function EmployeeIncentive()
+    {
+        return view('Employee.EmployeeIncentive.EmployeeIncentive');
+    }
+
+    public function EmployeeIncentiveData(Request $request)
+    {
+        $query = $this->GetIncentiveByUserID(Auth::user()->user_id, $request->input('month'));
+
+        $IncentiveTransactions = $query->get();
+        $sums = $query->selectRaw("
+            SUM(CASE WHEN incentive_type = 'Receipt' THEN weight ELSE 0 END) as SumReceipt,
+            SUM(CASE WHEN incentive_type = 'Arrange' THEN weight ELSE 0 END) as SumArrange,
+            SUM(CASE WHEN incentive_type = 'Send' THEN weight ELSE 0 END) as SumSend,
+            SUM(CASE WHEN incentive_type = 'Blood' THEN weight ELSE 0 END) as SumBlood
+        ")->first();
+
+        return response()->json([
+            'IncentiveTransactions' => $IncentiveTransactions,
+            'SumReceipt' => $sums->SumReceipt ?? 0,
+            'SumArrange' => $sums->SumArrange ?? 0,
+            'SumSend' => $sums->SumSend ?? 0,
+            'SumBlood' => $sums->SumBlood ?? 0,
+        ]);
     }
 }

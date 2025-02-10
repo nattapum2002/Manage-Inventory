@@ -90,8 +90,6 @@
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('icon-search').style.display = 'inline-block';
 
-                    console.log(data);
-
                     DateStatTable.clear();
                     if (data.ProductTransactionsFilterMonth && data.ProductTransactionsFilterMonth.length > 0) {
                         const newRows = data.ProductTransactionsFilterMonth.map(item => [
