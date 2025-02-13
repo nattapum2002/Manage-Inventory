@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pallet_order', function (Blueprint $table) {
+        Schema::create('pallet_detail', function (Blueprint $table) {
             $table->id();
             $table->string('pallet_id');
             $table->string('product_id');
+            $table->string('product_number');
+            $table->float('quantity');
+            $table->float('quantity2');
             $table->timestamps();
         });
     }

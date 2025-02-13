@@ -436,11 +436,11 @@ class ShiftAndTeamController extends Controller
 
     public function SaveAddTeam(Request $request, $Shift_id)
     {
+
         // ตรวจสอบความถูกต้องของข้อมูล
         $request->validate([
             'shift_id' => 'required|string|max:255',
             'team_name' => 'required|string|max:255',
-            'work' => 'required|string|max:255',
             'note' => 'nullable|string',
             'user_id' => 'required|array',
             'user_id.*' => 'required|string|max:255',
@@ -448,7 +448,7 @@ class ShiftAndTeamController extends Controller
             'dmc_position.*' => 'required|string|max:255',
         ]);
 
-        dd($request->all());
+        //dd($request->all());
 
         $team_id = Str::uuid();
 

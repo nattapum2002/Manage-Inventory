@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-รายละเอียดล็อคสินค้า : {{ $customer_name ?? 'N/A' }}
+รายละเอียดล็อคสินค้า : {{ $customer_name ?? 'N/A' }} 
 @endsection
 
 @section('content')
@@ -129,10 +129,26 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h3 class="card-title">ใบล็อค</h3>
-
-                            <a href="{{ route('PreLock', [$CUS_ID, $ORDER_DATE]) }}"
-                                class="btn btn-primary">จัดใบล็อค</a>
+                            <!-- กลุ่มปุ่มใบล็อค -->
+                            <div class="input-group text-nowrap" style="max-width: 350px;">
+                                <span class="input-group-text">ใบล็อค</span>
+                                    <div class="form-floating">
+                                        <select class="form-select" name="" id="pallet-orderNumber" {{$palletOrderId->isEmpty() ? 'disabled' : ''}}>
+                                            @forelse ($palletOrderId as $OrderId)
+                                                <option value="{{ $OrderId}}">{{ $OrderId }}</option>
+                                            @empty
+                                                <option selected>ไม่มี</option>
+                                            @endforelse
+                                            <option value="">ทั้งหมด</option>
+                                        </select>
+                                        <label for="select-order-number">หมายเลขออเดอร์</label>
+                                    </div>
+                                <button class="btn btn-warning text-white print-lock-card" {{$palletOrderId->isEmpty() ? 'disabled' : ''}}>ปริ้นใบล็อค</button>
+                            </div>
+                            <!-- ปุ่มจัดใบล็อค -->
+                            <a href="{{ route('PreLock', [$CUS_ID, $ORDER_DATE]) }}" class="btn btn-primary">
+                                จัดใบล็อค
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -160,17 +176,17 @@
                                     <td id="pallet-type">{{ $Pallet->pallet_type }}</td>
                                     <td>
                                         {!! $Pallet->arrange_pallet_status == 1
-                                        ? '<p class="text-success">จัดพาเลทแล้ว</p>'
-                                        : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}
+        ? '<p class="text-success">จัดพาเลทแล้ว</p>'
+        : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}
                                     </td>
                                     <td>
                                         {!! $Pallet->recive_status == 1
-                                        ? '<p class="text-success">ส่งแล้ว</p>'
-                                        : '<p class="text-danger">ยังไม่จัดส่ง</p>' !!}
+        ? '<p class="text-success">ส่งแล้ว</p>'
+        : '<p class="text-danger">ยังไม่จัดส่ง</p>' !!}
                                     </td>
                                     <td>{{ $Pallet->note ?? 'N/A' }}</td>
                                     <td>
-                                        <a href="{{route('DetailPallets',[$ORDER_DATE,$CUS_ID,$Pallet->id])}}"
+                                        <a href="{{route('DetailPallets', [$ORDER_DATE, $CUS_ID, $Pallet->id])}}"
                                             class="btn btn-primary"><i class="far fa-file-alt"></i></a>
                                     </td>
                                 </tr>
@@ -252,6 +268,49 @@
         });
     });
 
+    $('.print-lock-card').on('click', () =>{
+        const order_number = $('#pallet-orderNumber').val();
+        let order_date = @json($ORDER_DATE);
+        let cusId = @json($CUS_ID);
+        let loading = false ;
 
+        $.ajax({
+            url: '{{route('LoadLog')}}',
+            method: 'GET',
+            data: { 
+                order_number ,
+                order_date,
+                cusId
+            },
+            xhrFields: {
+                responseType: 'blob' // รับไฟล์เป็น PDF
+            },
+            beforeSend: function () {
+                loading = true; // ✅ ตั้งค่า loading เป็น true ก่อนเริ่มส่ง request
+                setLoading(); // แสดงสถานะโหลด
+            },
+            success: function (response) {
+                let blob = new Blob([response], { type: 'application/pdf' });
+                let url = URL.createObjectURL(blob);
+
+                window.open(url); // หรือเปิดหน้าใหม่
+                loading = false; 
+                setLoading();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+
+        function setLoading(){
+            $('.print-lock-card').attr('disabled',loading);
+            $('.print-lock-card').text("กำลังโหลด...");
+            if(!loading){
+                $('.print-lock-card').text("ปริ๊นใบล็อค");
+            }
+        }
+       
+        
+    })
 </script>
 @endsection

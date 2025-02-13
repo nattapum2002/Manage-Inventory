@@ -80,24 +80,31 @@
 </style>
 
 <div>
-    @foreach ($data as $index => $data)
+    @foreach ($data as $index => $items)
         <div class="lock-container">
             <!-- หัวข้อ -->
             <div class="lock-header">
                 <p>เวลาเริ่มจัด : _________________</p>
-                <p>ผู้จัด : _________________</p>
-                <p>ห้องเก็บ : {{$data['warehouse']}}</p>
-                <p class="pallet-type">{{$data['pallet_type']}}</p>
+                <p>ผู้จัด :@foreach ($items['team'] as $team)
+                    @if (!empty($team))
+                        {{$team}},
+                    @else
+                        _________________
+                    @endif
+                @endforeach </p>
+                <p>ห้องเก็บ : {{$items['warehouse']}}</p>
+                <p class="pallet-type">{{$items['pallet_type']}}</p>
             </div>
 
             <!-- แถวลูกค้า (ไม่มีเส้นขอบ) -->
             <div class="lock-title">
-                <p class="order-number">ออเดอร์ : {{$data['order_number']}}</p>
-                <p>ลูกค้า : {{$data['customer']['name']}}</p>
-                <p>{{$data['customer']['grade']}}</p>
-                <p>{{$data['order_date']}}</p>
-                <p>{{$index + 1}}/{{count($data)+1}}</p>
+                <p class="order-number">ออเดอร์ : {{$items['order_number']}}</p>
+                <p>ลูกค้า : {{$items['customer']['name']}}</p>
+                <p>{{$items['customer']['grade']}}</p>
+                <p>{{$items['order_date']}}</p>
+                <p>{{$index + 1 .'/'. count($data )}}</p>
             </div>
+            
             <div class="lock-body">
                 <table class="no-break">
                     <thead>
@@ -112,7 +119,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data['order_details'] as $detail)
+                        @foreach ($items['order_details'] as $detail)
                             <tr>
                                 <td>{{$detail['product_number']}}</td>
                                 <td class="text-left">{{$detail['product_name']}}</td>

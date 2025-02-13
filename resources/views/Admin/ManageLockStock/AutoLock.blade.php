@@ -5,6 +5,12 @@
 @endsection
 
 @section('content')
+@if (session()->has('LockErrorCreate'))
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{session('LockErrorCreate')}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 <meta name="csrf-token" content="{{ csrf_token() }}">
     <section class="content">
         <div class="container-fluid">
@@ -123,11 +129,12 @@
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add-product">
                                         ออกใบขายเพิ่ม
                                     </button>
+                                    {{-- @dump(session()->all()) --}}
                                 </div>
                         
                                 <!-- Dropdown + ปุ่ม "ล้าง" (อยู่ขวาสุด) -->
                                 <div class="col-auto text-end d-flex align-items-center gap-2">
-                                    <form action="{{route('AutoLock', [$CUS_ID,$ORDER_DATE])}}" method="GET">
+                                    <form action="{{route('AutoLock', [$CUS_ID, $ORDER_DATE])}}" method="GET">
                                         <div class="input-group">
                                             <label class="input-group-text" for="select-order-number">
                                                 <button type="submit" id="auto-btn" class="btn btn-warning">จัดใบล็อค</button>
@@ -165,41 +172,45 @@
                                     <th>#</th>
                                 </thead>
                                 <tbody>
-                                    @if (session('lock' . $CUS_ID . $ORDER_DATE))
-                                        @foreach (session('lock' . $CUS_ID . $ORDER_DATE) as $number => $lockItems)
-                                            @foreach ($lockItems as $lockItem)
+                                    {{-- @dd(cache('lock' . $CUS_ID . $ORDER_DATE)) --}}
+                                    @if (cache('lock' . $CUS_ID . $ORDER_DATE))
+                                        @foreach (cache('lock' . $CUS_ID . $ORDER_DATE) as $lockItem)
                                                 <tr>
                                                     <td>{{ $lockItem['order_number'] }}</td>
-                                                    <td id="warehouse-name">{{ $lockItem['warehouse']}}</td>
+                                                    <td id="warehouse-name">{{ $lockItem['warehouse'] }}</td>
                                                     <td id="work-type">{{ $lockItem['work_type'] ?? '' }}</td>
+
                                                     <td>
-                                                        @foreach ($lockItem['items'] as $itemNo)
-                                                            {{ $itemNo['product_number'] }} <br>
+                                                        @foreach ($lockItem['items'] as $item)
+                                                            {{ $item['product_number'] }} <br>
                                                         @endforeach
                                                     </td>
+
                                                     <td>
-                                                        @foreach ($lockItem['items'] as $itemName)
-                                                            {{ $itemName['product_description'] }} <br>
+                                                        @foreach ($lockItem['items'] as $item)
+                                                            {{ $item['product_description'] }} <br>
                                                         @endforeach
                                                     </td>
+
                                                     <td>
-                                                        @foreach ($lockItem['items'] as $itemQtn)
-                                                            {{ $itemQtn['quantity'] }} <br>
+                                                        @foreach ($lockItem['items'] as $item)
+                                                            {{ $item['quantity'] }} <br>
                                                         @endforeach
                                                     </td>
+
                                                     <td id="pallet-type">
                                                         {{ $lockItem['pallet_type'] }}
                                                     </td>
                                                     <td></td>
                                                 </tr>
-                                            @endforeach                                       
+
                                         @endforeach
                                     @endif
                                 </tbody>
                             </table>
                         </div>
                         <div class="card-footer text-center">
-                            @if(session('lock' . $CUS_ID . $ORDER_DATE))
+                            @if(cache('lock' . $CUS_ID . $ORDER_DATE))
                                 <a href="{{ route('Insert_Pallet', [$CUS_ID, $ORDER_DATE]) }}" class="btn btn-success">
                                     บันทึกข้อมูล
                                 </a>
@@ -248,6 +259,7 @@
                                                     <option value="" selected>เลือกห้อง</option>
                                                     <option value="1">Cold-A</option>
                                                     <option value="2">Cold-C</option>
+                                                    <option value="3">Blood</option>
                                                 </select>
                                                 @error('room')
                                                     <div class="text-red">

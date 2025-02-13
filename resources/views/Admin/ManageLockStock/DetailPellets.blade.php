@@ -25,7 +25,7 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <form class="row mt-2" action="{{ route('UpdateLockTeam', [$Pallets[0]->pallet_id]) }}" method="POST">
+                                        <form class="row mt-2" action="{{ route('UpdateLockTeam', [$Pallets[0]->pallet_pr_id]) }}" method="POST">
                                             @csrf
                                             <div class="col-lg-2 col-md-3 col-sm-4 text-center">
                                                 <label for="team">ทีมจัดพาเลท</label>
@@ -69,7 +69,7 @@
                                     <th colspan="10">
                                         <div class="row">
                                             <div class="col-lg-5 col-md-12 col-sm-12">
-                                                <form action="{{ route('updatePalletType', [$Pallets[0]->id]) }}">
+                                                <form action="{{ route('updatePalletType', [$Pallets[0]->pallet_pr_id]) }}">
                                                     @csrf
                                                     <div class="input-group">
                                                         <span class="input-group-text">ประเภทพาเลท</span>

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('pallet_number');
             $table->string('pallet_name');
             $table->string('order_number');
+            $table->string('pallet_desc');
+            $table->string('warehouse_id');
             $table->string('note')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();

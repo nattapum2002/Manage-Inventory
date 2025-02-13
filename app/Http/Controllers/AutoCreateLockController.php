@@ -10,18 +10,19 @@ class AutoCreateLockController extends Controller
     //
     function ShowPrelock($CUS_ID, $ORDER_DATE)
     {
+        //dd(session()->get('lock' . $CUS_ID . $ORDER_DATE));
         $pallet_type = DB::table('pallet_type')->get();
         $orders_number = DB::table('orders')
-                ->select('order_number')
-                ->where('customer_id',$CUS_ID)
-                ->whereDate('order_date',$ORDER_DATE)
-                ->get();
-        return view('Admin.ManageLockStock.AutoLock', compact('CUS_ID', 'ORDER_DATE', 'pallet_type','orders_number'));
+            ->select('order_number')
+            ->where('customer_id', $CUS_ID)
+            ->whereDate('order_date', $ORDER_DATE)
+            ->get();
+        return view('Admin.ManageLockStock.AutoLock', compact('CUS_ID', 'ORDER_DATE', 'pallet_type', 'orders_number'));
     }
-    public function forgetSession($CUS_ID,$ORDER_DATE)
+    public function forgetSession($CUS_ID, $ORDER_DATE)
     {
         // dd($id);
-        session()->forget('lock' . $CUS_ID . $ORDER_DATE);
+        cache()->forget('lock' . $CUS_ID . $ORDER_DATE);
 
         return back()->with('success', 'Data cleared successfully');
     }
@@ -55,76 +56,82 @@ class AutoCreateLockController extends Controller
     }
     public function insert_pallet($CUS_ID, $ORDER_DATE)
     {
-        $data = session()->get('lock' . $CUS_ID);
-        //dd($data);
-        DB::table('pallet')->truncate();
-        DB::table('pallet_detail')->truncate();
-        DB::table('confirmOrder')->truncate();
-            DB::transaction(function () use ($data, $CUS_ID, $ORDER_DATE) {
-                $counter = 1;
-                $convertDate = str_replace(["/", "-"], "", $ORDER_DATE);
-            foreach ($data as $items) {
-                foreach ($items as $item) {
-                    $palletNum = sprintf('%s%s%s', $CUS_ID, $convertDate, $counter);
-                    $palletId = DB::table('pallet')->insertGetId([
-                        'pallet_id' => $palletNum,
+        // dd($CachePallets);
+        // DB::table('pallet')->truncate();
+        // DB::table('pallet_detail')->truncate();
+        // DB::table('confirmOrder')->truncate();
+        // DB::table('pallet_team')->truncate();
+        DB::transaction(function () use ($CUS_ID, $ORDER_DATE) { // ✅ ใช้ use() เพื่อเข้าถึงตัวแปรจากภายนอก
+            $CacheKey = 'lock' . $CUS_ID . $ORDER_DATE;
+            $CachePallets = cache($CacheKey, []); // ✅ ดึงข้อมูลจาก session ตาม key
+
+            if (empty($CachePallets)) {
+                return; // ถ้าไม่มีข้อมูลใน session ให้จบการทำงาน
+            }
+
+            foreach ($CachePallets as $index => $item) {
+                // ✅ Debug ตรวจสอบข้อมูล session
+                // dd($CachePallets); 
+
+                $palletNum = sprintf('%s%s%02d', $CUS_ID, now()->format('Ymd'), $index + 1);
+
+                // ✅ Insert ลงตาราง `pallet`
+                $palletId = DB::table('pallet')->insertGetId([
+                    'pallet_id' => $palletNum,
+                    'order_number' => $item['order_number'],
+                    'pallet_name' => $index + 1,
+                    'pallet_type_id' => $item['pallet_type'],
+                    'warehouse_id' => $item['warehouse'],
+                    'note' => null,
+                    'arrange_pallet_status' => false,
+                    'recive_status' => false,
+                    'pallet_desc' => $item['work_type']
+                ]);
+
+                $insertPalletDetail = [];
+                $insertConfirmOrder = [];
+
+                foreach ($item['items'] as $details) {
+                    $insertPalletDetail[] = [
+                        'pallet_id' => $palletId,
+                        'product_id' => $details['product_id'],
+                        'product_number' => $details['product_number'],
+                        'quantity' => $details['quantity'],
+                        'quantity2' => $details['quantity2'],
+                    ];
+
+                    $insertConfirmOrder[] = [
                         'order_number' => $item['order_number'],
-                        'pallet_name' => $counter,
-                        'pallet_type_id' => $item['pallet_type'],
-                        'warehouse_id' => $item['warehouse'],
-                        'note' => null,
-                        'arrange_pallet_status' => false,
-                        'recive_status' => false,
-                        'pallet_desc' => $item['work_type']
-                    ]);
-
-                    $insertPalletDetail = [];
-                    $insertConfirmOrder = [];
-
-                    foreach ($item['items'] as $details) {
-                        $insertPalletDetail[] = [
-                            'pallet_id' => $palletId,
-                            'product_id' => $details['product_id'],
-                            'product_number' => $details['product_number'],
-                            'quantity' => $details['quantity'],
-                            'quantity2' => $details['quantity2'],
-                        ];
-
-                        $insertConfirmOrder[] = [
-                            'order_number' => $details['order_number'],
-                            'pallet_id' => $palletId,
-                            'product_id' => $details['product_id'],
-                            'quantity' => $details['quantity'],
-                            'quantity2' => null,
-                            'product_work_desc_id' => $item['work_type'],
-                            'confirm_order_status' => false,
-                            'confirm_at' => null,
-                            'created_at' => now()
-                        ];
-                    }
-
-                    if (!empty($insertPalletDetail)) {
-                        foreach (array_chunk($insertPalletDetail, 100) as $chunk) {
-                            DB::table('pallet_detail')->insert($chunk);
-                        }
-                    }
-
-                    if (!empty($insertConfirmOrder)) {
-                        foreach (array_chunk($insertConfirmOrder, 100) as $chunk) {
-                            DB::table('confirmOrder')->insert($chunk);
-                        }
-                    }
-
-                    $counter++;
+                        'pallet_id' => $palletId,
+                        'product_id' => $details['product_id'],
+                        'quantity' => $details['quantity'],
+                        'quantity2' => null,
+                        'product_work_desc_id' => $item['work_type'],
+                        'confirm_order_status' => false,
+                        'confirm_at' => null,
+                        'created_at' => now()
+                    ];
                 }
+
+                // ✅ Insert ลง `pallet_detail` (แบ่ง batch)
+                if (!empty($insertPalletDetail)) {
+                    DB::table('pallet_detail')->insert($insertPalletDetail);
                 }
-            });
-            session()->forget('lock');
+
+                // ✅ Insert ลง `confirmOrder`
+                if (!empty($insertConfirmOrder)) {
+                    DB::table('confirmOrder')->insert($insertConfirmOrder);
+                }
+            }
+
+            cache()->forget($CacheKey);
+        });
 
         return redirect()->route('DetailLockStock', [$CUS_ID, $ORDER_DATE])->with('success', 'Data saved successfully');
     }
-    public function addUpSellPallet(Request $request , $CUS_ID , $ORDER_DATE)
+    public function addUpSellPallet(Request $request, $CUS_ID, $ORDER_DATE)
     {
+        $key = 'lock' . $CUS_ID . $ORDER_DATE;
         $data = $request->validate([
             'order_number' => 'required',
             'room' => 'required',
@@ -135,232 +142,214 @@ class AutoCreateLockController extends Controller
             'product_name.*' => 'nullable',
             'quantity.*' => 'nullable',
             'pallet_type_id' => 'required'
-        ],[
+        ], [
             'room.required' => 'กรุณาเลือกห้อง',
             'work_desc.required' => 'กรุณาเลือกลักษณะงาน',
-            'pallet_type_id.required' => 'กรุณาเลือกประเถทใบล็อค',
+            'pallet_type_id.required' => 'กรุณาเลือกประเภทใบล็อค',
             'product_name.0.required' => 'กรุณากรอกสินค้า',
-            // 'quantity.required' => 'กรุณากรอกจำนวน'
         ]);
 
-        $item = $this->UpSellProduct($data,$CUS_ID , $ORDER_DATE);
+        $items = $this->UpSellProduct($data, $CUS_ID, $ORDER_DATE);
 
-        foreach( $data as $index => $dataItem){
-            $UpSellLock = [
-                [
-                'warehouse' => intval($data['room']),
-                'order_number' => $data['order_number'],
-                'pallet_type' => 2 ,
-                'work_type' =>  intval($data['work_desc']),
-                'items' => $item
-                ]
-            ];
-        }
+        // ดึงข้อมูล Cache ปัจจุบัน (ถ้ามี)
+        $existingCache = cache()->get($key, []);
+
+        // เพิ่มข้อมูลใหม่เข้าไป
+        $UpSellLock = [
+            'warehouse' => intval($data['room']),
+            'order_number' => $data['order_number'],
+            'pallet_type' => 2,
+            'work_type' => intval($data['work_desc']),
+            'items' => $items
+        ];
+
         //dd($UpSellLock);
-        //dd(session('lock'.$CUS_ID));
-        session()->push('lock' . $CUS_ID . $ORDER_DATE, $UpSellLock);
+        // รวมข้อมูลใหม่เข้าไปใน Cache
+        $existingCache[] = $UpSellLock;
+
+        // อัปเดต Cache
+        cache()->put($key, $existingCache, now()->addMinutes(30));
+
+        // Debug ตรวจสอบค่าที่อยู่ใน Cache
+        //dd(cache()->get($key));
 
         return redirect()->back();
-        
     }
-    function UpSellProduct($data , $CUS_ID , $ORDER_DATE){
-        $item = [];
-        foreach($data['product_id'] as $index => $product){
+
+    function UpSellProduct($data, $CUS_ID, $ORDER_DATE)
+    {
+        $items = [];
+
+        foreach ($data['product_id'] as $index => $product) {
             if (empty($product)) {
                 continue; // ข้ามค่า null หรือ empty
             }
-            $item[] = [
-            'order_id' => '',
-            'order_no' => NULL,
-            'customer_id' => $CUS_ID,
-            'order_date' => $ORDER_DATE,
-            'product_id' => $product,
-            'product_number' => $data['show_product_id'][$index],
-            'product_description' => $data['product_name'][$index],
-            'quantity' => $data['quantity'][$index],
-            'quantity_um' => 'Kg',
-            'quantity2' => 0,
-            'product_um2' => 0,
-            'warehouse' =>  $data['room'],
-            'work_type' => $data['work_desc'],
+
+            $items[] = [
+                'customer_id' => $CUS_ID,
+                'order_date' => $ORDER_DATE,
+                'product_id' => $product,
+                'product_number' => $data['show_product_id'][$index] ?? null,
+                'product_description' => $data['product_name'][$index] ?? null,
+                'quantity' => $data['quantity'][$index] ?? 0,
+                'quantity_um' => 'Kg',
+                'quantity2' => 0,
+                'product_um2' => 0,
+                'warehouse' => $data['room'],
+                'work_type' => $data['work_desc'],
             ];
         }
-        //dd($item);
-        return $item ;
+
+        return $items;
     }
 
-    public function autoCreateLock(Request $request ,$CUS_ID,$ORDER_DATE){
+
+    public function autoCreateLock(Request $request, $CUS_ID, $ORDER_DATE)
+    {
         $order_number = $request->input('order_number');
+
+        // Fetch the orders and join necessary tables
         $CustomerOrders = DB::table('orders')
-        ->join('order_detail', 'orders.order_number', '=', 'order_detail.order_number')
-        ->join('product', 'order_detail.product_id', '=', 'product.product_id')
-        ->join('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
-        ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
-        ->join('warehouse','warehouse.id','=','product.warehouse_id')
-        ->select(
-            'orders.order_number as ORDER_NUMBER',
-            'orders.customer_id as customer_id',
-            'orders.order_date as order_date',
-            'customer.customer_name as ORDER_BY_CUS',
-            'order_detail.quantity as quantity',
-            'order_detail.quantity2 as quantity2',
-            'product.product_um as product_um',
-            'product.product_um2 as product_um2',
-            'product_work_desc.product_work_desc as item_work_desc',
-            'product_work_desc.id as item_work_desc_id',
-            'product.*',
-            'customer.*',
-            'warehouse.id as warehouse_id'
-        )
-        ->where('orders.order_number', $order_number)
-        ->orderBy('quantity')
-        ->get();
+            ->join('order_detail', 'orders.order_number', '=', 'order_detail.order_number')
+            ->join('product', 'order_detail.product_id', '=', 'product.product_id')
+            ->leftJoin('product_work_desc', 'product.product_work_desc_id', '=', 'product_work_desc.id')
+            ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
+            ->leftJoin('warehouse', 'warehouse.id', '=', 'product.warehouse_id')
+            ->select(
+                'orders.order_number as ORDER_NUMBER',
+                'orders.customer_id as customer_id',
+                'orders.order_date as order_date',
+                'customer.customer_name as ORDER_BY_CUS',
+                'order_detail.quantity as quantity',
+                'order_detail.quantity2 as quantity2',
+                'product.product_id',
+                'product.product_number',
+                'product.product_um as product_um',
+                'product.product_um2 as product_um2',
+                'product.product_work_desc_id as item_work_desc_id',
+                'product.warehouse_id',
+                'product.product_description',
+                'customer.*',
+            )
+            ->where('orders.order_number', $order_number)
+            ->orderBy('quantity')
+            ->get();
 
-    $this->splitItem($CustomerOrders, $CUS_ID ,$order_number,$ORDER_DATE);
+        $this->splitItem($CustomerOrders, $CUS_ID, $order_number, $ORDER_DATE);
 
-    return back();
-}
-
-function splitItem($CustomerOrders, $CUS_ID ,$order_number,$ORDER_DATE)
-{
-    $lock_items = []; // สำหรับจัดกลุ่มสินค้า (ล็อก)
-    $current_group = []; // กลุ่มสินค้าที่กำลังสร้าง
-    $current_weight = []; // น้ำหนักสะสมของแต่ละ warehouse และแต่ละลักษณะงาน
-
-    foreach ($CustomerOrders as $itemOrder) {
-        $warehouse = $itemOrder->warehouse_id;
-        $work_type_name = $itemOrder->item_work_desc_id;
-
-        // ถ้ายังไม่มีข้อมูล warehouse นี้ใน lock_items และ current_weight ให้เริ่มต้น
-        if (!isset($current_group[$warehouse][$work_type_name])) {
-            $current_group[$warehouse][$work_type_name] = [];
-            $current_weight[$warehouse][$work_type_name] = 0;
-        }
-
-        if ($itemOrder->product_um === 'Kg') {
-            $this->split_product_work_type(
-                $itemOrder,
-                $itemOrder->quantity,
-                $current_group[$warehouse][$work_type_name],
-                $current_weight[$warehouse][$work_type_name],
-                $lock_items
-            );
-        } else if ($itemOrder->product_um2 === 'Kg') {
-            $this->split_product_work_type(
-                $itemOrder,
-                $itemOrder->quantity2,
-                $current_group[$warehouse][$work_type_name],
-                $current_weight[$warehouse][$work_type_name],
-                $lock_items
-            );
-        }
+        return back();
     }
 
-    // เพิ่มกลุ่มสุดท้ายในแต่ละ warehouse และลักษณะงาน
-    foreach ($current_group as $warehouse => $work_types) {
-        foreach ($work_types as $work_type => $group) {
-            if (!empty($group)) {
-                $lock_items[] = [
-                    'warehouse' => $warehouse,
-                    'work_type' => $work_type,
-                    'order_number' => $order_number,
-                    'pallet_type' => 1 ,
-                    'items' => $group,
-                ];
-            }
-        }
-    }
-    //dd($lock_items);
-    session()->push('lock' . $CUS_ID . $ORDER_DATE, $lock_items);
-}
-
-function split_product_work_type($itemOrder, $quantity, &$current_group, &$current_weight, &$lock_items)
-{
-    if ($itemOrder->item_work_desc == 'แยกจ่าย') {
-        $this->processItem($itemOrder, $quantity, $current_group, $current_weight, $lock_items);
-    } else if ($itemOrder->item_work_desc == 'รับจัด') {
-        $this->processItem($itemOrder, $quantity, $current_group, $current_weight, $lock_items);
-    } else {
-        $this->processItem($itemOrder, $quantity, $current_group, $current_weight, $lock_items);
-    }
-}
-
-function processItem($itemOrder, $quantity, &$current_group, &$current_weight, &$lock_items)
-{
-    if ($quantity <= 850) {
-        $this->smallOrder($itemOrder, $quantity, $current_group, $current_weight, $lock_items);
-    } else {
-        $this->largeOrder($itemOrder, $quantity, $lock_items);
-    }
-}
-
-function smallOrder($itemOrder, $quantity, &$current_group, &$current_weight, &$lock_items)
-{
-    if ($current_weight + $quantity > 850) {
-        // เก็บกลุ่มปัจจุบันลงใน lock_items และรีเซ็ต
-        $lock_items[] = [
-            'items' => $current_group
-        ];
+    function splitItem($CustomerOrders, $CUS_ID, $order_number, $ORDER_DATE)
+    {
+        $lock_items = collect(); // ใช้ Collection แทน array
+        $key = 'lock' . $CUS_ID . $ORDER_DATE;
         $current_group = [];
-        $current_weight = 0;
-    }
+        $current_weight = [];
 
-    // เพิ่มสินค้าเข้าในกลุ่ม
-    $current_group[] = [
-        'order_id' => $itemOrder->id,
-        'order_number' => $itemOrder->ORDER_NUMBER,
-        'customer_id' => $itemOrder->customer_id,
-        'order_date' => $itemOrder->order_date,
-        'product_id' => $itemOrder->product_id,
-        'product_number' => $itemOrder->product_number,
-        'product_description' => $itemOrder->product_description,
-        'ORDER_BY_CUS' => $itemOrder->ORDER_BY_CUS,
-        'quantity' => $itemOrder->quantity,
-        'product_um' => $itemOrder->product_um,
-        'quantity2' => $itemOrder->quantity2,
-        'product_um2' => $itemOrder->product_um2,
-        'warehouse' => $itemOrder->warehouse_id,
-        // 'work_type' => $itemOrder->item_work_desc_id,
-    ];
-    $current_weight += $quantity;
+        $CustomerOrders->each(function ($itemOrder) use (&$current_group, &$current_weight, &$lock_items, $order_number) {
+            if (!$itemOrder->item_work_desc_id || !$itemOrder->warehouse_id) {
+                session()->flash('LockErrorCreate', "{$itemOrder->product_number} {$itemOrder->product_description} ยังไม่ได้กำหนดข้อมูลห้องเก็บหรือลักษณะงาน");
+                return false; // หยุดการทำงานของ each()
+            }
+
+            $warehouse = $itemOrder->warehouse_id;
+            $work_type_name = $itemOrder->item_work_desc_id;
+
+            // กำหนดค่าเริ่มต้นหากยังไม่มีข้อมูล
+            $current_group[$warehouse][$work_type_name] = $current_group[$warehouse][$work_type_name] ?? [];
+            $current_weight[$warehouse][$work_type_name] = $current_weight[$warehouse][$work_type_name] ?? 0;
+
+            $quantityToProcess = ($itemOrder->product_um === 'Kg') ? $itemOrder->quantity : $itemOrder->quantity2;
+            if ($itemOrder->product_um === 'Kg' || $itemOrder->product_um2 === 'Kg') {
+                $this->splitProductWorkType($itemOrder, $quantityToProcess, $current_group[$warehouse][$work_type_name], $current_weight[$warehouse][$work_type_name], $lock_items);
+            }
+        });
+
+        // เพิ่มกลุ่มสุดท้ายเข้า lock_items
+        foreach ($current_group as $warehouse => $work_types) {
+            foreach ($work_types as $work_type => $group) {
+                if (!empty($group)) {
+                    $lock_items->push([
+                        'warehouse' => $warehouse,
+                        'work_type' => $work_type,
+                        'order_number' => $order_number,
+                        'pallet_type' => 1,
+                        'items' => $group,
+                    ]);
+                }
+            }
+        } 
+        $exitCache = cache()->get($key,[]);
+        if($exitCache){
+            $newCache = $lock_items->toArray();
+            cache()->put($key, array_merge($newCache , $exitCache), now()->addMinutes(30));
+        }else{
+            cache()->put($key, $lock_items->toArray(), now()->addMinutes(30));
+        }
+        
 }
 
-function largeOrder($itemOrder, $quantity, &$lock_items)
-{
-    $remaining_quantity = $quantity;
-
-    // กระจายสินค้าออกเป็นหลายกลุ่ม โดยแต่ละกลุ่มมีน้ำหนักไม่เกิน 850
-    while ($remaining_quantity > 850) {
-        $this->LargeOrderAddData($itemOrder, 850, $lock_items);
-        $remaining_quantity -= 850;
+    function splitProductWorkType($itemOrder, $quantity, &$current_group, &$current_weight, &$lock_items)
+    {
+        $this->processItem($itemOrder, $quantity, $current_group, $current_weight, $lock_items);
     }
 
-    // ถ้ามีส่วนที่เหลืออยู่ ให้นำมาจัดกลุ่ม
-    if ($remaining_quantity > 0) {
-        $this->LargeOrderAddData($itemOrder, $remaining_quantity, $lock_items);
+    function processItem($itemOrder, $quantity, &$current_group, &$current_weight, &$lock_items)
+    {
+        if ($quantity <= 850) {
+            $this->smallOrder($itemOrder, $quantity, $current_group, $current_weight, $lock_items);
+        } else {
+            $this->largeOrder($itemOrder, $quantity, $lock_items);
+        }
     }
-}
 
+    function smallOrder($itemOrder, $quantity, &$current_group, &$current_weight, &$lock_items)
+    {
+        if ($current_weight + $quantity > 850) {
+            $lock_items->push(['items' => $current_group]);
+            $current_group = [];
+            $current_weight = 0;
+        }
 
-function LargeOrderAddData($itemOrder, $quantity, &$lock_items)
-{
-    $lock_items[] = [
-        'items' =>
-        [
-            [
-                'order_number' => $itemOrder->ORDER_NUMBER,
-                'product_id' => $itemOrder->product_id,
-                'product_number' => $itemOrder->product_number,
-                'product_description' => $itemOrder->product_description,
-                'ORDER_BY_CUS' => $itemOrder->ORDER_BY_CUS,
-                'quantity' => $itemOrder->quantity,
-                'product_um' => $itemOrder->product_um,
-                'quantity2' => $itemOrder->quantity2,
-                'product_um2' => $itemOrder->product_um2,
-                'warehouse' => $itemOrder->warehouse_id,
-                // 'work_type' => $itemOrder->item_work_desc_id,
-            ]
-        ]
-    ];
-}
+        $current_group[] = $this->createItemData($itemOrder, $quantity);
+        $current_weight += $quantity;
+    }
+
+    function largeOrder($itemOrder, $quantity, &$lock_items)
+    {
+        // ใช้ array_chunk แบ่งกลุ่มละ 850
+        foreach (array_chunk(range(1, $quantity), 850) as $chunk) {
+            $this->largeOrderAddData($itemOrder, count($chunk), $lock_items);
+        }
+    }
+
+    function largeOrderAddData($itemOrder, $quantity, &$lock_items)
+    {
+        $lock_items->push([
+            'warehouse' => $itemOrder->warehouse_id,
+            'work_type' => $itemOrder->item_work_desc_id,
+            'order_number' => $itemOrder->ORDER_NUMBER ?? 'N/A',
+            'pallet_type' => 1,
+            'items' => [$this->createItemData($itemOrder, $quantity)],
+        ]);
+    }
+
+    function createItemData($itemOrder, $quantity)
+    {
+        return [
+            'order_number' => $itemOrder->ORDER_NUMBER ?? 'N/A',
+            'customer_id' => $itemOrder->customer_id,
+            'order_date' => $itemOrder->order_date,
+            'product_id' => $itemOrder->product_id,
+            'product_number' => $itemOrder->product_number,
+            'product_description' => $itemOrder->product_description,
+            'ORDER_BY_CUS' => $itemOrder->ORDER_BY_CUS,
+            'quantity' => $quantity,
+            'product_um' => $itemOrder->product_um,
+            'quantity2' => $itemOrder->quantity2,
+            'product_um2' => $itemOrder->product_um2,
+            'warehouse' => $itemOrder->warehouse_id,
+        ];
+    }
 }

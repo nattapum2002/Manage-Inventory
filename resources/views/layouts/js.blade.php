@@ -350,7 +350,6 @@
                     query: request.term
                 },
                 success: function(data) {
-                    console.log(data);
                     response(data); // ส่งข้อมูลผลลัพธ์ไปยัง autocomplete
                 },
                 error: function(xhr, status, error) {

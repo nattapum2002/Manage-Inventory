@@ -47,6 +47,8 @@ class LockController extends Controller
     public function DetailLockStock($CUS_ID, $ORDER_DATE)
     {
         $orders = $this->getCustomerOrder($CUS_ID , $ORDER_DATE);
+        $palletOrderId = $this->getPalletOrderId($CUS_ID,$ORDER_DATE);
+        //dd($palletOrderId);
         $customer_name = DB::table('customer')
             ->select('customer_name')
             ->where('customer_id',$CUS_ID)->value('customer_name');
@@ -76,15 +78,16 @@ class LockController extends Controller
             $pallets = DB::table('pallet')
                 ->join('orders','orders.order_number','=','pallet.order_number')
                 ->join('pallet_type','pallet_type.id','=','pallet.pallet_type_id')
+                ->leftJoin('pallet_team', 'pallet_team.pallet_id', '=', 'pallet.id')
+                ->leftJoin('team', 'pallet_team.team_id', '=', 'team.team_id')
                 ->whereDate('orders.order_date',$ORDER_DATE)
                 ->where('orders.customer_id',$CUS_ID)
-                ->select('pallet.*','pallet_type.pallet_type')
+                ->select('pallet.*','pallet_type.pallet_type','team.team_name')
                 ->get();
-        //dd($pallets);
         
         
 
-        return view('Admin.ManageLockStock.DetailLockStock', compact('formatOrders', 'customer_name', 'CUS_ID', 'ORDER_DATE','pallets'));
+        return view('Admin.ManageLockStock.DetailLockStock', compact('formatOrders', 'customer_name', 'CUS_ID', 'ORDER_DATE','pallets','palletOrderId'));
     }
 
     public function getCustomerOrder($CUS_ID,$ORDER_DATE){
@@ -96,6 +99,18 @@ class LockController extends Controller
             ->get();
 
         return $customerOrder ;
+    }
+
+    public function getPalletOrderId($CUS_ID , $ORDER_DATE){
+        $palletOrderId = DB::table('pallet')
+            ->join('orders','orders.order_number','=','pallet.order_number')
+            ->select('pallet.order_number')
+            ->whereDate('orders.order_date',$ORDER_DATE)
+            ->where('orders.customer_id',$CUS_ID)
+            ->groupBy('pallet.order_number')
+            ->pluck('order_number');
+        
+            return $palletOrderId;
     }
     public function updatePalletType(Request $request ,$pallet_id ){
         $data = $request->input();
@@ -250,7 +265,7 @@ class LockController extends Controller
             ->leftJoin('pallet_team', 'pallet.pallet_id', '=', 'pallet_team.pallet_id')
             ->leftJoin('team', 'pallet_team.team_id', '=', 'team.team_id')
             ->select(
-                'pallet.id',
+                'pallet.id as pallet_pr_id',
                 'pallet.pallet_id',
                 'pallet.arrange_pallet_status as status',
                 'warehouse.warehouse_name as warehouse',
@@ -270,7 +285,6 @@ class LockController extends Controller
 
             $pallet_type = DB::table('pallet_type')->get();
 
-        //dd($Pallets, $pallet_id);
         return view('Admin.ManageLockStock.DetailPellets', compact('Pallets', 'ORDER_DATE', 'CUS_ID','pallet_type'));
     }
 
