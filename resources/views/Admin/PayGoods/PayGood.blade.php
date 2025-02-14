@@ -5,24 +5,24 @@
 @endsection
 
 @section('content')
-    <div class="content">
+    <section class="content">
         <div class="container-fluid">
-            <div class="row mb-1">
-                <div class="col-lg-6 col-md-6 col-sm-12 mb-1">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="card">
                         <div class="card-body text-center">
                             <h5>พนักงานขนย้าย</h5>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 mb-1">
+                <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="card">
                         <div class="card-body text-center">
                             <h5 id="time"></h5>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 mb-1">
+                <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="card">
                         <div class="card-body text-center">
                             <h5 id="date"></h5>
@@ -31,8 +31,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <ol id="queue-list" class="list-group list-group-numbered">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <ol id="queue-list" class="list-group list-group-numbered" style="max-height: 70vh; overflow-y: auto;">
                         @foreach ($queue as $queue)
                             <li class="list-group-item d-flex justify-content-between align-items-start list-group-item-action"
                                 value="{{ $queue->customer_id }}"
@@ -48,7 +48,7 @@
                         @endforeach
                     </ol>
                 </div>
-                <div class="col-lg-9 col-md-8 col-sm-6">
+                <div class="col-lg-9 col-md-8 col-sm-6 mt-1">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
@@ -67,39 +67,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="PalletTabsTable" class="card text-center">
-                        {{-- <div class="card-header">
-                            <ul class="nav nav-tabs card-header-tabs">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1">พาเลท
-                                        1</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="tab2-tab" data-bs-toggle="tab" href="#tab2">พาเลท 2</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="tab3-tab" data-bs-toggle="tab" href="#tab3">พาเลท 3</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="card-body tab-content">
-                            <div class="tab-pane fade show active" id="tab1">
-                                <table id="PalletTable" class="table table-bordered table-striped nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th>รหัสสินค้า</th>
-                                            <th>รายละเอียดสินค้า</th>
-                                            <th>จำนวน</th>
-                                            <th>จำนวน 2</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> --}}
-                    </div>
+                    <div id="PalletTabsTable" class="card text-center"></div>
                 </div>
             </div>
 
@@ -223,7 +191,7 @@
                 </div>
             @endif --}}
         </div>
-    </div>
+    </section>
 @endsection
 
 @section('script')
@@ -245,8 +213,12 @@
             const CustomerNameElement = document.getElementById('text_customer_name');
             const QueueTimeElement = document.getElementById('text_queue_time');
             const TotalPalletsElement = document.getElementById('text_total_pallets');
-
             const PalletTabsTable = document.getElementById('PalletTabsTable');
+
+            if (!PalletTabsTable) {
+                console.error('Element #PalletTabsTable ไม่พบใน DOM');
+                return;
+            }
 
             fetch(`{{ route('PayGoodsData') }}`, {
                     method: 'POST',
@@ -255,100 +227,70 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
                     body: JSON.stringify({
-                        customer_id: customer_id,
+                        customer_id
                     }),
                 })
-                .then((response) => {
+                .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     return response.json();
                 })
-                .then((data) => {
-                    console.log(data);
-                    CustomerNameElement.textContent = data.queue.customer_name;
-                    QueueTimeElement.textContent = formatTime(data.queue.ship_datetime);
+                .then(data => {
+                    CustomerNameElement.textContent = data.queue?.customer_name || '-';
+                    QueueTimeElement.textContent = formatTime(data.queue?.ship_datetime);
 
-                    if (data.pallet.length > 0) {
+                    if (Array.isArray(data.pallet) && data.pallet.length > 0) {
                         TotalPalletsElement.textContent = data.pallet.length;
 
-                        PalletTabsTable.innerHTML = '';
+                        let tabs = `
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            ${data.pallet.map((pallet, index) => `
+                                                                                                    <li class="nav-item">
+                                                                                                        <a class="nav-link ${index === 0 ? 'active' : ''}" id="tab${index + 1}-tab" data-bs-toggle="tab" href="#tab${index + 1}">
+                                                                                                            พาเลท ${index + 1}
+                                                                                                        </a>
+                                                                                                    </li>
+                                                                                                `).join('')}
+                        </ul>
+                    </div>
+                `;
 
-                        PalletTabsTable.innerHTML += `
-                        <div class="card-header">
-                            <ul class="nav nav-tabs card-header-tabs">
-                    `;
+                        let tabContent = `
+                    <div class="card-body tab-content">
+                    ${data.pallet.map((pallet, index) => `
+                                                                                            <div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="tab${index + 1}" role="tabpanel" aria-labelledby="tab${index + 1}-tab">
+                                                                                                <table id="PalletTable${index + 1}" class="table table-bordered table-striped nowrap">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th>รหัสสินค้า</th>
+                                                                                                            <th>รายละเอียดสินค้า</th>
+                                                                                                            <th>จำนวน</th>
+                                                                                                            <th>จำนวน 2</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody>
+                                                                                                    ${Array.isArray(pallet.products) ? pallet.products.map(product => `
+                                    <tr>
+                                        <td>${product.product_code || '-'}</td>
+                                        <td>${product.name || '-'}</td>
+                                        <td>${product.quantity || '0'}</td>
+                                        <td>${product.quantity_2 || '0'}</td>
+                                    </tr>
+                                `).join('') : ''}
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </div>
+                                                                                            `).join('')}
+                    </div>
+                `;
 
-                        data.pallet.forEach((pallet, index) => {
-                            PalletTabsTable.innerHTML += `
-                            <li class="nav-item">
-                                <a class="nav-link ${index === 0 ? 'active' : ''}" id="tab${index + 1}-tab" data-bs-toggle="tab" href="#tab${index + 1}">พาเลท ${index + 1}</a>
-                            </li>
-                        `;
-                        });
-
-                        PalletTabsTable.innerHTML += `
-                            </ul>
-                        </div>
-                        <div class="card-body tab-content">
-                    `;
-
-                        data.pallet.forEach((pallet, index) => {
-                            PalletTabsTable.innerHTML += `
-                            <div class="tab-pane fade show ${index === 0 ? 'active' : ''}" id="tab${index + 1}" role="tabpanel" aria-labelledby="tab${index + 1}-tab">
-                                <div class="row">
-                                    <div class="col-md-12 col-lg-12">
-                                        <table id="PalletTable" class="table table-bordered table-striped nowrap">
-                                            <thead>
-                                                <tr>
-                                                    <th>รหัสสินค้า</th>
-                                                    <th>รายละเอียดสินค้า</th>
-                                                    <th>จำนวน</th>
-                                                    <th>จำนวน 2</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                        `;
-
-                            pallet.products.forEach((product) => {
-                                PalletTabsTable.innerHTML += `
-                                            <tr>
-                                                <td>${product.product_code}</td>
-                                                <td>${product.name}</td>
-                                                <td>${product.quantity}</td>
-                                                <td>${product.quantity_2}</td>
-                                            </tr>
-                                        `;
-                            });
-
-                            PalletTabsTable.innerHTML += `
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        });
-
-                        PalletTabsTable.innerHTML += `
-                        </div>
-                    `;
+                        PalletTabsTable.innerHTML = tabs + tabContent;
                     } else {
                         TotalPalletsElement.textContent = '0';
-
-                        PalletTabsTable.innerHTML = `
-                        <div class="mt-3 mb-3">
-                            ยังไม่จัดสินค้าในคิวนี้
-                        </div>
-                    `;
+                        PalletTabsTable.innerHTML = `<div class="mt-3 mb-3">ยังไม่จัดสินค้าในคิวนี้</div>`;
                     }
-
-
-
-                    // document.getElementById('loading').style.display = 'none';
-                    // document.getElementById('icon-search').style.display = 'inline-block';
                 })
                 .catch(error => {
-                    // document.getElementById('loading').style.display = 'none';
-                    // document.getElementById('icon-search').style.display = 'inline-block';
                     console.error('Error:', error);
                 });
         }
@@ -374,9 +316,16 @@
             });
 
             if (closestItem) {
+                queueItems.forEach((i) => i.classList.remove("active"));
                 closestItem.classList.add("active");
+
                 let customer_id = closestItem.getAttribute("value");
                 loadPayGoodsData(customer_id);
+
+                closestItem.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
             }
         }
 
@@ -385,11 +334,16 @@
 
             queueItems.forEach((item) => {
                 item.addEventListener("click", function() {
-                    queueItems.forEach((item) => item.classList.remove("active"));
+                    queueItems.forEach((i) => i.classList.remove("active"));
                     item.classList.add("active");
 
                     let customer_id = item.getAttribute("value");
                     loadPayGoodsData(customer_id);
+
+                    item.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
                 });
             });
         }
@@ -400,8 +354,10 @@
         }
 
         function formatTime(datetime) {
+            if (!datetime) return "-";
             const d = new Date(datetime);
-            if (isNaN(d)) return "Invalid Date";
+            if (isNaN(d.getTime())) return "-";
+
             const hours = d.getHours().toString().padStart(2, '0');
             const minutes = d.getMinutes().toString().padStart(2, '0');
             return `${hours}:${minutes}`;
@@ -435,4 +391,3 @@
         updateDateTime();
     </script>
 @endsection
-ํ
