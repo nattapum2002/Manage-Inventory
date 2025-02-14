@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('pallet_id');
             $table->string('pallet_number');
             $table->string('pallet_name');
+            $table->boolean('recipe_status')->default(false);
+            $table->boolean('arrange_pallet_status')->default(false);
             $table->string('order_number');
             $table->string('pallet_desc');
             $table->string('warehouse_id');

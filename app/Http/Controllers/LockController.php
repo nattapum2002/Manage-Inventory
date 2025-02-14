@@ -90,6 +90,10 @@ class LockController extends Controller
         return view('Admin.ManageLockStock.DetailLockStock', compact('formatOrders', 'customer_name', 'CUS_ID', 'ORDER_DATE','pallets','palletOrderId'));
     }
 
+    public function updatePalletStatus(Request $request){
+        $palletId = $request->query('palletId');
+        return response()->json(['success',$palletId]);
+    }
     public function getCustomerOrder($CUS_ID,$ORDER_DATE){
         $customerOrder = DB::table('orders')
             ->join('order_detail','order_detail.order_number','=','orders.order_number')

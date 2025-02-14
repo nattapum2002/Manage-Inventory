@@ -176,18 +176,28 @@
                                     <td id="pallet-type">{{ $Pallet->pallet_type }}</td>
                                     <td>
                                         {!! $Pallet->arrange_pallet_status == 1
-        ? '<p class="text-success">จัดพาเลทแล้ว</p>'
-        : '<p class="text-danger">ยังไม่จัดพาเลท</p>' !!}
+        ? '<p class="text-success arrange-status' . $Pallet->id . '">จัดพาเลทแล้ว</p>'
+        : '<p class="text-danger arrange-status' . $Pallet->id . '">ยังไม่จัดพาเลท</p>' !!}
                                     </td>
                                     <td>
-                                        {!! $Pallet->recive_status == 1
+                                        {!! $Pallet->recipe_status == 1
         ? '<p class="text-success">ส่งแล้ว</p>'
         : '<p class="text-danger">ยังไม่จัดส่ง</p>' !!}
                                     </td>
                                     <td>{{ $Pallet->note ?? 'N/A' }}</td>
                                     <td>
+                                        <button
+                                            class="btn btn-success btn-pallet-send"
+                                            data-pallet-id="{{$Pallet->id}}"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-title="ยืนยันการจัด"
+                                            >
+                                                <i class="bi bi-cart"></i>
+                                            </button>
+                                        <button
+                                            class="btn btn-info" data-bs-toggle="tooltip" data-bs-title="ยืนยันการส่ง"><i class="bi bi-truck"></i></button>
                                         <a href="{{route('DetailPallets', [$ORDER_DATE, $CUS_ID, $Pallet->id])}}"
-                                            class="btn btn-primary"><i class="far fa-file-alt"></i></a>
+                                            class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="รายละเอียด"><i class="far fa-file-alt"></i></a>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -222,95 +232,146 @@
 </section>
 @endsection
 @section('script')
-<script>
-    $(document).ready(function () {
-        $('.orderTable').DataTable({
-            "paging": true,        // เปิดใช้งาน Pagination
-            "lengthMenu": [7 , 10 , 15], // กำหนดจำนวนแถวที่แสดง
-            "searching": true,     // เปิดใช้งานช่องค้นหา
-            "ordering": true,      // เปิดใช้งานการเรียงลำดับ
-            "info": true,          // แสดงข้อมูลจำนวนแถว
-            "autoWidth": false,    // ปิด Auto Width เพื่อให้ตารางดูสมส่วน
-            "responsive": true,    // ทำให้รองรับหน้าจอขนาดเล็ก
-            "language": {
-                "search": "ค้นหา:",
-                "lengthMenu": "แสดง _MENU_ รายการต่อหน้า",
-                "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
-                "paginate": {
-                    "first": "หน้าแรก",
-                    "last": "หน้าสุดท้าย",
-                    "next": "ถัดไป",
-                    "previous": "ก่อนหน้า"
-                }
-            },
-        });
-
-        $("#pallet").DataTable({
-            //responsive: true,
-            lengthChange: true,
-            autoWidth: true,
-            scrollX: true,
-            order:[[0 ,'asc']],
-            rowGroup:{
-                    dataSrc: 1
+    <script>
+        $(document).ready(function () {
+            $('.orderTable').DataTable({
+                "paging": true,        // เปิดใช้งาน Pagination
+                "lengthMenu": [7 , 10 , 15], // กำหนดจำนวนแถวที่แสดง
+                "searching": true,     // เปิดใช้งานช่องค้นหา
+                "ordering": true,      // เปิดใช้งานการเรียงลำดับ
+                "info": true,          // แสดงข้อมูลจำนวนแถว
+                "autoWidth": false,    // ปิด Auto Width เพื่อให้ตารางดูสมส่วน
+                "responsive": true,    // ทำให้รองรับหน้าจอขนาดเล็ก
+                "language": {
+                    "search": "ค้นหา:",
+                    "lengthMenu": "แสดง _MENU_ รายการต่อหน้า",
+                    "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
+                    "paginate": {
+                        "first": "หน้าแรก",
+                        "last": "หน้าสุดท้าย",
+                        "next": "ถัดไป",
+                        "previous": "ก่อนหน้า"
+                    }
                 },
-            "language": {
-                "search": "ค้นหา:",
-                "lengthMenu": "แสดง _MENU_ รายการต่อหน้า",
-                "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
-                "paginate": {
-                    "first": "หน้าแรก",
-                    "last": "หน้าสุดท้าย",
-                    "next": "ถัดไป",
-                    "previous": "ก่อนหน้า"
+            });
+
+            $("#pallet").DataTable({
+                //responsive: true,
+                lengthChange: true,
+                autoWidth: true,
+                scrollX: true,
+                order:[[0 ,'asc']],
+                rowGroup:{
+                        dataSrc: 1
+                    },
+                "language": {
+                    "search": "ค้นหา:",
+                    "lengthMenu": "แสดง _MENU_ รายการต่อหน้า",
+                    "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
+                    "paginate": {
+                        "first": "หน้าแรก",
+                        "last": "หน้าสุดท้าย",
+                        "next": "ถัดไป",
+                        "previous": "ก่อนหน้า"
+                    }
+                },
+            });
+        });
+
+        $('.print-lock-card').on('click', () =>{
+            const order_number = $('#pallet-orderNumber').val();
+            let order_date = @json($ORDER_DATE);
+            let cusId = @json($CUS_ID);
+            let loading = false ;
+
+            $.ajax({
+                url: '{{route('LoadLog')}}',
+                method: 'GET',
+                data: { 
+                    order_number ,
+                    order_date,
+                    cusId
+                },
+                xhrFields: {
+                    responseType: 'blob' // รับไฟล์เป็น PDF
+                },
+                beforeSend: function () {
+                    loading = true; // ✅ ตั้งค่า loading เป็น true ก่อนเริ่มส่ง request
+                    setLoading(); // แสดงสถานะโหลด
+                },
+                success: function (response) {
+                    let blob = new Blob([response], { type: 'application/pdf' });
+                    let url = URL.createObjectURL(blob);
+
+                    window.open(url); // หรือเปิดหน้าใหม่
+                    loading = false; 
+                    setLoading();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
                 }
-            },
-        });
-    });
+            });
 
-    $('.print-lock-card').on('click', () =>{
-        const order_number = $('#pallet-orderNumber').val();
-        let order_date = @json($ORDER_DATE);
-        let cusId = @json($CUS_ID);
-        let loading = false ;
-
-        $.ajax({
-            url: '{{route('LoadLog')}}',
-            method: 'GET',
-            data: { 
-                order_number ,
-                order_date,
-                cusId
-            },
-            xhrFields: {
-                responseType: 'blob' // รับไฟล์เป็น PDF
-            },
-            beforeSend: function () {
-                loading = true; // ✅ ตั้งค่า loading เป็น true ก่อนเริ่มส่ง request
-                setLoading(); // แสดงสถานะโหลด
-            },
-            success: function (response) {
-                let blob = new Blob([response], { type: 'application/pdf' });
-                let url = URL.createObjectURL(blob);
-
-                window.open(url); // หรือเปิดหน้าใหม่
-                loading = false; 
-                setLoading();
-            },
-            error: function (xhr, status, error) {
-                console.error('Error:', error);
+            function setLoading(){
+                $('.print-lock-card').attr('disabled',loading);
+                $('.print-lock-card').text("กำลังโหลด...");
+                if(!loading){
+                    $('.print-lock-card').text("ปริ๊นใบล็อค");
+                }
             }
-        });
 
-        function setLoading(){
-            $('.print-lock-card').attr('disabled',loading);
-            $('.print-lock-card').text("กำลังโหลด...");
-            if(!loading){
-                $('.print-lock-card').text("ปริ๊นใบล็อค");
+
+        })
+
+
+
+    </script>
+    <script>
+        $(document).on('click', '.btn-pallet-send', async function () {
+                let palletId = $(this).data('palletId'); // ✅ ใช้ .data() แปลง camelCase อัตโนมัติ
+                let button = $(this);
+                let query = 1;
+                const arrangeStatus = $(`.arrange-status${palletId}`);
+                try {
+                    let response = await updatePalletStatus(palletId, query);
+                    // console.log(arrangeStatus);
+                    updataArrangeStatus(arrangeStatus , button);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+
+            function updataArrangeStatus(arrangeStatus , button) {
+                    if (arrangeStatus.text() === 'ยังไม่จัดพาเลท') {                       
+                        arrangeStatus.removeClass('text-danger').addClass('text-success').text('จัดพาเลทแล้ว')
+                        button.removeClass('btn-success').addClass('btn-danger')
+                            .html('<i class="bi bi-cart-check-fill"></i>');
+                    } else {
+                        arrangeStatus.removeClass('text-success').addClass('text-danger').text('ยังไม่จัดพาเลท')
+                        button.removeClass('btn-danger').addClass('btn-success')
+                            .html('<i class="bi bi-cart"></i>');
+                    }
+                }
+
+            function updatePalletStatus(palletId, query) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        'url': '{{route('updatePalletStatus')}}',
+                        'data': {
+                            palletId,
+                            query
+                        },
+                        success: (response) => {
+                            resolve(response);
+                            console.log(response);
+                        },
+                        error: (error) => {
+                            reject(error);
+                            console.log(error);
+                        }
+                    })
+                });
+
             }
-        }
-       
-        
-    })
-</script>
+    </script>
 @endsection
