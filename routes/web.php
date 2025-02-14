@@ -121,7 +121,7 @@ Route::prefix('ManageLockStock')->group(function () {
     Route::get('/Detail/insertPallet/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'insert_pallet'])->name('Insert_Pallet');
     Route::get('/Detail/editPalletOrde/{order_id}/{product_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
     Route::get('/Arrange/{CUS_id}/{order_date}', [AutoCreateLockController::class, 'ShowPreLock'])->name('PreLock');
-   
+
     Route::post('/UPDATE/{id}', [LockController::class, 'update_lock_team'])->name('UpdateLockTeam');
     Route::post('/UpSell/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'addUpSellPallet'])->name('addUpSellPallet');
     Route::get('/Detail/PalletType/UPDATE/{pallet_id}', [LockController::class, 'updatePalletType'])->name('updatePalletType');

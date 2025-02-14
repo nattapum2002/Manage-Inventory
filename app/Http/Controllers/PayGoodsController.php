@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
-use function Laravel\Prompts\error;
 
 class PayGoodsController extends Controller
 {
@@ -34,8 +31,8 @@ class PayGoodsController extends Controller
     private function GetPallet()
     {
         return DB::table('pallet')
-            // ->join('pallet_detail', 'pallet.pallet_id', '=', 'pallet_detail.pallet_id')
-            // ->join('product', 'pallet_detail.product_id', '=', 'product.product_id')
+            ->join('pallet_detail', 'pallet.pallet_id', '=', 'pallet_detail.pallet_id')
+            ->join('product', 'pallet_detail.product_id', '=', 'product.product_id')
             ->get();
     }
 
@@ -142,7 +139,7 @@ class PayGoodsController extends Controller
         $queue = $this->GetQueues()->get();
         // dd($queue);
 
-        return view('Admin.PayGoods.PayGoods', [
+        return view('Admin.PayGoods.PayGood', [
             'customer_queues' => $customer_queues,
             'select_queue' => null,
             'teams' => $teams,
@@ -187,100 +184,6 @@ class PayGoodsController extends Controller
             'teams' => $teams,
         ]);
     }
-
-    // public function SelectPayGoods(Request $request)
-    // {
-
-    //     $customer_queues = DB::table('customer_queue')
-    //         ->join('customer_order', 'customer_queue.order_number', '=', 'customer_order.order_number')
-    //         ->join('customer', 'customer_order.customer_id', '=', 'customer.customer_id')
-    //         ->where('queue_date', now()->format('Y-m-d'))
-    //         ->select('customer_queue.queue_time', 'customer_queue.order_number', 'customer.customer_name', 'customer.customer_grade')
-    //         ->orderBy('customer_queue.queue_time')
-    //         ->get();
-
-    //     $select_queue = $customer_queues
-    //         ->firstWhere('order_number', $order_number);
-
-    //     $auto_select_queue = $customer_queues
-    //         ->filter(fn($queue) => $queue->queue_time >= now()->toTimeString())
-    //         ->sortBy('queue_time')
-    //         ->first();
-
-    //     $pallets_with_products = DB::table('pallet')
-    //         ->join('pallet_order', 'pallet.pallet_id', '=', 'pallet_order.pallet_id')
-    //         ->join('product', 'pallet_order.product_id', '=', 'product.product_id')
-    //         ->join('orders', 'pallet_order.pallet_id', '=', 'orders.id')
-    //         ->where('pallet.order_number', $order_number)
-    //         ->select(
-    //             'pallet.pallet_id',
-    //             'pallet.pallet_no',
-    //             'pallet.room',
-    //             'pallet.team_id',
-    //             'pallet.towing_staff_id',
-    //             'pallet_order.product_id',
-    //             'product.product_id',
-    //             'product.product_description',
-    //             'orders.quantity',
-    //             'product.product_um',
-    //             'orders.quantity2',
-    //             'product.product_um2',
-    //         )
-    //         ->orderBy('pallet.pallet_id')
-    //         ->get()
-    //         ->groupBy('pallet_id')
-    //         ->map(function ($items, $pallet_id) {
-    //             $firstItem = $items->first(); // ใช้สำหรับดึงข้อมูลพาเลท
-
-    //             return [
-    //                 'pallet_no' => $firstItem->pallet_no,
-    //                 'room' => $firstItem->room,
-    //                 'team_id' => $firstItem->team_id,
-    //                 'towing_staff_id' => $firstItem->towing_staff_id,
-    //                 'products' => $items->map(function ($item) {
-    //                     return [
-    //                         'product_id' => $item->product_id,
-    //                         'product_id' => $item->product_id,
-    //                         'product_description' => $item->product_description,
-    //                         'quantity' => $item->quantity,
-    //                         'product_um' => $item->product_um,
-    //                         'quantity2' => $item->quantity2,
-    //                         'product_um2' => $item->product_um2,
-    //                     ];
-    //                 })
-    //             ];
-    //         });
-
-    //     $total_pallets = $pallets_with_products->count();
-
-    //     // $teams = DB::table('team')
-    //     //     ->join('team_user', 'team.team_id', '=', 'team_user.team_id')
-    //     //     ->join('users', 'team_user.user_id', '=', 'users.user_id')
-    //     //     ->where('team.work', 'DragDropGoods')
-    //     //     ->select('users.name', 'users.user_id')
-    //     //     ->get();
-
-    //     // $incentives = DB::table('incentive_transactions')->first();
-
-    //     $teams = DB::table('team')
-    //         ->join('team_user', 'team.team_id', '=', 'team_user.team_id')
-    //         ->join('users', 'team_user.user_id', '=', 'users.user_id')
-    //         ->leftJoin('incentive_transactions', 'incentive_transactions.user_id', '=', 'users.user_id') // ดึงข้อมูล incentive_transactions
-    //         ->where('team.work', 'DragDropGoods')
-    //         ->select('users.name', 'users.user_id', 'incentive_transactions.incentive_id', 'incentive_transactions.end_time')
-    //         ->get();
-
-    //     // dd($teams);
-
-    //     return view('Admin.PayGoods.PayGoods', [
-    //         'customer_queues' => $customer_queues,
-    //         'select_queue' => $select_queue,
-    //         'auto_select_queue' => $auto_select_queue,
-    //         'total_pallets' => $total_pallets,
-    //         'pallets_with_products' => $pallets_with_products,
-    //         'teams' => $teams,
-    //     ]);
-    // }
 
     public function StartWork(Request $request)
     {
