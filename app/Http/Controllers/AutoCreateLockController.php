@@ -84,7 +84,7 @@ class AutoCreateLockController extends Controller
                     'warehouse_id' => $item['warehouse'],
                     'note' => null,
                     'arrange_pallet_status' => false,
-                    'recive_status' => false,
+                    'recipe_status' => false,
                     'pallet_desc' => $item['work_type']
                 ]);
 
