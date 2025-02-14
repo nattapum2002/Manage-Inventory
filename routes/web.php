@@ -121,8 +121,8 @@ Route::prefix('ManageLockStock')->group(function () {
     Route::get('/Detail/insertPallet/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'insert_pallet'])->name('Insert_Pallet');
     Route::get('/Detail/editPalletOrde/{order_id}/{product_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
     Route::get('/Arrange/{CUS_id}/{order_date}', [AutoCreateLockController::class, 'ShowPreLock'])->name('PreLock');
-   
-    Route::get('/UPDATE/PALLET-STATUS',[LockController::class,'updatePalletStatus'])->name('updatePalletStatus');
+
+    Route::get('/UPDATE/PALLET-STATUS', [LockController::class, 'updatePalletStatus'])->name('updatePalletStatus');
 
     Route::post('/UPDATE/{id}', [LockController::class, 'update_lock_team'])->name('UpdateLockTeam');
     Route::post('/UpSell/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'addUpSellPallet'])->name('addUpSellPallet');
@@ -176,8 +176,6 @@ Route::prefix('ManageShiftAndTeam')->group(function () {
 
 Route::prefix('PayGoods')->group(function () {
     Route::get('/', [PayGoodsController::class, 'index'])->name('PayGoods');
-    Route::post('/SelectPayGoods', [PayGoodsController::class, 'SelectPayGoods'])->name('SelectPayGoods');
-    Route::post('/Incentive/StartWork', [PayGoodsController::class, 'StartWork'])->name('StartWork');
     Route::post('/Incentive/EndWork', [PayGoodsController::class, 'EndWork'])->name('EndWork');
     Route::post('/PayGoodsData', [PayGoodsController::class, 'PayGoodsData'])->name('PayGoodsData');
 });
