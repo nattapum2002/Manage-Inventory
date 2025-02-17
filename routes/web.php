@@ -177,8 +177,6 @@ Route::prefix('ManageShiftAndTeam')->group(function () {
 
 Route::prefix('PayGoods')->group(function () {
     Route::get('/', [PayGoodsController::class, 'index'])->name('PayGoods');
-    Route::post('/SelectPayGoods', [PayGoodsController::class, 'SelectPayGoods'])->name('SelectPayGoods');
-    Route::post('/Incentive/StartWork', [PayGoodsController::class, 'StartWork'])->name('StartWork');
     Route::post('/Incentive/EndWork', [PayGoodsController::class, 'EndWork'])->name('EndWork');
     Route::post('/PayGoodsData', [PayGoodsController::class, 'PayGoodsData'])->name('PayGoodsData');
 });

@@ -11,7 +11,7 @@
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="card">
                         <div class="card-body text-center">
-                            <h5>พนักงานขนย้าย</h5>
+                            <h5>งานขนย้าย</h5>
                         </div>
                     </div>
                 </div>
@@ -70,126 +70,6 @@
                     <div id="PalletTabsTable" class="card text-center"></div>
                 </div>
             </div>
-
-            {{-- @if ($customer_queues->isNotEmpty())
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
-                        <div class="queue-list">
-                            @foreach ($customer_queues as $queue)
-                                <button class="btn btn-primary mb-2 load-queue-detail"
-                                    data-queue-id="{{ $queue->order_number }}">
-                                    {{ $queue->customer_name }}
-                                    ({{ $queue->queue_time }})
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="col-lg-9 col-md-8 col-sm-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div id="order-details">
-                                    <div class="row">
-                                        <div class="col-md-6 col-lg-3 mb-2">
-                                            <label class="text-primary font-weight-bold">หมายเลขออเดอร์</label>
-                                            <h5>{{ $auto_select_queue['order_number'] ?? 'N/A' }}</h5>
-                                        </div>
-                                        <div class="col-md-6 col-lg-5 mb-2">
-                                            <label class="text-primary font-weight-bold">ชื่อลูกค้า</label>
-                                            <h5>{{ $auto_select_queue['customer_name'] ?? 'N/A' }}</h5>
-                                        </div>
-                                        <div class="col-md-6 col-lg-2 mb-2">
-                                            <label class="text-primary font-weight-bold">เวลานัด</label>
-                                            <h5>{{ $auto_select_queue['queue_time'] ?? 'N/A' }}</h5>
-                                        </div>
-                                        <div class="col-md-6 col-lg-2 mb-2">
-                                            <label class="text-primary font-weight-bold">จำนวนพาเลท</label>
-                                            <h5>{{ $total_pallets ?? 'N/A' }}</h5>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    @if ($pallets_with_products->isNotEmpty())
-                                        <div class="tab">
-                                            @foreach ($pallets_with_products as $index => $pallet)
-                                                <button class="tabLinks btn btn-outline-primary"
-                                                    onclick="openTab(event, 'pallet-{{ $index }}')">
-                                                    พาเลท {{ $index }}
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                        @foreach ($pallets_with_products as $index => $pallet)
-                                            <div id="pallet-{{ $index }}" class="tabContent" style="display: none;">
-                                                <table class="table table-bordered table-striped pallet nowrap">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>รหัสสินค้า</th>
-                                                            <th>รายละเอียดสินค้า</th>
-                                                            <th>จำนวน</th>
-                                                            <th>จำนวน 2</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($pallet['products'] as $product)
-                                                            <tr>
-                                                                <td>{{ $product['product_id'] }}</td>
-                                                                <td>{{ $product['product_description'] }}</td>
-                                                                <td>{{ $product['quantity'] }}
-                                                                    {{ $product['product_um'] }}
-                                                                </td>
-                                                                <td>{{ $product['quantity2'] }}
-                                                                    {{ $product['product_um2'] }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                                <div class="row">
-                                                    @foreach ($teams as $member)
-                                                        @if ($member['incentive_id'] && !$member['end_time'])
-                                                            <div class="col">
-                                                                <form action="{{ route('EndWork') }}" method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden" name="products"
-                                                                        value="{{ json_encode($pallet['products']) }}">
-                                                                    <input type="hidden" name="incentive_id"
-                                                                        value="{{ $member['incentive_id'] }}">
-                                                                    <input type="hidden" name="order_number"
-                                                                        value="{{ $auto_select_queue['order_number'] }}">
-                                                                    <button
-                                                                        class="btn btn-warning btn-block">{{ $member['name'] }}</button>
-                                                                </form>
-                                                            </div>
-                                                        @elseif (!$member['incentive_id'])
-                                                            <div class="col">
-                                                                <form action="{{ route('StartWork') }}" method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden" name="user_id"
-                                                                        value="{{ $member['user_id'] }}">
-                                                                    <input type="hidden" name="order_number"
-                                                                        value="{{ $auto_select_queue['order_number'] }}">
-                                                                    <button
-                                                                        class="btn btn-primary btn-block">{{ $member['name'] }}</button>
-                                                                </form>
-                                                            </div>
-                                                        @endif
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="alert alert-info" role="alert">
-                                            ยังไม่จัดสินค้าในคิวนี้
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @else
-                <div class="alert alert-info" role="alert">
-                    ไม่มีคิวที่ต้องจ่ายสินค้า
-                </div>
-            @endif --}}
         </div>
     </section>
 @endsection
@@ -235,6 +115,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.log(data);
                     CustomerNameElement.textContent = data.queue?.customer_name || '-';
                     QueueTimeElement.textContent = formatTime(data.queue?.ship_datetime);
 
@@ -245,12 +126,12 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs">
                             ${data.pallet.map((pallet, index) => `
-                                                                                                    <li class="nav-item">
-                                                                                                        <a class="nav-link ${index === 0 ? 'active' : ''}" id="tab${index + 1}-tab" data-bs-toggle="tab" href="#tab${index + 1}">
-                                                                                                            พาเลท ${index + 1}
-                                                                                                        </a>
-                                                                                                    </li>
-                                                                                                `).join('')}
+                                <li class="nav-item">
+                                    <a class="nav-link ${index === 0 ? 'active' : ''}" id="tab${index + 1}-tab" data-bs-toggle="tab" href="#tab${index + 1}">
+                                        พาเลท ${index + 1}
+                                    </a>
+                                </li>
+                            `).join('')}
                         </ul>
                     </div>
                 `;
@@ -258,29 +139,57 @@
                         let tabContent = `
                     <div class="card-body tab-content">
                     ${data.pallet.map((pallet, index) => `
-                                                                                            <div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="tab${index + 1}" role="tabpanel" aria-labelledby="tab${index + 1}-tab">
-                                                                                                <table id="PalletTable${index + 1}" class="table table-bordered table-striped nowrap">
-                                                                                                    <thead>
-                                                                                                        <tr>
-                                                                                                            <th>รหัสสินค้า</th>
-                                                                                                            <th>รายละเอียดสินค้า</th>
-                                                                                                            <th>จำนวน</th>
-                                                                                                            <th>จำนวน 2</th>
-                                                                                                        </tr>
-                                                                                                    </thead>
-                                                                                                    <tbody>
-                                                                                                    ${Array.isArray(pallet.products) ? pallet.products.map(product => `
-                                    <tr>
-                                        <td>${product.product_code || '-'}</td>
-                                        <td>${product.name || '-'}</td>
-                                        <td>${product.quantity || '0'}</td>
-                                        <td>${product.quantity_2 || '0'}</td>
-                                    </tr>
-                                `).join('') : ''}
-                                                                                                        </tbody>
-                                                                                                    </table>
-                                                                                                </div>
-                                                                                            `).join('')}
+                                                <div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="tab${index + 1}" role="tabpanel" aria-labelledby="tab${index + 1}-tab">
+                                                    <form action="{{ route('EndWork') }}" method="POST">
+                                                        @csrf
+                                                        <table id="PalletTable${index + 1}" class="table table-bordered table-striped nowrap">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>รหัสสินค้า</th>
+                                                                    <th>รายละเอียดสินค้า</th>
+                                                                    <th>จำนวน</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            ${Array.isArray(pallet.products) ? pallet.products.map(product => `
+                                        <tr>
+                                            <td>${product.product_number || '-'}</td>
+                                            <td>${product.product_description || '-'}</td>
+                                            <td>
+                                                <p class="text-primary">${product.quantity} ${product.product_um}</p>
+                                                <span>${product.quantity2} ${product.product_um2}</span>
+                                            </td>
+                                        </tr>
+                                            <input type="hidden" name="pallet_id" value="${pallet.pallet_id}">
+                                            <input type="hidden" name="products[]" value='${JSON.stringify({
+                                                product_number: product.product_number || '-',
+                                                product_description: product.product_description || '-',
+                                                quantity: product.quantity ?? '0',
+                                                product_um: product.product_um || '-',
+                                                quantity2: product.quantity2 ?? '0',
+                                                product_um2: product.product_um2 || '-'
+                                            })}'>
+                                    `).join('') : ''}
+                                                            </tbody>
+                                                        </table>
+                                                        ${pallet.arrange_pallet_status == 1 ? `
+                                    <div class="alert alert-success" role="alert">
+                                        จ่ายสินค้าแล้ว
+                                    </div>
+                                    ` : `
+                                    <div class="input-group">
+                                        <select class="form-control" name="user_id">
+                                            <option>เลือกพนักงาน</option>
+                                            ${data.teams ? data.teams.map(team => `
+                                                                <option value="${team.user_id}">${team.name}</option>
+                                                            `).join('') : ''}
+                                        </select>
+                                        <button class="btn btn-primary">จ่ายสินค้า</button>
+                                    </div>
+                                    `}
+                                                    </form>
+                                                </div>
+                                            `).join('')}
                     </div>
                 `;
 
