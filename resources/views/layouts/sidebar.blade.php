@@ -117,10 +117,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('IncentiveDashbord') }}" class="nav-link">
+                        <a 
+                        {{-- href="{{ route('IncentiveDashbord') }}"  --}}
+                        class="nav-link" >
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Incentive
+                                Incentive(ปรับปรุง)
                             </p>
                         </a>
                     </li>

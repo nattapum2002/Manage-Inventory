@@ -101,7 +101,7 @@
                 <p class="order-number">ออเดอร์ : {{$items['order_number']}}</p>
                 <p>ลูกค้า : {{$items['customer']['name']}}</p>
                 <p>{{$items['customer']['grade']}}</p>
-                <p>{{$items['order_date']}}</p>
+                <p>{{ \Carbon\Carbon::parse($items['order_date'])->format('d-m-Y') }}</p>
                 <p>{{$index + 1 .'/'. count($data )}}</p>
             </div>
             

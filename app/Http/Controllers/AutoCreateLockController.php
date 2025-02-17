@@ -247,12 +247,20 @@ class AutoCreateLockController extends Controller
         $current_group = [];
         $current_weight = [];
 
-        $CustomerOrders->each(function ($itemOrder) use (&$current_group, &$current_weight, &$lock_items, $order_number) {
-            if (!$itemOrder->item_work_desc_id || !$itemOrder->warehouse_id) {
+        $invalidOrders = $CustomerOrders->filter(function ($itemOrder) {
+            return !$itemOrder->item_work_desc_id || !$itemOrder->warehouse_id;
+        });
+        
+        // ถ้ามีรายการที่ไม่ผ่านเงื่อนไข ให้แจ้งเตือนและหยุดทำงาน
+        if ($invalidOrders->isNotEmpty()) {
+            foreach ($invalidOrders as $itemOrder) {
                 session()->flash('LockErrorCreate', "{$itemOrder->product_number} {$itemOrder->product_description} ยังไม่ได้กำหนดข้อมูลห้องเก็บหรือลักษณะงาน");
-                return false; // หยุดการทำงานของ each()
             }
+            return redirect()->back(); // หรือ return false; ถ้าไม่ต้องการ redirect
+        }
 
+        $CustomerOrders->each(function ($itemOrder) use (&$current_group, &$current_weight, &$lock_items, $order_number) {
+            
             $warehouse = $itemOrder->warehouse_id;
             $work_type_name = $itemOrder->item_work_desc_id;
 

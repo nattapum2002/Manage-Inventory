@@ -123,6 +123,7 @@ Route::prefix('ManageLockStock')->group(function () {
     Route::get('/Arrange/{CUS_id}/{order_date}', [AutoCreateLockController::class, 'ShowPreLock'])->name('PreLock');
    
     Route::get('/UPDATE/PALLET-STATUS',[LockController::class,'updatePalletStatus'])->name('updatePalletStatus');
+    Route::get('/UPDATE/ORDER/STATUS',[LockController::class,'updateOrderConfirmStatus'])->name('updateOrderConfirmStatus');
 
     Route::post('/UPDATE/{id}', [LockController::class, 'update_lock_team'])->name('UpdateLockTeam');
     Route::post('/UpSell/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'addUpSellPallet'])->name('addUpSellPallet');

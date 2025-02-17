@@ -44,8 +44,8 @@
                                     <th>รหัสสินค้า</th>
                                     <th>รายการ</th>
                                     <th class="text-center" colspan="4">สั่งจ่าย</th>
-                                    <th>สถานะ</th>
-                                    <th>การกระทำ</th>
+                                    {{-- <th>สถานะ</th>
+                                    <th>การกระทำ</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,10 +57,10 @@
                                         <td>{{ $CustomerOrder->product_um }}</td>
                                         <td>{{ $CustomerOrder->quantity2 ?? 0 }}</td>
                                         <td>{{ $CustomerOrder->product_um2 }}</td>
-                                        <td>{{ $CustomerOrder->status }}</td>
+                                        {{-- <td>{{ $CustomerOrder->status }}</td>
                                         <td>
                                             <a href="#" class="btn btn-primary">แก้ไข</a>
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @endforeach
                             </tbody>

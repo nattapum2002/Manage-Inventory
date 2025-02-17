@@ -92,7 +92,51 @@ class LockController extends Controller
 
     public function updatePalletStatus(Request $request){
         $palletId = $request->query('palletId');
-        return response()->json(['success',$palletId]);
+        $query = $request->query('query');
+
+        if($query == 1){
+            $this->updateArrangePallet($palletId);
+        }else if($query == 2){
+            $this->updateSendPallet($palletId);
+        }
+        return response()->json(['success',$palletId ,$query]);
+    }
+
+    private function updateArrangePallet($palletId){
+        DB::table('pallet')->where('id',$palletId)
+        ->update([
+            'arrange_pallet_status' => DB::raw("
+                CASE 
+                    WHEN arrange_pallet_status = 1 THEN 0 
+                    ELSE 1 
+                END
+            ")
+        ]);
+    }
+    private function updateSendPallet($palletId){
+        DB::table('pallet')->where('id',$palletId)
+        ->update([
+            'recipe_status' => DB::raw("
+                CASE 
+                    WHEN recipe_status = 1 THEN 0 
+                    ELSE 1 
+                END
+            ")
+        ]);
+    }
+
+    public function updateOrderConfirmStatus(Request $request){
+        $orderNumber = $request->query('orderNumber');
+        try {
+            DB::table('orders')->where('order_number',$orderNumber)
+                ->update([
+                    'confirm_order_status' => true ,
+                    //'confirm_at' => now(),
+                ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        return response()->json(['success']);
     }
     public function getCustomerOrder($CUS_ID,$ORDER_DATE){
         $customerOrder = DB::table('orders')
