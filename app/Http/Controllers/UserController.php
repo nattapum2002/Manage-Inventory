@@ -38,6 +38,8 @@ class UserController extends Controller
     public function syncUsers()
     {
         try {
+            set_time_limit(1800);
+
             // เรียก Stored Procedure
             DB::statement('EXEC dbo.Add_users');
 
