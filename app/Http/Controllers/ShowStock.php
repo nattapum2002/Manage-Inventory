@@ -109,6 +109,8 @@ class ShowStock extends Controller
     public function SyncProduct()
     {
         try {
+            set_time_limit(1800);
+
             DB::statement('EXEC dbo.Add_product');
 
             return redirect()->route('AdminShowStock')->with('success', 'เพิ่มข้อมูลสินค้าเรียบร้อยแล้ว');
