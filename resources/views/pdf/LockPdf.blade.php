@@ -102,7 +102,8 @@
                 <p>ลูกค้า : {{$items['customer']['name']}}</p>
                 <p>{{$items['customer']['grade']}}</p>
                 <p>{{ \Carbon\Carbon::parse($items['order_date'])->format('d-m-Y') }}</p>
-                <p>{{$index + 1 .'/'. count($data )}}</p>
+                <p>{{collect($data)->where('order_number', $items['order_number'])->values()->search($items) + 1 
+                        .'/'. collect($data)->where('order_number', $items['order_number'])->count()}}</p>
             </div>
             
             <div class="lock-body">
