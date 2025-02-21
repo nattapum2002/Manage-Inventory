@@ -11,10 +11,10 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class CustomerQueueController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     public function syncQueue()
     {

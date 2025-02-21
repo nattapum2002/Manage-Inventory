@@ -27,14 +27,6 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-                <li class="nav-item">
-                    <a href="{{ route('ShowStatDate') }}" class="nav-link has-dropdown">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                            รายการสินค้าเข้าออก
-                        </p>
-                    </a>
-                </li>
                 {{-- <li class="nav-item">
                     <a href="{{ route('ShowStockA') }}" class="nav-link has-dropdown">
                         <i class="far fa-circle nav-icon"></i>
@@ -53,22 +45,6 @@
                 </li> --}}
                 @if (Auth::user()->user_type == 'Admin')
                     <li class="nav-item">
-                        <a href="{{ route('AdminShowStock') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                จัดการสินค้าในคลัง
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('ManageLockStock') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                จัดการล็อคสินค้า
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="{{ route('ManageQueue') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
@@ -81,14 +57,6 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 จัดการกะ/ทีม
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('ManageUsers') }}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>
-                                จัดการผู้ใช้งาน
                             </p>
                         </a>
                     </li>
@@ -109,20 +77,34 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('PayGoods') }}" class="nav-link">
+                        <a href="{{ route('ManageLockStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                จ่ายสินค้า
+                                จัดการล็อคสินค้า
                             </p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a 
-                        {{-- href="{{ route('IncentiveDashbord') }}"  --}}
-                        class="nav-link" >
+                        <a href="{{ route('AdminShowStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
-                                Incentive(ปรับปรุง)
+                                จัดการสินค้าในคลัง
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ShowStatDate') }}" class="nav-link has-dropdown">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                รายการสินค้าเข้าออก
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ManageUsers') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                จัดการผู้ใช้งาน
                             </p>
                         </a>
                     </li>
@@ -134,12 +116,36 @@
                             </p>
                         </a>
                     </li>
+                    {{-- <li class="nav-item">
+                        <a href="{{ route('PayGoods') }}" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                จ่ายสินค้า
+                            </p>
+                        </a>
+                    </li> --}}
+                    {{-- <li class="nav-item">
+                        <a href="{{ route('IncentiveDashbord') }}"  class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                Incentive(ปรับปรุง)
+                            </p>
+                        </a>
+                    </li> --}}
                 @elseif (Auth::user()->user_type == 'Manager')
                     <li class="nav-item">
                         <a href="{{ route('ProductStock') }}" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>
                                 สินค้าคงคลัง
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('ShowStatDate') }}" class="nav-link has-dropdown">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                รายการสินค้าเข้าออก
                             </p>
                         </a>
                     </li>

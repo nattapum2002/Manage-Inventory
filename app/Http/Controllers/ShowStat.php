@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class ShowStat extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     private function GetProductTransactionsByMonth($month)
     {

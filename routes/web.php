@@ -95,9 +95,9 @@ Route::prefix('ShowStock')->group(function () {
     Route::post('/ProductDetail/SaveEditProduct', [ShowStock::class, 'SaveEditProduct'])->name('SaveEditProduct');
 });
 
-Route::get('/Admin/Dashboard', function () {
-    return view('Admin.Dashboard.index');
-})->name('Dashboard.Admin');
+Route::prefix('Admin')->group(function () {
+    Route::get('/Dashboard', [StatisticsController::class, 'index'])->name('Dashboard.Admin');
+});
 
 Route::prefix('ManageQueue')->group(function () {
     Route::get('/', [CustomerQueueController::class, 'index'])->name('ManageQueue');
@@ -121,9 +121,9 @@ Route::prefix('ManageLockStock')->group(function () {
     Route::get('/Detail/insertPallet/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'insert_pallet'])->name('Insert_Pallet');
     Route::get('/Detail/editPalletOrde/{order_id}/{product_id}', [LockController::class, 'EditPalletOrder'])->name('EditPalletOrder');
     Route::get('/Arrange/{CUS_id}/{order_date}', [AutoCreateLockController::class, 'ShowPreLock'])->name('PreLock');
-   
-    Route::get('/UPDATE/PALLET-STATUS',[LockController::class,'updatePalletStatus'])->name('updatePalletStatus');
-    Route::get('/UPDATE/ORDER/STATUS',[LockController::class,'updateOrderConfirmStatus'])->name('updateOrderConfirmStatus');
+
+    Route::get('/UPDATE/PALLET-STATUS', [LockController::class, 'updatePalletStatus'])->name('updatePalletStatus');
+    Route::get('/UPDATE/ORDER/STATUS', [LockController::class, 'updateOrderConfirmStatus'])->name('updateOrderConfirmStatus');
 
     Route::post('/UPDATE/{id}', [LockController::class, 'update_lock_team'])->name('UpdateLockTeam');
     Route::post('/UpSell/{CUS_ID}/{ORDER_DATE}', [AutoCreateLockController::class, 'addUpSellPallet'])->name('addUpSellPallet');
@@ -214,8 +214,8 @@ Route::prefix('SetData')->group(function () {
 
 //Manager Routes
 
-Route::prefix('Dashboard')->group(function () {
-    Route::get('/', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
+Route::prefix('Manager')->group(function () {
+    Route::get('/Dashboard', [StatisticsController::class, 'index'])->name('Dashboard.Manager');
 });
 
 Route::prefix('ProductStock')->group(function () {
@@ -233,10 +233,8 @@ Route::prefix('Employee')->group(function () {
 
 //Employee Routes
 
-Route::prefix('Dashboard')->group(function () {
-    Route::get('/', function () {
-        return view('Admin.Dashboard.index');
-    })->name('Dashboard.Employee');
+Route::prefix('Employee')->group(function () {
+    Route::get('/Dashboard', [StatisticsController::class, 'index'])->name('Dashboard.Employee');
 });
 
 Route::prefix('Pallet')->group(function () {

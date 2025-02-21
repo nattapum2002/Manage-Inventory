@@ -10,10 +10,10 @@ use Carbon\Carbon;
 
 class ShiftAndTeamController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     private function GetShiftsByMonth($month)
     {
@@ -663,18 +663,19 @@ class ShiftAndTeamController extends Controller
     {
         // 1️⃣ ตรวจสอบความถูกต้องของข้อมูล
         $request->validate([
-            'team_id' => 'required|string|max:255',
-            'shift_id' => 'required|string|max:255',
-            'team_name' => 'required|string|max:255',
-            'work' => 'required|string|max:255',
+            'team_id' => 'required|string',
+            'shift_id' => 'required|string',
+            'team_name' => 'required|string',
             'note' => 'nullable|string',
-            'user_id' => 'required|array',
-            'user_id.*' => 'required|string|max:255',
-            'dmc_position' => 'required|array',
-            'dmc_position.*' => 'required|string|max:255',
+            'edit_user_id' => 'required|array',
+            'edit_user_id.*' => 'required|string',
+            'edit_name' => 'required|array',
+            'edit_name.*' => 'required|string',
+            'edit_dmc_position' => 'required|array',
+            'edit_dmc_position.*' => 'nullable|string',
+            'edit_work_description' => 'required|array',
+            'edit_work_description.*' => 'nullable|string',
         ]);
-
-        dd($request->all());
 
         $team_id = $request->input('team_id');
 
@@ -702,8 +703,8 @@ class ShiftAndTeamController extends Controller
                     ->keyBy('user_id'); // ใช้ user_id เป็น key
 
                 // 4️⃣ เตรียมข้อมูลใหม่จากฟอร์ม
-                $users = $request->input('user_id');
-                $positions = $request->input('dmc_position');
+                $users = $request->input('edit_user_id');
+                $positions = $request->input('edit_dmc_position');
 
                 $updatedUsers = []; // user_id ที่ถูกเพิ่ม/อัปเดต
                 $newUsers = []; // รายการ user_id ที่ต้องเพิ่มเข้าใหม่

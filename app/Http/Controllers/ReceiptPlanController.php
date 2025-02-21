@@ -12,10 +12,10 @@ use Illuminate\Support\Arr;
 
 class ReceiptPlanController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     private function GetReceiptPlanByMonth($month)
     {

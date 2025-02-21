@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class ShowStock extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     private function GetProducts($product_id = null)
     {

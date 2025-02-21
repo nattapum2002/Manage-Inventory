@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     public function index()
     {
@@ -135,8 +135,6 @@ class UserController extends Controller
             return redirect()->route('Login.index');
         }
 
-        dd($request->all());
-
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
@@ -186,7 +184,6 @@ class UserController extends Controller
             'note' => 'nullable|string|max:500',
             'status' => 'required|boolean',
         ]);
-        dd($request->all());
 
         $user = DB::table('users')->where('user_id', $validatedData['user_id'])->first();
 

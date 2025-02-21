@@ -10,10 +10,10 @@ use Illuminate\Support\Str;
 
 class ReceiptProductController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     private function GetReceiptPlan($date, $shift_id)
     {

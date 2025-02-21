@@ -423,8 +423,8 @@
             const date = document.getElementById('date').value;
             const shift = document.querySelector('input[name="shift"]:checked').value;
             const receiptSlipNumber = document.getElementById('receipt_slip_number').value;
-            const department = document.getElementById('department').value;
-            const productCheckerId = document.getElementById('product_checker_id').value;
+            const department = document.getElementById('SelectorDepartment').value;
+            const productCheckerId = document.getElementById('SelectorProductChecker').value;
             const domesticCheckerId = document.getElementById('domestic_checker_id').value;
             const teamReceiveProduct = document.getElementById('team_receive_product').value;
 

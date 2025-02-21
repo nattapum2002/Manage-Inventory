@@ -11,32 +11,32 @@ use Throwable;
 
 class LockController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     public function index()
     {
         $CustomerOrders = DB::table('orders')
-        ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
-        ->select(
-            'orders.order_date', // ✅ รวมข้อมูลตามวัน
-            'orders.customer_id',
-            'customer.customer_name',
-            'customer.customer_grade',
-            DB::raw('COUNT(DISTINCT orders.order_number) AS total_orders'),
-            DB::raw('COUNT(CASE WHEN orders.confirm_order_status = 1 THEN 1 END) AS complete_order'),
-            DB::raw('COUNT(CASE WHEN orders.confirm_order_status = 0 THEN 1 END) AS not_complete_order')
-        )
-        ->groupBy(
-            'orders.order_date', // ✅ Group ตามวัน
-            'orders.customer_id',
-            'customer.customer_name',
-            'customer.customer_grade'
-        )
-        ->orderBy('orders.order_date') // ✅ เรียงตามวัน
-        ->get();
+            ->join('customer', 'orders.customer_id', '=', 'customer.customer_id')
+            ->select(
+                'orders.order_date', // ✅ รวมข้อมูลตามวัน
+                'orders.customer_id',
+                'customer.customer_name',
+                'customer.customer_grade',
+                DB::raw('COUNT(DISTINCT orders.order_number) AS total_orders'),
+                DB::raw('COUNT(CASE WHEN orders.confirm_order_status = 1 THEN 1 END) AS complete_order'),
+                DB::raw('COUNT(CASE WHEN orders.confirm_order_status = 0 THEN 1 END) AS not_complete_order')
+            )
+            ->groupBy(
+                'orders.order_date', // ✅ Group ตามวัน
+                'orders.customer_id',
+                'customer.customer_name',
+                'customer.customer_grade'
+            )
+            ->orderBy('orders.order_date') // ✅ เรียงตามวัน
+            ->get();
 
 
 
@@ -46,15 +46,15 @@ class LockController extends Controller
 
     public function DetailLockStock($CUS_ID, $ORDER_DATE)
     {
-        $orders = $this->getCustomerOrder($CUS_ID , $ORDER_DATE);
-        $palletOrderId = $this->getPalletOrderId($CUS_ID,$ORDER_DATE);
+        $orders = $this->getCustomerOrder($CUS_ID, $ORDER_DATE);
+        $palletOrderId = $this->getPalletOrderId($CUS_ID, $ORDER_DATE);
         //dd($palletOrderId);
         $customer_name = DB::table('customer')
             ->select('customer_name')
-            ->where('customer_id',$CUS_ID)->value('customer_name');
+            ->where('customer_id', $CUS_ID)->value('customer_name');
 
         $formatOrders = $orders->groupBy('order_number')
-            ->map(function($data,$order_number){
+            ->map(function ($data, $order_number) {
                 return [
                     'order_date' => $data->first()->order_date,
                     'order_number' => $order_number,
@@ -64,9 +64,9 @@ class LockController extends Controller
                         'entry_datetime' => $data->first()->entry_datetime,
                         'release_datetime' => $data->first()->release_datetime
                     ],
-                    'order_detail' => $data->map(function($item){
+                    'order_detail' => $data->map(function ($item) {
                         return [
-                            'product_number' => $item->product_number ,
+                            'product_number' => $item->product_number,
                             'product_name' => $item->product_description,
                             'quantity1' => $item->quantity,
                             'quantity2' => $item->quantity2,
@@ -75,62 +75,66 @@ class LockController extends Controller
                 ];
             })->values();
 
-            $pallets = DB::table('pallet')
-                ->join('orders','orders.order_number','=','pallet.order_number')
-                ->join('pallet_type','pallet_type.id','=','pallet.pallet_type_id')
-                ->leftJoin('pallet_team', 'pallet_team.pallet_id', '=', 'pallet.id')
-                ->leftJoin('team', 'pallet_team.team_id', '=', 'team.team_id')
-                ->whereDate('orders.order_date',$ORDER_DATE)
-                ->where('orders.customer_id',$CUS_ID)
-                ->select('pallet.*','pallet_type.pallet_type','team.team_name')
-                ->get();
-        
-        
+        $pallets = DB::table('pallet')
+            ->join('orders', 'orders.order_number', '=', 'pallet.order_number')
+            ->join('pallet_type', 'pallet_type.id', '=', 'pallet.pallet_type_id')
+            ->leftJoin('pallet_team', 'pallet_team.pallet_id', '=', 'pallet.id')
+            ->leftJoin('team', 'pallet_team.team_id', '=', 'team.team_id')
+            ->whereDate('orders.order_date', $ORDER_DATE)
+            ->where('orders.customer_id', $CUS_ID)
+            ->select('pallet.*', 'pallet_type.pallet_type', 'team.team_name')
+            ->get();
 
-        return view('Admin.ManageLockStock.DetailLockStock', compact('formatOrders', 'customer_name', 'CUS_ID', 'ORDER_DATE','pallets','palletOrderId'));
+
+
+        return view('Admin.ManageLockStock.DetailLockStock', compact('formatOrders', 'customer_name', 'CUS_ID', 'ORDER_DATE', 'pallets', 'palletOrderId'));
     }
 
-    public function updatePalletStatus(Request $request){
+    public function updatePalletStatus(Request $request)
+    {
         $palletId = $request->query('palletId');
         $query = $request->query('query');
 
-        if($query == 1){
+        if ($query == 1) {
             $this->updateArrangePallet($palletId);
-        }else if($query == 2){
+        } else if ($query == 2) {
             $this->updateSendPallet($palletId);
         }
-        return response()->json(['success',$palletId ,$query]);
+        return response()->json(['success', $palletId, $query]);
     }
 
-    private function updateArrangePallet($palletId){
-        DB::table('pallet')->where('id',$palletId)
-        ->update([
-            'arrange_pallet_status' => DB::raw("
-                CASE 
-                    WHEN arrange_pallet_status = 1 THEN 0 
-                    ELSE 1 
+    private function updateArrangePallet($palletId)
+    {
+        DB::table('pallet')->where('id', $palletId)
+            ->update([
+                'arrange_pallet_status' => DB::raw("
+                CASE
+                    WHEN arrange_pallet_status = 1 THEN 0
+                    ELSE 1
                 END
             ")
-        ]);
+            ]);
     }
-    private function updateSendPallet($palletId){
-        DB::table('pallet')->where('id',$palletId)
-        ->update([
-            'recipe_status' => DB::raw("
-                CASE 
-                    WHEN recipe_status = 1 THEN 0 
-                    ELSE 1 
+    private function updateSendPallet($palletId)
+    {
+        DB::table('pallet')->where('id', $palletId)
+            ->update([
+                'recipe_status' => DB::raw("
+                CASE
+                    WHEN recipe_status = 1 THEN 0
+                    ELSE 1
                 END
             ")
-        ]);
+            ]);
     }
 
-    public function updateOrderConfirmStatus(Request $request){
+    public function updateOrderConfirmStatus(Request $request)
+    {
         $orderNumber = $request->query('orderNumber');
         try {
-            DB::table('orders')->where('order_number',$orderNumber)
+            DB::table('orders')->where('order_number', $orderNumber)
                 ->update([
-                    'confirm_order_status' => true ,
+                    'confirm_order_status' => true,
                     //'confirm_at' => now(),
                 ]);
         } catch (\Throwable $th) {
@@ -138,33 +142,36 @@ class LockController extends Controller
         }
         return response()->json(['success']);
     }
-    public function getCustomerOrder($CUS_ID,$ORDER_DATE){
+    public function getCustomerOrder($CUS_ID, $ORDER_DATE)
+    {
         $customerOrder = DB::table('orders')
-            ->join('order_detail','order_detail.order_number','=','orders.order_number')
-            ->join('product','product.product_number','=','order_detail.product_number')
-            ->where('orders.customer_id',$CUS_ID)
-            ->whereDate('orders.order_date',$ORDER_DATE)
+            ->join('order_detail', 'order_detail.order_number', '=', 'orders.order_number')
+            ->join('product', 'product.product_number', '=', 'order_detail.product_number')
+            ->where('orders.customer_id', $CUS_ID)
+            ->whereDate('orders.order_date', $ORDER_DATE)
             ->get();
 
-        return $customerOrder ;
+        return $customerOrder;
     }
 
-    public function getPalletOrderId($CUS_ID , $ORDER_DATE){
+    public function getPalletOrderId($CUS_ID, $ORDER_DATE)
+    {
         $palletOrderId = DB::table('pallet')
-            ->join('orders','orders.order_number','=','pallet.order_number')
+            ->join('orders', 'orders.order_number', '=', 'pallet.order_number')
             ->select('pallet.order_number')
-            ->whereDate('orders.order_date',$ORDER_DATE)
-            ->where('orders.customer_id',$CUS_ID)
+            ->whereDate('orders.order_date', $ORDER_DATE)
+            ->where('orders.customer_id', $CUS_ID)
             ->groupBy('pallet.order_number')
             ->pluck('order_number');
-        
-            return $palletOrderId;
+
+        return $palletOrderId;
     }
-    public function updatePalletType(Request $request ,$pallet_id ){
+    public function updatePalletType(Request $request, $pallet_id)
+    {
         $data = $request->input();
         try {
             //code...
-            DB::table('pallet')->where('id',$pallet_id)->update([
+            DB::table('pallet')->where('id', $pallet_id)->update([
                 'pallet_type_id' => $data['pallet_type_id'],
             ]);
             return redirect()->back();
@@ -173,7 +180,7 @@ class LockController extends Controller
             throw $th;
         }
     }
-    
+
 
     public function AddPallet($order_id)
     {
@@ -210,7 +217,7 @@ class LockController extends Controller
         }
     }
 
-    
+
 
     // public function insert_pallet($CUS_ID, $ORDER_DATE)
     // {
@@ -331,9 +338,9 @@ class LockController extends Controller
             ->where('pallet.id', $pallet_id)
             ->get();
 
-            $pallet_type = DB::table('pallet_type')->get();
+        $pallet_type = DB::table('pallet_type')->get();
 
-        return view('Admin.ManageLockStock.DetailPellets', compact('Pallets', 'ORDER_DATE', 'CUS_ID','pallet_type'));
+        return view('Admin.ManageLockStock.DetailPellets', compact('Pallets', 'ORDER_DATE', 'CUS_ID', 'pallet_type'));
     }
 
     public function EditPalletOrder($order_id, $product_id)
@@ -347,9 +354,9 @@ class LockController extends Controller
         return view('Admin.ManageLockStock.EditPalletOrder', compact('data'));
     }
 
-    
+
 
 
     //คุณธีรพล พูลเพิ่ม test
-   
+
 }
